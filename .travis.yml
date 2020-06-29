@@ -11,10 +11,12 @@ android:
     - build-tools-30.0.0
     - android-30
 
+# accepting android build-tools-30.0.0's license
 before_install:
   - yes | sdkmanager "platforms;android-30"
 
 script:
   - cd plugin
+  # download dependency
   - wget -O ${GODOT_LIB_VERSION}/${GODOT_LIB_VERSION}.aar $GODOT_LIB_URL 
   - ./gradlew test
