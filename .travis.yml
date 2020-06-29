@@ -9,6 +9,9 @@ android:
     # accept all licenses
     - '.+'
 
+before_install:
+  - yes | sdkmanager "platforms;android-30"
+
 script:
   - cd plugin
   - ./gradlew test
