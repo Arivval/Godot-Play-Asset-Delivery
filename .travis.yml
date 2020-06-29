@@ -3,4 +3,4 @@ dist: trusty
 
 script:
   - cd plugin
-  - gradlew test
+  - ./gradlew test
