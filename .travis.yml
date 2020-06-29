@@ -14,4 +14,5 @@ before_install:
 
 script:
   - cd plugin
+  - wget -O godot-lib.3.2.2.rc1.release/godot-lib.3.2.2.rc1.release.aar https://downloads.tuxfamily.org/godotengine/3.2.2/rc1/godot-lib.3.2.2.rc1.release.aar 
   - ./gradlew test
