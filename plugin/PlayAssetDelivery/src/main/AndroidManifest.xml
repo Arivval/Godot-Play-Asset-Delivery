@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.google.play.godot">
+    package="com.google.play.core.godot">
     <application>
         <meta-data
             android:name="org.godotengine.plugin.v1.PlayAssetDelivery"
