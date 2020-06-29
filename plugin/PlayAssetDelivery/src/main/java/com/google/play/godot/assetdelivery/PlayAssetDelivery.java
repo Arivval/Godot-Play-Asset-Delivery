@@ -14,7 +14,7 @@
   	limitations under the License.
  */
 
-package com.google.play.godotassetdelivery;
+package com.google.play.godot.assetdelivery;
 
 import androidx.annotation.NonNull;
 
