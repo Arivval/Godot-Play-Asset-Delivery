@@ -1,18 +1,20 @@
 language: android
 dist: trusty
 
+env:
+  global:
+    - GODOT_LIB_VERSION=godot-lib.3.2.2.rc1.release
+    - GODOT_LIB_URL=https://downloads.tuxfamily.org/godotengine/3.2.2/rc1/godot-lib.3.2.2.rc1.release.aar
+
 android:
   components:
     - build-tools-30.0.0
     - android-30
-  licenses:
-    # accept all licenses
-    - '.+'
 
 before_install:
   - yes | sdkmanager "platforms;android-30"
 
 script:
   - cd plugin
-  - wget -O godot-lib.3.2.2.rc1.release/godot-lib.3.2.2.rc1.release.aar https://downloads.tuxfamily.org/godotengine/3.2.2/rc1/godot-lib.3.2.2.rc1.release.aar 
+  - wget -O ${GODOT_LIB_VERSION}/${GODOT_LIB_VERSION}.aar $GODOT_LIB_URL 
   - ./gradlew test
