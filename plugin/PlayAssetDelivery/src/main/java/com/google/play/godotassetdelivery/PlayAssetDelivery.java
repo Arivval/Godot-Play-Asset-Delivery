@@ -29,11 +29,6 @@ public class PlayAssetDelivery extends GodotPlugin {
     @NonNull
     @Override
     public String getPluginName() {
-        try {
-            throw new UnsupportedOperationException();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+        throw new UnsupportedOperationException();
     }
 }
