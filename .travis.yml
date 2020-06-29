@@ -3,8 +3,8 @@ dist: trusty
 
 android:
   components:
-    - build-tools-29.0.3
-    - android-29
+    - build-tools-30.0.0
+    - android-30
   licenses:
     # accept all licenses
     - '.+'
