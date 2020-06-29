@@ -1,0 +1,4 @@
+include ':godot-lib.3.2.2.rc1.release'
+include ':PlayAssetDelivery'
+include ':app'
+rootProject.name = "My Application"
