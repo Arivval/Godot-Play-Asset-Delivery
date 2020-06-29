@@ -1,0 +1,4 @@
+language: android
+dist: trusty
+
+./gradlew test
