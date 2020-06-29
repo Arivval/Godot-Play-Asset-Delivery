@@ -5,6 +5,9 @@ android:
   components:
     - build-tools-29.0.3
     - android-29
+  licenses:
+    # accept all licenses
+    - '.+'
 
 script:
   - cd plugin
