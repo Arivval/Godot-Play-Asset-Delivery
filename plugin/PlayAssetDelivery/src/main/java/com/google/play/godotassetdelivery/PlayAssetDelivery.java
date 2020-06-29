@@ -30,7 +30,7 @@ public class PlayAssetDelivery extends GodotPlugin {
     @Override
     public String getPluginName() {
         try {
-            throw new Exception("method not implemented!");
+            throw new UnsupportedOperationException();
         } catch (Exception e) {
             e.printStackTrace();
         }
