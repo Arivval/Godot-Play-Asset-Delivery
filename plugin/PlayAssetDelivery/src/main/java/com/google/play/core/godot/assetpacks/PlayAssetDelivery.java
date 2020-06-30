@@ -46,7 +46,7 @@ public class PlayAssetDelivery extends GodotPlugin {
   }
 
   /**
-   * <pre>Returns a list of all plugin method names that the Godot runtime can call.</pre>
+   * <pre> Returns a list of all plugin method names that the Godot runtime can call. </pre>
    */
   @NonNull
   @Override
@@ -63,16 +63,23 @@ public class PlayAssetDelivery extends GodotPlugin {
   }
 
   /**
-   * Returns a set containing all the signals the Godot runtime is able to receive. Below is the
-   * documentation for all signals registered. AssetPackStateUpdateSignal - passes AssetPackState
-   * serialized as Dictionary. All the signals below also passes signalID. fetchSuccess - passes
-   * AssetPackStates serialized as Dictionary. fetchError - passes Error serialized as Dictionary.
-   * getPackStatesSuccess - passes AssetPackStates serialized as Dictionary. getPackStatesError -
-   * passes Error serialized as Dictionary. removePackSuccess - passes name of the pack removed.
+   * <pre>
+   * Returns a set containing all the signals the Godot runtime is able to receive.
+   * Below is the documentation for all signals registered.
+   * AssetPackStateUpdateSignal - passes AssetPackState
+   * serialized as Dictionary.
+   * All the signals below also passes signalID. fetchSuccess - passes
+   * AssetPackStates serialized as Dictionary.
+   * fetchError - passes Error serialized as Dictionary.
+   * getPackStatesSuccess - passes AssetPackStates serialized as Dictionary.
+   * getPackStatesError - passes Error serialized as Dictionary.
+   * removePackSuccess - passes name of the pack removed.
    * removePackError - passes name of the pack to be removed along with the Error serialized as
-   * Dictionary. showCellularDataConfirmationSuccess - passes Integer indicating how the user
-   * responded to the dialog. showCellularDataConfirmationError - passes Error serialized as
    * Dictionary.
+   * showCellularDataConfirmationSuccess - passes Integer indicating how the user
+   * responded to the dialog.
+   * showCellularDataConfirmationError - passes Error serialized as Dictionary.
+   * <pre/>
    */
   @NonNull
   @Override
