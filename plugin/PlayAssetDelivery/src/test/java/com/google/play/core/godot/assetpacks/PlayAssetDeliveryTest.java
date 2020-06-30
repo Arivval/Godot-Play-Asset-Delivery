@@ -19,13 +19,10 @@ package com.google.play.core.godot.assetpacks;
 import org.godotengine.godot.Godot;
 import org.godotengine.godot.plugin.SignalInfo;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.CoreMatchers.*;
+import static com.google.common.truth.Truth.assertThat;
 
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -42,22 +39,23 @@ public class PlayAssetDeliveryTest {
   public void getPluginName() {
     PlayAssetDelivery testSubject = new PlayAssetDelivery(godotMock);
     String actualName = testSubject.getPluginName();
-    assertThat(actualName, is("PlayAssetDelivery"));
+    assertThat(actualName).isEqualTo("PlayAssetDelivery");
   }
 
   @Test
   public void getPluginMethods() {
     PlayAssetDelivery testSubject = new PlayAssetDelivery(godotMock);
     List<String> actualList = testSubject.getPluginMethods();
-    assertEquals(actualList.size(), 8);
-    assertTrue(actualList.contains("cancel"));
-    assertTrue(actualList.contains("fetch"));
-    assertTrue(actualList.contains("getAssetLocation"));
-    assertTrue(actualList.contains("getPackLocation"));
-    assertTrue(actualList.contains("getPackLocations"));
-    assertTrue(actualList.contains("getPackStates"));
-    assertTrue(actualList.contains("removePack"));
-    assertTrue(actualList.contains("showCellularDataConfirmation"));
+    assertThat(actualList)
+        .containsExactly(
+            "cancel",
+            "fetch",
+            "getAssetLocation",
+            "getPackLocation",
+            "getPackLocations",
+            "getPackStates",
+            "removePack",
+            "showCellularDataConfirmation");
   }
 
   @Test
@@ -81,17 +79,17 @@ public class PlayAssetDeliveryTest {
         new SignalInfo("showCellularDataConfirmationSuccess", Integer.class, Integer.class);
     SignalInfo showCellularDataConfirmationError =
         new SignalInfo("showCellularDataConfirmationError", String.class, Integer.class);
-
-    assertEquals(10, testSet.size());
-    assertTrue(testSet.contains(assetPackStateUpdateSignal));
-    assertTrue(testSet.contains(fetchStateUpdated));
-    assertTrue(testSet.contains(fetchSuccess));
-    assertTrue(testSet.contains(fetchError));
-    assertTrue(testSet.contains(getPackStatesSuccess));
-    assertTrue(testSet.contains(getPackStatesError));
-    assertTrue(testSet.contains(removePackSuccess));
-    assertTrue(testSet.contains(removePackError));
-    assertTrue(testSet.contains(showCellularDataConfirmationSuccess));
-    assertTrue(testSet.contains(showCellularDataConfirmationError));
+    assertThat(testSet)
+        .containsExactly(
+            assetPackStateUpdateSignal,
+            fetchStateUpdated,
+            fetchSuccess,
+            fetchError,
+            getPackStatesSuccess,
+            getPackStatesError,
+            removePackSuccess,
+            removePackError,
+            showCellularDataConfirmationSuccess,
+            showCellularDataConfirmationError);
   }
 }
