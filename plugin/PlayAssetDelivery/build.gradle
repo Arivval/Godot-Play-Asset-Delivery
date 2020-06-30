@@ -20,13 +20,24 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    testOptions {
+        // return default values so we won't run into
+        // "Method isEmpty in android.text.TextUtils not mocked"
+        // error during unit test.
+        unitTests.returnDefaultValues = true
+    }
 }
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.appcompat:appcompat:1.1.0'
     testImplementation 'junit:junit:4.12'
+    testImplementation 'org.mockito:mockito-all:1.10.19'
+    testImplementation project(':godot-lib.3.2.2.rc1.release')
+    testImplementation 'com.google.truth:truth:1.0.1'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     compileOnly project(':godot-lib.3.2.2.rc1.release')
+
 }
