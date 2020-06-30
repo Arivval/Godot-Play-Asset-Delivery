@@ -18,33 +18,69 @@ package com.google.play.core.godot.assetpacks;
 
 
 import org.godotengine.godot.Godot;
-import org.junit.Rule;
+import org.godotengine.godot.plugin.SignalInfo;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
-
 import static org.junit.Assert.*;
+import org.mockito.runners.MockitoJUnitRunner;
 
-public class PlayAssetDeliveryTest {
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+
+@RunWith(MockitoJUnitRunner.class) public class PlayAssetDeliveryTest {
+
     @Mock
     Godot godotMock;
 
     @Test
     public void getPluginName() {
-        System.out.println("here");
-//        PlayAssetDelivery testSubject = new PlayAssetDelivery(godotMock);
-//        System.out.println(testSubject.getPluginName());
-        assertEquals(4, 2 + 2);
+        PlayAssetDelivery testSubject = new PlayAssetDelivery(godotMock);
+        assertEquals("PlayAssetDelivery", testSubject.getPluginName());
     }
 
     @Test
     public void getPluginMethods() {
-        assertEquals(4, 2 + 2);
+        PlayAssetDelivery testSubject = new PlayAssetDelivery(godotMock);
+        List<String> actualList = testSubject.getPluginMethods();
+        assertEquals(actualList.size(), 8);
+        assertTrue(actualList.contains("cancel"));
+        assertTrue(actualList.contains("fetch"));
+        assertTrue(actualList.contains("getAssetLocation"));
+        assertTrue(actualList.contains("getPackLocation"));
+        assertTrue(actualList.contains("getPackLocations"));
+        assertTrue(actualList.contains("getPackStates"));
+        assertTrue(actualList.contains("removePack"));
+        assertTrue(actualList.contains("showCellularDataConfirmation"));
     }
 
     @Test
     public void getPluginSignals() {
-        assertEquals(4, 2 + 2);
+        PlayAssetDelivery testSubject = new PlayAssetDelivery(godotMock);
+        Set<SignalInfo> testSet = testSubject.getPluginSignals();
+
+        SignalInfo assetPackStateUpdateSignal = new SignalInfo("assetPackStateUpdateSignal", String.class);
+        SignalInfo fetchStateUpdated = new SignalInfo("fetchStateUpdated", String.class, Integer.class);
+        SignalInfo fetchSuccess = new SignalInfo("fetchSuccess", String.class, Integer.class);
+        SignalInfo fetchError = new SignalInfo("fetchError", String.class, Integer.class);
+        SignalInfo getPackStatesSuccess = new SignalInfo("getPackStatesSuccess", String.class, Integer.class);
+        SignalInfo getPackStatesError = new SignalInfo("getPackStatesError", String.class, Integer.class);
+        SignalInfo removePackSuccess = new SignalInfo("removePackSuccess", String.class, Integer.class);
+        SignalInfo removePackError = new SignalInfo("removePackError", String.class, String.class, Integer.class);
+        SignalInfo showCellularDataConfirmationSuccess = new SignalInfo("showCellularDataConfirmationSuccess", Integer.class, Integer.class);
+        SignalInfo showCellularDataConfirmationError = new SignalInfo("showCellularDataConfirmationError", String.class, Integer.class);
+
+        assertEquals(10, testSet.size());
+        assertTrue(testSet.contains(assetPackStateUpdateSignal));
+        assertTrue(testSet.contains(fetchStateUpdated));
+        assertTrue(testSet.contains(fetchSuccess));
+        assertTrue(testSet.contains(fetchError));
+        assertTrue(testSet.contains(getPackStatesSuccess));
+        assertTrue(testSet.contains(getPackStatesError));
+        assertTrue(testSet.contains(removePackSuccess));
+        assertTrue(testSet.contains(removePackError));
+        assertTrue(testSet.contains(showCellularDataConfirmationSuccess));
+        assertTrue(testSet.contains(showCellularDataConfirmationError));
     }
 }
