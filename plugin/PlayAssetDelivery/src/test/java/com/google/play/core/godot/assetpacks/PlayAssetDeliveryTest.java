@@ -19,10 +19,11 @@ package com.google.play.core.godot.assetpacks;
 
 import org.godotengine.godot.Godot;
 import org.godotengine.godot.plugin.SignalInfo;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import static org.junit.Assert.*;
+import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
