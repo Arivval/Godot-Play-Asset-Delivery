@@ -22,8 +22,8 @@ android {
     }
 
     testOptions {
-        // return default values so we won't run into Method isEmpty in android.text.TextUtils
-        // not mocked error during unit testing.
+        // return default values so we won't run into "Method isEmpty in android.text.TextUtils
+        // not mocked" error during unit testing.
         unitTests.returnDefaultValues = true
     }
 }
