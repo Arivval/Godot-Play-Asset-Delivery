@@ -29,9 +29,9 @@ import java.util.HashSet;
 
 /**
  * This class is served as a middleware, to expose the Play Core Java library to the Godot runtime,
- * so Godot Play Asset Delivery front-end API is able to access the related Java APIs
- * This class is intended to be compile to an .AAR Android Library, which can be loaded into
- * Godot Engine as an Godot Android Plugin
+ * so Godot Play Asset Delivery front-end API is able to access the related Java APIs.
+ * This class is intended to be compiled to an .AAR Android Library, which can be loaded into
+ * Godot Engine as a Godot Android Plugin.
  */
 public class PlayAssetDelivery extends GodotPlugin {
 
@@ -46,8 +46,7 @@ public class PlayAssetDelivery extends GodotPlugin {
     }
 
     /**
-     *
-     * @return a list of all the available plugin method names that the Godot runtime can call
+     * Returns a list of all the available plugin method names that the Godot runtime can call.
      */
     @NonNull
     @Override
@@ -57,20 +56,20 @@ public class PlayAssetDelivery extends GodotPlugin {
     }
 
     /**
-     *
-     * @return a set containing all the signals the Godot runtime is able to receive
-     * AssetPackStateUpdateSignal - passes AssetPackState serialized as Dictionary
-     * All the signals below also passes signalID
-     * fetchSuccess - passes AssetPackStates serialized as Dictionary
-     * fetchError - passes Error serialized as Dictionary
-     * getPackStatesSuccess - passes AssetPackStates serialized as Dictionary
-     * getPackStatesError - passes Error serialized as Dictionary
-     * removePackSuccess - passes name of the pack removed
+     * Returns a set containing all the signals the Godot runtime is able to receive.
+     * Below is the documentation for all signals registered.
+     * AssetPackStateUpdateSignal - passes AssetPackState serialized as Dictionary.
+     * All the signals below also passes signalID.
+     * fetchSuccess - passes AssetPackStates serialized as Dictionary.
+     * fetchError - passes Error serialized as Dictionary.
+     * getPackStatesSuccess - passes AssetPackStates serialized as Dictionary.
+     * getPackStatesError - passes Error serialized as Dictionary.
+     * removePackSuccess - passes name of the pack removed.
      * removePackError - passes name of the pack to be removed along with the Error serialized
-     * as Dictionary
+     * as Dictionary.
      * showCellularDataConfirmationSuccess - passes Integer indicating how the user responded to
-     * the dialog
-     * showCellularDataConfirmationError - passes Error serialized as Dictionary
+     * the dialog.
+     * showCellularDataConfirmationError - passes Error serialized as Dictionary.
      */
     @NonNull
     @Override
