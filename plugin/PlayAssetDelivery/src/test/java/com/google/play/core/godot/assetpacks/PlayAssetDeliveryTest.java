@@ -60,16 +60,26 @@ import java.util.Set;
         PlayAssetDelivery testSubject = new PlayAssetDelivery(godotMock);
         Set<SignalInfo> testSet = testSubject.getPluginSignals();
 
-        SignalInfo assetPackStateUpdateSignal = new SignalInfo("assetPackStateUpdateSignal", String.class);
-        SignalInfo fetchStateUpdated = new SignalInfo("fetchStateUpdated", String.class, Integer.class);
-        SignalInfo fetchSuccess = new SignalInfo("fetchSuccess", String.class, Integer.class);
-        SignalInfo fetchError = new SignalInfo("fetchError", String.class, Integer.class);
-        SignalInfo getPackStatesSuccess = new SignalInfo("getPackStatesSuccess", String.class, Integer.class);
-        SignalInfo getPackStatesError = new SignalInfo("getPackStatesError", String.class, Integer.class);
-        SignalInfo removePackSuccess = new SignalInfo("removePackSuccess", String.class, Integer.class);
-        SignalInfo removePackError = new SignalInfo("removePackError", String.class, String.class, Integer.class);
-        SignalInfo showCellularDataConfirmationSuccess = new SignalInfo("showCellularDataConfirmationSuccess", Integer.class, Integer.class);
-        SignalInfo showCellularDataConfirmationError = new SignalInfo("showCellularDataConfirmationError", String.class, Integer.class);
+        SignalInfo assetPackStateUpdateSignal = new SignalInfo(
+                "assetPackStateUpdateSignal", String.class);
+        SignalInfo fetchStateUpdated = new SignalInfo(
+                "fetchStateUpdated", String.class, Integer.class);
+        SignalInfo fetchSuccess = new SignalInfo(
+                "fetchSuccess", String.class, Integer.class);
+        SignalInfo fetchError = new SignalInfo(
+                "fetchError", String.class, Integer.class);
+        SignalInfo getPackStatesSuccess = new SignalInfo(
+                "getPackStatesSuccess", String.class, Integer.class);
+        SignalInfo getPackStatesError = new SignalInfo(
+                "getPackStatesError", String.class, Integer.class);
+        SignalInfo removePackSuccess = new SignalInfo(
+                "removePackSuccess", String.class, Integer.class);
+        SignalInfo removePackError = new SignalInfo(
+                "removePackError", String.class, String.class, Integer.class);
+        SignalInfo showCellularDataConfirmationSuccess = new SignalInfo(
+                "showCellularDataConfirmationSuccess", Integer.class, Integer.class);
+        SignalInfo showCellularDataConfirmationError = new SignalInfo(
+                "showCellularDataConfirmationError", String.class, Integer.class);
 
         assertEquals(10, testSet.size());
         assertTrue(testSet.contains(assetPackStateUpdateSignal));
