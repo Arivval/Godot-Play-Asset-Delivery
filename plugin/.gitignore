@@ -12,5 +12,5 @@
 /captures
 .externalNativeBuild
 .cxx
-/godot-lib.3.2.2.rc1.release/build
-/godot-lib.3.2.2.rc1.release/*.aar
+/godot-lib.*/build
+/godot-lib.*/*.aar
