@@ -61,11 +61,10 @@ public class PlayAssetDelivery extends GodotPlugin {
   }
 
   /**
-   * <pre>
    * Returns a set containing all the signals the Godot runtime is able to receive.
    * Below is the documentation for all signals registered.
-   * AssetPackStateUpdateSignal - passes AssetPackState
-   * serialized as Dictionary.
+   * <pre>
+   * AssetPackStateUpdateSignal - passes AssetPackState serialized as Dictionary.
    * All the signals below also passes signalID. fetchSuccess - passes
    * AssetPackStates serialized as Dictionary.
    * fetchError - passes Error serialized as Dictionary.
