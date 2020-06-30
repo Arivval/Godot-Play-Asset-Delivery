@@ -45,7 +45,9 @@ public class PlayAssetDelivery extends GodotPlugin {
     return "PlayAssetDelivery";
   }
 
-  /** Returns a list of all the available plugin method names that the Godot runtime can call. */
+  /**
+   * <pre>Returns a list of all plugin method names that the Godot runtime can call.</pre>
+   */
   @NonNull
   @Override
   public List<String> getPluginMethods() {
