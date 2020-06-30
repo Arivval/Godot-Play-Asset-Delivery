@@ -20,8 +20,15 @@ import androidx.annotation.NonNull;
 
 import org.godotengine.godot.Godot;
 import org.godotengine.godot.plugin.GodotPlugin;
+import org.godotengine.godot.plugin.SignalInfo;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 
 public class PlayAssetDelivery extends GodotPlugin {
+
     public PlayAssetDelivery(Godot godot) {
         super(godot);
     }
@@ -29,6 +36,39 @@ public class PlayAssetDelivery extends GodotPlugin {
     @NonNull
     @Override
     public String getPluginName() {
-        throw new UnsupportedOperationException("Method not implemented yet!");
+        return "PlayAssetDelivery";
+    }
+
+    @NonNull
+    @Override
+    public List<String> getPluginMethods() {
+        return Arrays.asList("cancel", "fetch", "getAssetLocation", "getPackLocation",
+                "getPackLocations", "getPackStates", "removePack", "showCellularDataConfirmation");
+    }
+
+    @NonNull
+    @Override
+    public Set<SignalInfo> getPluginSignals() {
+        Set<SignalInfo> availableSignals = new HashSet<>();
+        availableSignals.add(new SignalInfo("assetPackStateUpdateSignal",
+                String.class));
+        availableSignals.add(new SignalInfo("fetchStateUpdated", String.class,
+                Integer.class));
+        availableSignals.add(new SignalInfo("fetchSuccess", String.class,
+                Integer.class));
+        availableSignals.add(new SignalInfo("fetchError", String.class, Integer.class));
+        availableSignals.add(new SignalInfo("getPackStatesSuccess", String.class,
+                Integer.class));
+        availableSignals.add(new SignalInfo("getPackStatesError", String.class,
+                Integer.class));
+        availableSignals.add(new SignalInfo("removePackSuccess", String.class,
+                Integer.class));
+        availableSignals.add(new SignalInfo("removePackError", String.class,
+                String.class, Integer.class));
+        availableSignals.add(new SignalInfo("showCellularDataConfirmationSuccess",
+                Integer.class, Integer.class));
+        availableSignals.add(new SignalInfo("showCellularDataConfirmationError",
+                String.class, Integer.class));
+        return availableSignals;
     }
 }
