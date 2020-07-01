@@ -22,7 +22,6 @@ import org.godotengine.godot.Godot;
 import org.godotengine.godot.plugin.GodotPlugin;
 import org.godotengine.godot.plugin.SignalInfo;
 
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
