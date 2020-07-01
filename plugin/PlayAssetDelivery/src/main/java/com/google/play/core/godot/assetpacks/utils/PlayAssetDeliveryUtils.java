@@ -16,6 +16,8 @@
 
 package com.google.play.core.godot.assetpacks.utils;
 
+import android.util.Log;
+
 import org.godotengine.godot.Dictionary;
 
 import com.google.android.play.core.assetpacks.AssetPackState;
@@ -26,6 +28,8 @@ import com.google.android.play.core.assetpacks.AssetPackState;
  * which the Godot runtime can receive.
  */
 public class PlayAssetDeliveryUtils {
+
+  private static final String TAG = "PlayAssetDeliveryUtils";
 
   public static Dictionary convertAssetPackStateToDictionary(AssetPackState assetPackState) {
     try {
@@ -38,7 +42,7 @@ public class PlayAssetDeliveryUtils {
       returnDict.put("transferProgressPercentage", assetPackState.transferProgressPercentage());
       return returnDict;
     } catch (Exception e) {
-      System.out.println(e);
+      Log.w(TAG, e.getMessage());
       return null;
     }
   }
@@ -79,7 +83,7 @@ public class PlayAssetDeliveryUtils {
           };
       return packState;
     } catch (Exception e) {
-      System.out.println(e);
+      Log.w(TAG, e.getMessage());
       return null;
     }
   }
