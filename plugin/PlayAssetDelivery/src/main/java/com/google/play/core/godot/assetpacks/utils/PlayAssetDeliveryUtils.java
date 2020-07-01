@@ -61,7 +61,7 @@ public class PlayAssetDeliveryUtils {
         assetPackState.transferProgressPercentage());
   }
 
-  public static AssetPackState convertDictionaryToAssetPackState(final Dictionary dict) {
+  public static AssetPackState convertDictionaryToAssetPackState(Dictionary dict) {
     try {
       AssetPackState packState = new AssetPackStateFromDictionary(dict);
       return packState;
