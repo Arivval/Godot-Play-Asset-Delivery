@@ -18,30 +18,68 @@ package com.google.play.core.godot.assetpacks.utils;
 
 import org.godotengine.godot.Dictionary;
 
+import com.google.android.play.core.assetpacks.AssetPackState;
 import com.google.android.play.core.assetpacks.AssetPackStates;
 import com.google.android.play.core.assetpacks.AssetLocation;
 import com.google.android.play.core.assetpacks.AssetPackLocation;
 
-import java.util.List;
 import java.util.Map;
 
 public class PlayAssetDeliveryUtils {
 
-  public static Dictionary convertAssetPackStatesToDictionary(AssetPackStates assetPackStates) {
-    throw new UnsupportedOperationException("Not implemented!");
+  public static Dictionary convertAssetPackStateToDictionary(AssetPackState assetPackState) {
+    Dictionary returnDict = new Dictionary();
+    returnDict.put("bytesDownloaded", assetPackState.bytesDownloaded());
+    returnDict.put("errorCode", assetPackState.errorCode());
+    returnDict.put("name", assetPackState.name());
+    returnDict.put("status", assetPackState.status());
+    returnDict.put("totalBytesToDownload", assetPackState.totalBytesToDownload());
+    returnDict.put("transferProgressPercentage", assetPackState.transferProgressPercentage());
+    return returnDict;
   }
 
-  public static Dictionary convertAssetLocationToDictionary(AssetLocation AssetLocation) {
-    throw new UnsupportedOperationException("Not implemented!");
+  public static Dictionary convertAssetPackStatesToDictionary(AssetPackStates assetPackStates) {
+    Dictionary returnDict = new Dictionary();
+    returnDict.put("totalBytes", assetPackStates.totalBytes());
+
+    Map<String, AssetPackState> packStates = assetPackStates.packStates();
+    Dictionary packStatesDictionary = new Dictionary();
+
+    for (Map.Entry<String, AssetPackState> entry : packStates.entrySet()) {
+      String packName = entry.getKey();
+      AssetPackState packState = entry.getValue();
+      packStatesDictionary.put(packName, packState);
+    }
+
+    returnDict.put("packStates", packStatesDictionary);
+    return returnDict;
+  }
+
+  public static Dictionary convertAssetLocationToDictionary(AssetLocation assetLocation) {
+    Dictionary returnDict = new Dictionary();
+    returnDict.put("offset", assetLocation.offset());
+    returnDict.put("path", assetLocation.path());
+    returnDict.put("size", assetLocation.size());
+    return returnDict;
   }
 
   public static Dictionary convertAssetPackLocationToDictionary(
-      AssetPackLocation AssetPackLocation) {
-    throw new UnsupportedOperationException("Not implemented!");
+      AssetPackLocation assetPackLocation) {
+    Dictionary returnDict = new Dictionary();
+    returnDict.put("assetsPath", assetPackLocation.assetsPath());
+    returnDict.put("packStorageMethod", assetPackLocation.packStorageMethod());
+    returnDict.put("path", assetPackLocation.packStorageMethod());
+    return returnDict;
   }
 
   public static Dictionary convertAssetPackLocationsToDictionary(
-      Map<String, AssetPackLocation> AssetPackLocations) {
-    throw new UnsupportedOperationException("Not implemented!");
+      Map<String, AssetPackLocation> assetPackLocations) {
+    Dictionary returnDict = new Dictionary();
+    for (Map.Entry<String, AssetPackLocation> entry : assetPackLocations.entrySet()) {
+      String packName = entry.getKey();
+      AssetPackLocation packLocation = entry.getValue();
+      returnDict.put(packName, packLocation);
+    }
+    return returnDict;
   }
 }
