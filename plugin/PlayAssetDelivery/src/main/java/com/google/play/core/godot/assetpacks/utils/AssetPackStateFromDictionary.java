@@ -20,7 +20,7 @@ public class AssetPackStateFromDictionary extends AssetPackState {
   private long totalBytesToDownload;
   private int transferProgressPercentage;
 
-  public AssetPackStateFromDictionary(Dictionary dict) {
+  public AssetPackStateFromDictionary(Dictionary dict) throws NullPointerException, ClassCastException {
     Set<String> dictionaryRequiredKeySet =
         new HashSet<>(
             Arrays.asList(
