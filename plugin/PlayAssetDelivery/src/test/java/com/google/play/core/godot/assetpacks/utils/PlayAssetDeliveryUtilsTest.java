@@ -25,6 +25,23 @@ public class PlayAssetDeliveryUtilsTest {
     return returnDict;
   }
 
+  private Dictionary constructAssetLocationDictionaryHelper(long offset, String path, long size) {
+    Dictionary returnDict = new Dictionary();
+    returnDict.put("offset", offset);
+    returnDict.put("path", path);
+    returnDict.put("size", size);
+    return returnDict;
+  }
+
+  private Dictionary constructAssetPackLocationDictionaryHelper(
+      String assetsPath, int packStorageMethod, String path) {
+    Dictionary returnDict = new Dictionary();
+    returnDict.put("assetsPath", assetsPath);
+    returnDict.put("packStorageMethod", packStorageMethod);
+    returnDict.put("path", path);
+    return returnDict;
+  }
+
   @Test
   public void testAssetPackStateSerialization1() {
     Dictionary testDictionary =
