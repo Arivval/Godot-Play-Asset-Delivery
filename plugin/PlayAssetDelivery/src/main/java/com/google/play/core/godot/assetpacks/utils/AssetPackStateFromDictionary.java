@@ -38,7 +38,9 @@ public class AssetPackStateFromDictionary extends AssetPackState {
       this.bytesDownloaded = (long) dict.get("bytesDownloaded");
       this.totalBytesToDownload = (long) dict.get("totalBytesToDownload");
       this.transferProgressPercentage = (int) dict.get("transferProgressPercentage");
-    } else throw new NullPointerException("Invalid input Dictionary!");
+    } else {
+      throw new NullPointerException("Invalid input Dictionary!");
+    }
   }
 
   @Override
