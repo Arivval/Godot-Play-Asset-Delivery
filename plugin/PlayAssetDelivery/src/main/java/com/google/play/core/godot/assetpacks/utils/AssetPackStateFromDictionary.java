@@ -10,7 +10,7 @@ import java.util.Arrays;
 
 /**
  * This class extends the AssetPackState abstract class, and provides constructor that allows
- * PlayAssetDeliveryUtils class to construct AssetPackStateFromDictionary from Godot Dictionary.
+ * PlayAssetDeliveryUtils class to instantiate AssetPackStateFromDictionary given Godot Dictionary.
  */
 public class AssetPackStateFromDictionary extends AssetPackState {
   private String name;
