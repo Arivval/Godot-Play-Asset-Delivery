@@ -42,7 +42,7 @@ public class PlayAssetDeliveryUtils {
       returnDict.put("transferProgressPercentage", assetPackState.transferProgressPercentage());
       return returnDict;
     } catch (Exception e) {
-      Log.w(TAG, e.getMessage());
+      Log.w(TAG, "Exception while converting AssetPackState object to Dictionary!", e);
       return null;
     }
   }
@@ -83,7 +83,7 @@ public class PlayAssetDeliveryUtils {
           };
       return packState;
     } catch (Exception e) {
-      Log.w(TAG, e.getMessage());
+      Log.w(TAG, "Exception while converting Dictionary to AssetPackState object!", e);
       return null;
     }
   }
