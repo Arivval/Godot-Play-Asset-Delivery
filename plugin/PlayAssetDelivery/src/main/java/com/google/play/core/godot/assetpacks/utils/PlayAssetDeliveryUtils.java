@@ -18,6 +18,8 @@ package com.google.play.core.godot.assetpacks.utils;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import org.godotengine.godot.Dictionary;
 
 import com.google.android.play.core.assetpacks.AssetPackState;
@@ -50,54 +52,18 @@ public class PlayAssetDeliveryUtils {
   }
 
   public static Dictionary convertAssetPackStateToDictionary(AssetPackState assetPackState) {
-    try {
-      return constructAssetPackStateDictionary(
-          assetPackState.bytesDownloaded(),
-          assetPackState.errorCode(),
-          assetPackState.name(),
-          assetPackState.status(),
-          assetPackState.totalBytesToDownload(),
-          assetPackState.transferProgressPercentage());
-    } catch (Exception e) {
-      Log.w(TAG, "Exception while converting AssetPackState object to Dictionary!", e);
-      return null;
-    }
+    return constructAssetPackStateDictionary(
+        assetPackState.bytesDownloaded(),
+        assetPackState.errorCode(),
+        assetPackState.name(),
+        assetPackState.status(),
+        assetPackState.totalBytesToDownload(),
+        assetPackState.transferProgressPercentage());
   }
 
   public static AssetPackState convertDictionaryToAssetPackState(final Dictionary dict) {
     try {
-      AssetPackState packState =
-          new AssetPackState() {
-            @Override
-            public String name() {
-              return (String) dict.get("name");
-            }
-
-            @Override
-            public int status() {
-              return (int) dict.get("status");
-            }
-
-            @Override
-            public int errorCode() {
-              return (int) dict.get("errorCode");
-            }
-
-            @Override
-            public long bytesDownloaded() {
-              return (long) dict.get("bytesDownloaded");
-            }
-
-            @Override
-            public long totalBytesToDownload() {
-              return (long) dict.get("totalBytesToDownload");
-            }
-
-            @Override
-            public int transferProgressPercentage() {
-              return (int) dict.get("transferProgressPercentage");
-            }
-          };
+      AssetPackState packState = new AssetPackStateFromDictionary(dict);
       return packState;
     } catch (Exception e) {
       Log.w(TAG, "Exception while converting Dictionary to AssetPackState object!", e);
