@@ -17,15 +17,13 @@
 package com.google.play.core.godot.assetpacks;
 
 import androidx.annotation.NonNull;
-
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import org.godotengine.godot.Godot;
 import org.godotengine.godot.plugin.GodotPlugin;
 import org.godotengine.godot.plugin.SignalInfo;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.HashSet;
 
 /**
  * This class is served as a middleware, to expose the Play Core Java library to the Godot runtime,

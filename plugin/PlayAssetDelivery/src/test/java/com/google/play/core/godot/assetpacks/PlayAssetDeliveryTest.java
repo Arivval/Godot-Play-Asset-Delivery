@@ -18,17 +18,14 @@ package com.google.play.core.godot.assetpacks;
 
 import static com.google.common.truth.Truth.assertThat;
 
-import org.godotengine.godot.Godot;
-import org.godotengine.godot.plugin.SignalInfo;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
 import java.util.List;
 import java.util.Set;
+import org.godotengine.godot.Godot;
+import org.godotengine.godot.plugin.SignalInfo;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PlayAssetDeliveryTest {
