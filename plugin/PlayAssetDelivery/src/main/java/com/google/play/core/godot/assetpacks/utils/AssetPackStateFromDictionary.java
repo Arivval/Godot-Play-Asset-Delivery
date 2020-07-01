@@ -37,14 +37,14 @@ public class AssetPackStateFromDictionary extends AssetPackState {
   private int transferProgressPercentage;
 
   private static final Set<String> dictionaryRequiredKeySet =
-          new HashSet<>(
-                  Arrays.asList(
-                          "name",
-                          "status",
-                          "errorCode",
-                          "bytesDownloaded",
-                          "totalBytesToDownload",
-                          "transferProgressPercentage"));
+      new HashSet<>(
+          Arrays.asList(
+              "name",
+              "status",
+              "errorCode",
+              "bytesDownloaded",
+              "totalBytesToDownload",
+              "transferProgressPercentage"));
 
   public AssetPackStateFromDictionary(Dictionary dict)
       throws NullPointerException, ClassCastException {
