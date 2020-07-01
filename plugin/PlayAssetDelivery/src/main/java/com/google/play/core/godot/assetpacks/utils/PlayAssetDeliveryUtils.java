@@ -23,6 +23,7 @@ import com.google.android.play.core.assetpacks.AssetPackStates;
 import com.google.android.play.core.assetpacks.AssetLocation;
 import com.google.android.play.core.assetpacks.AssetPackLocation;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class PlayAssetDeliveryUtils {
@@ -81,5 +82,141 @@ public class PlayAssetDeliveryUtils {
       returnDict.put(packName, packLocation);
     }
     return returnDict;
+  }
+
+  public static AssetPackState convertDictionaryToAssetPackState(final Dictionary dict) {
+    try {
+      AssetPackState packState =
+          new AssetPackState() {
+            @Override
+            public String name() {
+              return (String) dict.get("name");
+            }
+
+            @Override
+            public int status() {
+              return (int) dict.get("status");
+            }
+
+            @Override
+            public int errorCode() {
+              return (int) dict.get("errorCode");
+            }
+
+            @Override
+            public long bytesDownloaded() {
+              return (long) dict.get("bytesDownloaded");
+            }
+
+            @Override
+            public long totalBytesToDownload() {
+              return (long) dict.get("totalBytesToDownload");
+            }
+
+            @Override
+            public int transferProgressPercentage() {
+              return (int) dict.get("transferProgressPercentage");
+            }
+          };
+      return packState;
+    } catch (Exception e) {
+      System.out.println(e);
+      return null;
+    }
+  }
+
+  public static AssetPackStates convertDictionaryToAssetPackStates(final Dictionary dict) {
+    try {
+      AssetPackStates assetPackStates =
+          new AssetPackStates() {
+            @Override
+            public long totalBytes() {
+              return (long) dict.get("totalBytes");
+            }
+
+            @Override
+            public Map<String, AssetPackState> packStates() {
+              Map<String, AssetPackState> returnMap = new HashMap<String, AssetPackState>();
+              for (Map.Entry<String, Object> entry : dict.entrySet()) {
+                AssetPackState currentPackState =
+                    convertDictionaryToAssetPackState((Dictionary) entry.getValue());
+                returnMap.put(entry.getKey(), currentPackState);
+              }
+              return returnMap;
+            }
+          };
+      return assetPackStates;
+    } catch (Exception e) {
+      System.out.println(e);
+      return null;
+    }
+  }
+
+  public static AssetLocation convertDictionaryToAssetLocation(final Dictionary dict) {
+    try {
+      AssetLocation assetLocation =
+          new AssetLocation() {
+            @Override
+            public String path() {
+              return (String) dict.get("path");
+            }
+
+            @Override
+            public long offset() {
+              return (long) dict.get("offset");
+            }
+
+            @Override
+            public long size() {
+              return (long) dict.get("size");
+            }
+          };
+      return assetLocation;
+    } catch (Exception e) {
+      System.out.println(e);
+      return null;
+    }
+  }
+
+  public static AssetPackLocation convertDictionaryToAssetPackLocation(final Dictionary dict) {
+    try {
+      AssetPackLocation assetPackLocation =
+          new AssetPackLocation() {
+            @Override
+            public int packStorageMethod() {
+              return (int) dict.get("packStorageMethod");
+            }
+
+            @Override
+            public String path() {
+              return (String) dict.get("path");
+            }
+
+            @Override
+            public String assetsPath() {
+              return (String) dict.get("assetsPath");
+            }
+          };
+      return assetPackLocation;
+    } catch (Exception e) {
+      System.out.println(e);
+      return null;
+    }
+  }
+
+  public static Map<String, AssetPackLocation> convertDictionaryToAssetPackLocations(
+      final Dictionary dict) {
+    try {
+      Map<String, AssetPackLocation> returnMap = new HashMap<String, AssetPackLocation>();
+      for (Map.Entry<String, Object> entry : dict.entrySet()) {
+        AssetPackLocation currentPackLocation =
+            convertDictionaryToAssetPackLocation((Dictionary) entry.getValue());
+        returnMap.put(entry.getKey(), currentPackLocation);
+      }
+      return returnMap;
+    } catch (Exception e) {
+      System.out.println(e);
+      return null;
+    }
   }
 }
