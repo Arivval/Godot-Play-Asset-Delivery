@@ -23,9 +23,10 @@ import org.godotengine.godot.Dictionary;
 import com.google.android.play.core.assetpacks.AssetPackState;
 
 /**
- * This class contains all the helper methods for serialize/deserialize custom objects used in the
- * Play Asset Delivery API. The Java objects are serialized into org.godotengine.godot.Dictionary,
- * which the Godot runtime can receive. For all helper functions, null is return upon exception.
+ * This class contains all the helper methods for serializing/deserializing custom objects used in
+ * the Play Asset Delivery API. The Java objects are serialized into
+ * org.godotengine.godot.Dictionary, which the Godot runtime can receive. For all helper functions,
+ * null is return upon exception.
  */
 public class PlayAssetDeliveryUtils {
 
