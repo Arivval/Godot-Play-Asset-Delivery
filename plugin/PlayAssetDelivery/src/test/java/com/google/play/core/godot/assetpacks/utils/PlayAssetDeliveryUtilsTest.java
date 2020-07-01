@@ -8,22 +8,6 @@ import org.godotengine.godot.Dictionary;
 import org.junit.Test;
 
 public class PlayAssetDeliveryUtilsTest {
-  private Dictionary constructAssetPackStateDictionary(
-      long bytesDownloaded,
-      int errorCode,
-      String name,
-      int status,
-      long totalBytesToDownload,
-      int transferProgressPercentage) {
-    Dictionary returnDict = new Dictionary();
-    returnDict.put("bytesDownloaded", bytesDownloaded);
-    returnDict.put("errorCode", errorCode);
-    returnDict.put("name", name);
-    returnDict.put("status", status);
-    returnDict.put("totalBytesToDownload", totalBytesToDownload);
-    returnDict.put("transferProgressPercentage", transferProgressPercentage);
-    return returnDict;
-  }
 
   @Test
   public void testAssetPackStateSerialization1() {

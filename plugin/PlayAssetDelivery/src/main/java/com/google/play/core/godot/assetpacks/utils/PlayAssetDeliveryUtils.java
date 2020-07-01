@@ -32,23 +32,39 @@ public class PlayAssetDeliveryUtils {
 
   private static final String TAG = "PlayAssetDeliveryUtils";
 
+  public static Dictionary constructAssetPackStateDictionary(
+      long bytesDownloaded,
+      int errorCode,
+      String name,
+      int status,
+      long totalBytesToDownload,
+      int transferProgressPercentage) {
+    Dictionary returnDict = new Dictionary();
+    returnDict.put("bytesDownloaded", bytesDownloaded);
+    returnDict.put("errorCode", errorCode);
+    returnDict.put("name", name);
+    returnDict.put("status", status);
+    returnDict.put("totalBytesToDownload", totalBytesToDownload);
+    returnDict.put("transferProgressPercentage", transferProgressPercentage);
+    return returnDict;
+  }
+
   public static Dictionary convertAssetPackStateToDictionary(AssetPackState assetPackState) {
     try {
-      Dictionary returnDict = new Dictionary();
-      returnDict.put("bytesDownloaded", assetPackState.bytesDownloaded());
-      returnDict.put("errorCode", assetPackState.errorCode());
-      returnDict.put("name", assetPackState.name());
-      returnDict.put("status", assetPackState.status());
-      returnDict.put("totalBytesToDownload", assetPackState.totalBytesToDownload());
-      returnDict.put("transferProgressPercentage", assetPackState.transferProgressPercentage());
-      return returnDict;
+      return constructAssetPackStateDictionary(
+          assetPackState.bytesDownloaded(),
+          assetPackState.errorCode(),
+          assetPackState.name(),
+          assetPackState.status(),
+          assetPackState.totalBytesToDownload(),
+          assetPackState.transferProgressPercentage());
     } catch (Exception e) {
       Log.w(TAG, "Exception while converting AssetPackState object to Dictionary!", e);
       return null;
     }
   }
 
-  public static AssetPackState convertDictionaryToAssetPackState(Dictionary dict) {
+  public static AssetPackState convertDictionaryToAssetPackState(final Dictionary dict) {
     try {
       AssetPackState packState =
           new AssetPackState() {
