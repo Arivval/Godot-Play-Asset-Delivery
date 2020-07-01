@@ -17,12 +17,8 @@
 package com.google.play.core.godot.assetpacks.utils;
 
 import android.util.Log;
-
-import androidx.annotation.NonNull;
-
-import org.godotengine.godot.Dictionary;
-
 import com.google.android.play.core.assetpacks.AssetPackState;
+import org.godotengine.godot.Dictionary;
 
 /**
  * This class contains all the helper methods for serializing/deserializing custom objects used in

@@ -16,13 +16,11 @@
 
 package com.google.play.core.godot.assetpacks.utils;
 
-import org.godotengine.godot.Dictionary;
-
 import com.google.android.play.core.assetpacks.AssetPackState;
-
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Arrays;
+import org.godotengine.godot.Dictionary;
 
 /**
  * This class extends the AssetPackState abstract class, and provides constructor that allows
