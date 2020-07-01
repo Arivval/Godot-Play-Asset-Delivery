@@ -30,63 +30,63 @@ import java.util.Set;
 @RunWith(MockitoJUnitRunner.class)
 public class PlayAssetDeliveryTest {
 
-    @Mock Godot godotMock;
+  @Mock Godot godotMock;
 
-    @Test
-    public void getPluginName() {
-        PlayAssetDelivery testSubject = new PlayAssetDelivery(godotMock);
-        String actualName = testSubject.getPluginName();
-        assertThat(actualName).isEqualTo("PlayAssetDelivery");
-    }
+  @Test
+  public void getPluginName() {
+    PlayAssetDelivery testSubject = new PlayAssetDelivery(godotMock);
+    String actualName = testSubject.getPluginName();
+    assertThat(actualName).isEqualTo("PlayAssetDelivery");
+  }
 
-    @Test
-    public void getPluginMethods() {
-        PlayAssetDelivery testSubject = new PlayAssetDelivery(godotMock);
-        List<String> actualList = testSubject.getPluginMethods();
-        assertThat(actualList)
-                .containsExactly(
-                        "cancel",
-                        "fetch",
-                        "getAssetLocation",
-                        "getPackLocation",
-                        "getPackLocations",
-                        "getPackStates",
-                        "removePack",
-                        "showCellularDataConfirmation");
-    }
+  @Test
+  public void getPluginMethods() {
+    PlayAssetDelivery testSubject = new PlayAssetDelivery(godotMock);
+    List<String> actualList = testSubject.getPluginMethods();
+    assertThat(actualList)
+        .containsExactly(
+            "cancel",
+            "fetch",
+            "getAssetLocation",
+            "getPackLocation",
+            "getPackLocations",
+            "getPackStates",
+            "removePack",
+            "showCellularDataConfirmation");
+  }
 
-    @Test
-    public void getPluginSignals() {
-        PlayAssetDelivery testSubject = new PlayAssetDelivery(godotMock);
-        Set<SignalInfo> testSet = testSubject.getPluginSignals();
+  @Test
+  public void getPluginSignals() {
+    PlayAssetDelivery testSubject = new PlayAssetDelivery(godotMock);
+    Set<SignalInfo> testSet = testSubject.getPluginSignals();
 
-        SignalInfo assetPackStateUpdateSignal =
-                new SignalInfo("assetPackStateUpdateSignal", String.class);
-        SignalInfo fetchStateUpdated = new SignalInfo("fetchStateUpdated", String.class, Integer.class);
-        SignalInfo fetchSuccess = new SignalInfo("fetchSuccess", String.class, Integer.class);
-        SignalInfo fetchError = new SignalInfo("fetchError", String.class, Integer.class);
-        SignalInfo getPackStatesSuccess =
-                new SignalInfo("getPackStatesSuccess", String.class, Integer.class);
-        SignalInfo getPackStatesError =
-                new SignalInfo("getPackStatesError", String.class, Integer.class);
-        SignalInfo removePackSuccess = new SignalInfo("removePackSuccess", String.class, Integer.class);
-        SignalInfo removePackError =
-                new SignalInfo("removePackError", String.class, String.class, Integer.class);
-        SignalInfo showCellularDataConfirmationSuccess =
-                new SignalInfo("showCellularDataConfirmationSuccess", Integer.class, Integer.class);
-        SignalInfo showCellularDataConfirmationError =
-                new SignalInfo("showCellularDataConfirmationError", String.class, Integer.class);
-        assertThat(testSet)
-                .containsExactly(
-                        assetPackStateUpdateSignal,
-                        fetchStateUpdated,
-                        fetchSuccess,
-                        fetchError,
-                        getPackStatesSuccess,
-                        getPackStatesError,
-                        removePackSuccess,
-                        removePackError,
-                        showCellularDataConfirmationSuccess,
-                        showCellularDataConfirmationError);
-    }
+    SignalInfo assetPackStateUpdateSignal =
+        new SignalInfo("assetPackStateUpdateSignal", String.class);
+    SignalInfo fetchStateUpdated = new SignalInfo("fetchStateUpdated", String.class, Integer.class);
+    SignalInfo fetchSuccess = new SignalInfo("fetchSuccess", String.class, Integer.class);
+    SignalInfo fetchError = new SignalInfo("fetchError", String.class, Integer.class);
+    SignalInfo getPackStatesSuccess =
+        new SignalInfo("getPackStatesSuccess", String.class, Integer.class);
+    SignalInfo getPackStatesError =
+        new SignalInfo("getPackStatesError", String.class, Integer.class);
+    SignalInfo removePackSuccess = new SignalInfo("removePackSuccess", String.class, Integer.class);
+    SignalInfo removePackError =
+        new SignalInfo("removePackError", String.class, String.class, Integer.class);
+    SignalInfo showCellularDataConfirmationSuccess =
+        new SignalInfo("showCellularDataConfirmationSuccess", Integer.class, Integer.class);
+    SignalInfo showCellularDataConfirmationError =
+        new SignalInfo("showCellularDataConfirmationError", String.class, Integer.class);
+    assertThat(testSet)
+        .containsExactly(
+            assetPackStateUpdateSignal,
+            fetchStateUpdated,
+            fetchSuccess,
+            fetchError,
+            getPackStatesSuccess,
+            getPackStatesError,
+            removePackSuccess,
+            removePackError,
+            showCellularDataConfirmationSuccess,
+            showCellularDataConfirmationError);
+  }
 }
