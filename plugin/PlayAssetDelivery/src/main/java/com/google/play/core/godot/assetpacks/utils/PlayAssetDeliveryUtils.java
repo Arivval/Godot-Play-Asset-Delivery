@@ -16,6 +16,8 @@
 
 package com.google.play.core.godot.assetpacks.utils;
 
+import androidx.annotation.NonNull;
+
 import org.godotengine.godot.Dictionary;
 
 import com.google.android.play.core.assetpacks.AssetPackState;
@@ -29,14 +31,19 @@ import java.util.Map;
 public class PlayAssetDeliveryUtils {
 
   public static Dictionary convertAssetPackStateToDictionary(AssetPackState assetPackState) {
-    Dictionary returnDict = new Dictionary();
-    returnDict.put("bytesDownloaded", assetPackState.bytesDownloaded());
-    returnDict.put("errorCode", assetPackState.errorCode());
-    returnDict.put("name", assetPackState.name());
-    returnDict.put("status", assetPackState.status());
-    returnDict.put("totalBytesToDownload", assetPackState.totalBytesToDownload());
-    returnDict.put("transferProgressPercentage", assetPackState.transferProgressPercentage());
-    return returnDict;
+    try {
+      Dictionary returnDict = new Dictionary();
+      returnDict.put("bytesDownloaded", assetPackState.bytesDownloaded());
+      returnDict.put("errorCode", assetPackState.errorCode());
+      returnDict.put("name", assetPackState.name());
+      returnDict.put("status", assetPackState.status());
+      returnDict.put("totalBytesToDownload", assetPackState.totalBytesToDownload());
+      returnDict.put("transferProgressPercentage", assetPackState.transferProgressPercentage());
+      return returnDict;
+    } catch (Exception e) {
+      System.out.println(e);
+      return null;
+    }
   }
 
   public static Dictionary convertAssetPackStatesToDictionary(AssetPackStates assetPackStates) {
