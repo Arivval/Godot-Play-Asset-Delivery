@@ -8,7 +8,7 @@ import org.godotengine.godot.Dictionary;
 import org.junit.Test;
 
 public class PlayAssetDeliveryUtilsTest {
-  private Dictionary constructAssetPackStateDictionaryHelper(
+  private Dictionary constructAssetPackStateDictionary(
       long bytesDownloaded,
       int errorCode,
       String name,
@@ -28,7 +28,7 @@ public class PlayAssetDeliveryUtilsTest {
   @Test
   public void testAssetPackStateSerialization1() {
     Dictionary testDictionary =
-        constructAssetPackStateDictionaryHelper(42, 0, "awesomePack", 2, 65536, 35);
+        constructAssetPackStateDictionary(42, 0, "awesomePack", 2, 65536, 35);
     AssetPackState testAssetPackState =
         PlayAssetDeliveryUtils.convertDictionaryToAssetPackState(testDictionary);
     Dictionary resultingDictionary =
