@@ -22,7 +22,7 @@ public class PlayAssetDeliveryUtilsTest {
   }
 
   @Test
-  public void convertAssetPackStateToDictionary_valid2() {
+  public void convertAssetPackStateToDictionaryAndBack_valid2() {
     Dictionary testDictionary =
         PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
             0, -6, "Lorem ipsum dolor sit amet, consectetur adipiscing elit.", 7, 0, 0);
@@ -49,11 +49,11 @@ public class PlayAssetDeliveryUtilsTest {
   public void convertDictionaryToAssetPackState_typeMismatch() {
     // Test failure case where there is a missing key
     Dictionary testDictionary =
-            PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
-                    42, 0, "awesomePack", 2, 65536, 35);
+        PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
+            42, 0, "awesomePack", 2, 65536, 35);
     testDictionary.put("bytesDownloaded", "PAD");
     AssetPackState testAssetPackState =
-            PlayAssetDeliveryUtils.convertDictionaryToAssetPackState(testDictionary);
+        PlayAssetDeliveryUtils.convertDictionaryToAssetPackState(testDictionary);
     assertThat(testAssetPackState).isEqualTo(null);
   }
 }
