@@ -12,7 +12,8 @@ public class PlayAssetDeliveryUtilsTest {
   @Test
   public void testAssetPackStateSerialization1() {
     Dictionary testDictionary =
-        constructAssetPackStateDictionary(42, 0, "awesomePack", 2, 65536, 35);
+        PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
+            42, 0, "awesomePack", 2, 65536, 35);
     AssetPackState testAssetPackState =
         PlayAssetDeliveryUtils.convertDictionaryToAssetPackState(testDictionary);
     Dictionary resultingDictionary =
@@ -23,7 +24,7 @@ public class PlayAssetDeliveryUtilsTest {
   @Test
   public void testAssetPackStateSerialization2() {
     Dictionary testDictionary =
-        constructAssetPackStateDictionaryHelper(
+        PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
             0, -6, "Lorem ipsum dolor sit amet, consectetur adipiscing elit.", 7, 0, 0);
     AssetPackState testAssetPackState =
         PlayAssetDeliveryUtils.convertDictionaryToAssetPackState(testDictionary);
@@ -36,7 +37,8 @@ public class PlayAssetDeliveryUtilsTest {
   public void testAssetPackStateSerialization3() {
     // Test failure case where there is a missing key
     Dictionary testDictionary =
-        constructAssetPackStateDictionaryHelper(42, 0, "awesomePack", 2, 65536, 35);
+        PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
+            42, 0, "awesomePack", 2, 65536, 35);
     testDictionary.remove("bytesDownloaded");
     AssetPackState testAssetPackState =
         PlayAssetDeliveryUtils.convertDictionaryToAssetPackState(testDictionary);
