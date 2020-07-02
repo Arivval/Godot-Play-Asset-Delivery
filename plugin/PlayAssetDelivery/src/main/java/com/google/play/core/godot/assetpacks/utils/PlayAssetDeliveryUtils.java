@@ -13,7 +13,6 @@
 
 package com.google.play.core.godot.assetpacks.utils;
 
-import android.util.Log;
 import com.google.android.play.core.assetpacks.AssetPackState;
 import org.godotengine.godot.Dictionary;
 
