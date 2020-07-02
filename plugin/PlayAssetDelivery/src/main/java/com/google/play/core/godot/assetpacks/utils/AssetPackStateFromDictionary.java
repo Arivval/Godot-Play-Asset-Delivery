@@ -55,6 +55,7 @@ public class AssetPackStateFromDictionary extends AssetPackState {
         if (e.getClass() == ClassCastException.class) {
           throw new IllegalArgumentException("Invalid input Dictionary, value type mismatch!");
         }
+        throw e;
       }
     } else {
       throw new IllegalArgumentException(
