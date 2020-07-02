@@ -23,8 +23,7 @@ import org.godotengine.godot.Dictionary;
 /**
  * This class contains all the helper methods for serializing/deserializing custom objects used in
  * the Play Asset Delivery API. The Java objects are serialized into
- * org.godotengine.godot.Dictionary, which the Godot runtime can receive. For all helper functions,
- * null is return upon exception.
+ * org.godotengine.godot.Dictionary, which the Godot runtime can receive.
  */
 public class PlayAssetDeliveryUtils {
 
@@ -57,7 +56,8 @@ public class PlayAssetDeliveryUtils {
         assetPackState.transferProgressPercentage());
   }
 
-  public static AssetPackState convertDictionaryToAssetPackState(Dictionary dict) throws IllegalArgumentException {
+  public static AssetPackState convertDictionaryToAssetPackState(Dictionary dict)
+      throws IllegalArgumentException {
     try {
       AssetPackState packState = new AssetPackStateFromDictionary(dict);
       return packState;

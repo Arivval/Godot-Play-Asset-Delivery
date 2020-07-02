@@ -24,7 +24,8 @@ import org.godotengine.godot.Dictionary;
 
 /**
  * This class extends the AssetPackState abstract class, and provides constructor that allows
- * PlayAssetDeliveryUtils class to instantiate AssetPackStateFromDictionary given Godot Dictionary.
+ * PlayAssetDeliveryUtils class to instantiate AssetPackStateFromDictionary given a Godot
+ * Dictionary.
  */
 public class AssetPackStateFromDictionary extends AssetPackState {
   private String name;
