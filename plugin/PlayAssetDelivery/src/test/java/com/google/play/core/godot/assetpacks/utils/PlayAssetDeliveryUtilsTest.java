@@ -48,7 +48,7 @@ public class PlayAssetDeliveryUtilsTest {
     assertThat(resultingDictionary).isEqualTo(testDictionary);
   }
 
-  @Test
+  @Test(expected = IllegalArgumentException.class)
   public void convertDictionaryToAssetPackState_missingKey() {
     // Test failure case where there is a missing key
     Dictionary testDictionary =
@@ -57,10 +57,9 @@ public class PlayAssetDeliveryUtilsTest {
     testDictionary.remove("bytesDownloaded");
     AssetPackState testAssetPackState =
         PlayAssetDeliveryUtils.convertDictionaryToAssetPackState(testDictionary);
-    assertThat(testAssetPackState).isEqualTo(null);
   }
 
-  @Test
+  @Test(expected = IllegalArgumentException.class)
   public void convertDictionaryToAssetPackState_typeMismatch() {
     // Test failure case where there is a missing key
     Dictionary testDictionary =
@@ -69,6 +68,5 @@ public class PlayAssetDeliveryUtilsTest {
     testDictionary.put("bytesDownloaded", "PAD");
     AssetPackState testAssetPackState =
         PlayAssetDeliveryUtils.convertDictionaryToAssetPackState(testDictionary);
-    assertThat(testAssetPackState).isEqualTo(null);
   }
 }

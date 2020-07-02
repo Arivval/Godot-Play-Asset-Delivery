@@ -37,7 +37,7 @@ public class AssetPackStateFromDictionaryTest {
     assertThat(testSubject.transferProgressPercentage()).isEqualTo(35);
   }
 
-  @Test(expected = NullPointerException.class)
+  @Test(expected = IllegalArgumentException.class)
   public void AssetPackStateFromDictionary_missingKey() {
     Dictionary testDict =
         PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
@@ -46,7 +46,7 @@ public class AssetPackStateFromDictionaryTest {
     AssetPackStateFromDictionary testSubject = new AssetPackStateFromDictionary(testDict);
   }
 
-  @Test(expected = ClassCastException.class)
+  @Test(expected = IllegalArgumentException.class)
   public void AssetPackStateFromDictionary_typeMismatch() {
     Dictionary testDict =
         PlayAssetDeliveryUtils.constructAssetPackStateDictionary(

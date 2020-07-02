@@ -57,13 +57,13 @@ public class PlayAssetDeliveryUtils {
         assetPackState.transferProgressPercentage());
   }
 
-  public static AssetPackState convertDictionaryToAssetPackState(Dictionary dict) {
+  public static AssetPackState convertDictionaryToAssetPackState(Dictionary dict) throws IllegalArgumentException {
     try {
       AssetPackState packState = new AssetPackStateFromDictionary(dict);
       return packState;
     } catch (Exception e) {
       Log.w(TAG, "Exception while converting Dictionary to AssetPackState object!", e);
-      return null;
+      throw e;
     }
   }
 }

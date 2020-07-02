@@ -44,17 +44,23 @@ public class AssetPackStateFromDictionary extends AssetPackState {
               "totalBytesToDownload",
               "transferProgressPercentage"));
 
-  public AssetPackStateFromDictionary(Dictionary dict)
-      throws NullPointerException, ClassCastException {
+  public AssetPackStateFromDictionary(Dictionary dict) throws IllegalArgumentException {
     if (dict.keySet().containsAll(dictionaryRequiredKeySet)) {
-      this.name = (String) dict.get("name");
-      this.status = (int) dict.get("status");
-      this.errorCode = (int) dict.get("errorCode");
-      this.bytesDownloaded = (long) dict.get("bytesDownloaded");
-      this.totalBytesToDownload = (long) dict.get("totalBytesToDownload");
-      this.transferProgressPercentage = (int) dict.get("transferProgressPercentage");
+      try {
+        this.name = (String) dict.get("name");
+        this.status = (int) dict.get("status");
+        this.errorCode = (int) dict.get("errorCode");
+        this.bytesDownloaded = (long) dict.get("bytesDownloaded");
+        this.totalBytesToDownload = (long) dict.get("totalBytesToDownload");
+        this.transferProgressPercentage = (int) dict.get("transferProgressPercentage");
+      } catch (Exception e) {
+        if (e.getClass() == ClassCastException.class) {
+          throw new IllegalArgumentException("Invalid input Dictionary, value type mismatch!");
+        }
+      }
     } else {
-      throw new IllegalArgumentException("Invalid input Dictionary!");
+      throw new IllegalArgumentException(
+          "Invalid input Dictionary, does not contain all required keys!");
     }
   }
 
