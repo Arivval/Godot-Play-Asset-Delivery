@@ -24,7 +24,7 @@ import org.junit.Test;
 public class AssetPackStateFromDictionaryTest {
 
   @Test
-  public void AssetPackStateFromDictionary_valid() {
+  public void assetPackStateFromDictionary_valid() {
     Dictionary testDict =
         PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
             42, 0, "awesomePack", 2, 65536, 35);
@@ -38,7 +38,7 @@ public class AssetPackStateFromDictionaryTest {
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void AssetPackStateFromDictionary_missingKey() {
+  public void assetPackStateFromDictionary_missingKey() {
     Dictionary testDict =
         PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
             42, 0, "awesomePack", 2, 65536, 35);
@@ -47,7 +47,7 @@ public class AssetPackStateFromDictionaryTest {
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void AssetPackStateFromDictionary_typeMismatch() {
+  public void assetPackStateFromDictionary_typeMismatch() {
     Dictionary testDict =
         PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
             42, 0, "awesomePack", 2, 65536, 35);
