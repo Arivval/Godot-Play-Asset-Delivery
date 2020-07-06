@@ -14,6 +14,7 @@
 package com.google.play.core.godot.assetpacks.utils;
 
 import com.google.android.play.core.assetpacks.AssetPackState;
+import com.google.android.play.core.assetpacks.AssetLocation;
 import org.godotengine.godot.Dictionary;
 
 /**
@@ -42,6 +43,14 @@ public class PlayAssetDeliveryUtils {
     return returnDict;
   }
 
+  public static Dictionary constructAssetLocationDictionary(long offset, String path, long size) {
+    Dictionary returnDict = new Dictionary();
+    returnDict.put("offset", offset);
+    returnDict.put("path", path);
+    returnDict.put("size", size);
+    return returnDict;
+  }
+
   public static Dictionary convertAssetPackStateToDictionary(AssetPackState assetPackState) {
     return constructAssetPackStateDictionary(
         assetPackState.bytesDownloaded(),
@@ -52,8 +61,18 @@ public class PlayAssetDeliveryUtils {
         assetPackState.transferProgressPercentage());
   }
 
+  public static Dictionary convertAssetLocationToDictionary(AssetLocation assetLocation) {
+    return constructAssetLocationDictionary(
+        assetLocation.offset(), assetLocation.path(), assetLocation.size());
+  }
+
   public static AssetPackState convertDictionaryToAssetPackState(Dictionary dict)
       throws IllegalArgumentException {
     return new AssetPackStateFromDictionary(dict);
+  }
+
+  public static AssetLocation convertDictionaryToAssetLocation(Dictionary dict)
+      throws IllegalArgumentException {
+    return new AssetLocationFromDictionary(dict);
   }
 }
