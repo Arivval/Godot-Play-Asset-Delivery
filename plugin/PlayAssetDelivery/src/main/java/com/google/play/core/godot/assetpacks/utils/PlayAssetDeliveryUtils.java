@@ -17,6 +17,7 @@
 package com.google.play.core.godot.assetpacks.utils;
 
 import com.google.android.play.core.assetpacks.AssetLocation;
+import com.google.android.play.core.assetpacks.AssetPackLocation;
 import com.google.android.play.core.assetpacks.AssetPackState;
 import org.godotengine.godot.Dictionary;
 
@@ -53,6 +54,15 @@ public class PlayAssetDeliveryUtils {
     return returnDict;
   }
 
+  public static Dictionary constructAssetPackLocationDictionary(
+      String assetsPath, int packStorageMethod, String path) {
+    Dictionary returnDict = new Dictionary();
+    returnDict.put(AssetPackLocationFromDictionary.ASSETS_PATH_KEY, assetsPath);
+    returnDict.put(AssetPackLocationFromDictionary.PACK_STORAGE_METHOD_KEY, packStorageMethod);
+    returnDict.put(AssetPackLocationFromDictionary.PATH_KEY, path);
+    return returnDict;
+  }
+
   public static Dictionary convertAssetPackStateToDictionary(AssetPackState assetPackState) {
     return constructAssetPackStateDictionary(
         assetPackState.bytesDownloaded(),
@@ -68,6 +78,14 @@ public class PlayAssetDeliveryUtils {
         assetLocation.offset(), assetLocation.path(), assetLocation.size());
   }
 
+  public static Dictionary convertAssetPackLocationToDictionary(
+      AssetPackLocation assetPackLocation) {
+    return constructAssetPackLocationDictionary(
+        assetPackLocation.assetsPath(),
+        assetPackLocation.packStorageMethod(),
+        assetPackLocation.path());
+  }
+
   public static AssetPackState convertDictionaryToAssetPackState(Dictionary dict)
       throws IllegalArgumentException {
     return new AssetPackStateFromDictionary(dict);
@@ -76,5 +94,10 @@ public class PlayAssetDeliveryUtils {
   public static AssetLocation convertDictionaryToAssetLocation(Dictionary dict)
       throws IllegalArgumentException {
     return new AssetLocationFromDictionary(dict);
+  }
+
+  public static AssetPackLocation convertDictionaryToAssetPackLocation(Dictionary dict)
+      throws IllegalArgumentException {
+    return new AssetPackLocationFromDictionary(dict);
   }
 }
