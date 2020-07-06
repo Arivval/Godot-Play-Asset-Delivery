@@ -17,7 +17,6 @@
 package com.google.play.core.godot.assetpacks.utils;
 
 import com.google.android.play.core.assetpacks.AssetPackLocation;
-
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -56,7 +55,7 @@ public class AssetPackLocationFromDictionary extends AssetPackLocation {
 
   @Override
   public String assetsPath() {
-    return null;
+    return this.assetsPath;
   }
 
   @Override
