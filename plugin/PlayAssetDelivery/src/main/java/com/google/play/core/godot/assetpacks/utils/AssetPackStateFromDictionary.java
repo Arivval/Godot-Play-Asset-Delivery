@@ -51,10 +51,9 @@ public class AssetPackStateFromDictionary extends AssetPackState {
         this.bytesDownloaded = (long) dict.get("bytesDownloaded");
         this.totalBytesToDownload = (long) dict.get("totalBytesToDownload");
         this.transferProgressPercentage = (int) dict.get("transferProgressPercentage");
+      } catch (ClassCastException e) {
+        throw new IllegalArgumentException("Invalid input Dictionary, value type mismatch!");
       } catch (Exception e) {
-        if (e.getClass() == ClassCastException.class) {
-          throw new IllegalArgumentException("Invalid input Dictionary, value type mismatch!");
-        }
         throw e;
       }
     } else {
