@@ -34,10 +34,10 @@ public class PlayAssetDeliveryUtils {
       long totalBytesToDownload,
       int transferProgressPercentage) {
     Dictionary returnDict = new Dictionary();
-    returnDict.put(AssetPackStateFromDictionary.key1, bytesDownloaded);
-    returnDict.put(AssetPackStateFromDictionary.key2, errorCode);
-    returnDict.put(AssetPackStateFromDictionary.key3, name);
-    returnDict.put(AssetPackStateFromDictionary.key4, status);
+    returnDict.put(AssetPackStateFromDictionary.key1, name);
+    returnDict.put(AssetPackStateFromDictionary.key2, status);
+    returnDict.put(AssetPackStateFromDictionary.key3, errorCode);
+    returnDict.put(AssetPackStateFromDictionary.key4, bytesDownloaded);
     returnDict.put(AssetPackStateFromDictionary.key5, totalBytesToDownload);
     returnDict.put(AssetPackStateFromDictionary.key6, transferProgressPercentage);
     return returnDict;
