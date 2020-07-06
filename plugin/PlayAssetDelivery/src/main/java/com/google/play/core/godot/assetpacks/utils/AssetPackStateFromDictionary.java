@@ -35,32 +35,32 @@ public class AssetPackStateFromDictionary extends AssetPackState {
   private long totalBytesToDownload;
   private int transferProgressPercentage;
 
-  public static final String nameKey = "name";
-  public static final String statusKey = "status";
-  public static final String errorCodeKey = "errorCode";
-  public static final String bytesDownloadedKey = "bytesDownloaded";
-  public static final String totalBytesToDownloadKey = "totalBytesToDownload";
-  public static final String transferProgressPercentageKey = "transferProgressPercentage";
+  public static final String NAME_KEY = "name";
+  public static final String STATUS_KEY = "status";
+  public static final String ERROR_CODE_KEY = "errorCode";
+  public static final String BYTES_DOWNLOADED_KEY = "bytesDownloaded";
+  public static final String TOTAL_BYTES_TO_DOWNLOAD_KEY = "totalBytesToDownload";
+  public static final String TRANSFER_PROGRESS_PERCENTAGE_KEY = "transferProgressPercentage";
 
   private static final Set<String> dictionaryRequiredKeySet =
       new HashSet<>(
           Arrays.asList(
-              nameKey,
-              statusKey,
-              errorCodeKey,
-              bytesDownloadedKey,
-              totalBytesToDownloadKey,
-              transferProgressPercentageKey));
+                  NAME_KEY,
+                  STATUS_KEY,
+                  ERROR_CODE_KEY,
+                  BYTES_DOWNLOADED_KEY,
+                  TOTAL_BYTES_TO_DOWNLOAD_KEY,
+                  TRANSFER_PROGRESS_PERCENTAGE_KEY));
 
   public AssetPackStateFromDictionary(Dictionary dict) throws IllegalArgumentException {
     if (dict.keySet().containsAll(dictionaryRequiredKeySet)) {
       try {
-        this.name = (String) dict.get(nameKey);
-        this.status = (int) dict.get(statusKey);
-        this.errorCode = (int) dict.get(errorCodeKey);
-        this.bytesDownloaded = (long) dict.get(bytesDownloadedKey);
-        this.totalBytesToDownload = (long) dict.get(totalBytesToDownloadKey);
-        this.transferProgressPercentage = (int) dict.get(transferProgressPercentageKey);
+        this.name = (String) dict.get(NAME_KEY);
+        this.status = (int) dict.get(STATUS_KEY);
+        this.errorCode = (int) dict.get(ERROR_CODE_KEY);
+        this.bytesDownloaded = (long) dict.get(BYTES_DOWNLOADED_KEY);
+        this.totalBytesToDownload = (long) dict.get(TOTAL_BYTES_TO_DOWNLOAD_KEY);
+        this.transferProgressPercentage = (int) dict.get(TRANSFER_PROGRESS_PERCENTAGE_KEY);
       } catch (ClassCastException e) {
         throw new IllegalArgumentException("Invalid input Dictionary, value type mismatch!");
       }
