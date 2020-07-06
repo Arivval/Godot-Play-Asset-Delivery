@@ -42,7 +42,7 @@ public class AssetPackStateFromDictionaryTest {
     Dictionary testDict =
         PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
             42, 0, "awesomePack", 2, 65536, 35);
-    testDict.remove("status");
+    testDict.remove(AssetPackStateFromDictionary.STATUS_KEY);
     AssetPackStateFromDictionary testSubject = new AssetPackStateFromDictionary(testDict);
   }
 
@@ -51,7 +51,7 @@ public class AssetPackStateFromDictionaryTest {
     Dictionary testDict =
         PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
             42, 0, "awesomePack", 2, 65536, 35);
-    testDict.put("status", "wrong type!");
+    testDict.put(AssetPackStateFromDictionary.STATUS_KEY, "wrong type!");
     AssetPackStateFromDictionary testSubject = new AssetPackStateFromDictionary(testDict);
   }
 }

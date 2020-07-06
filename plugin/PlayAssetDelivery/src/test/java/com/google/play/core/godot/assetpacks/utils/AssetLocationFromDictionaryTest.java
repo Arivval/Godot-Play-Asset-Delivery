@@ -36,15 +36,15 @@ public class AssetLocationFromDictionaryTest {
   public void assetLocationFromDictionary_missingKey() {
     Dictionary testDict =
         PlayAssetDeliveryUtils.constructAssetLocationDictionary(42, "~/Downloads/dlc.pck", 65536);
-    testDict.remove("path");
-    AssetPackStateFromDictionary testSubject = new AssetPackStateFromDictionary(testDict);
+    testDict.remove(AssetLocationFromDictionary.SIZE_KEY);
+    AssetLocationFromDictionary testSubject = new AssetLocationFromDictionary(testDict);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void assetLocationFromDictionary_typeMismatch() {
     Dictionary testDict =
         PlayAssetDeliveryUtils.constructAssetLocationDictionary(42, "~/Downloads/dlc.pck", 65536);
-    testDict.put("offset", "wrong type!");
-    AssetPackStateFromDictionary testSubject = new AssetPackStateFromDictionary(testDict);
+    testDict.put(AssetLocationFromDictionary.OFFSET_KEY, "wrong type!");
+    AssetLocationFromDictionary testSubject = new AssetLocationFromDictionary(testDict);
   }
 }
