@@ -38,7 +38,7 @@ public class AssetPackLocationFromDictionaryTest {
     Dictionary testDict =
         PlayAssetDeliveryUtils.constructAssetPackLocationDictionary(
             "~/Downloads/assetsPath", 0, "~/Downloads/extractedPath");
-    testDict.remove("path");
+    testDict.remove(AssetPackLocationFromDictionary.PATH_KEY);
     AssetPackLocationFromDictionary testSubject = new AssetPackLocationFromDictionary(testDict);
   }
 
@@ -47,7 +47,7 @@ public class AssetPackLocationFromDictionaryTest {
     Dictionary testDict =
         PlayAssetDeliveryUtils.constructAssetPackLocationDictionary(
             "~/Downloads/assetsPath", 0, "~/Downloads/extractedPath");
-    testDict.put("path", 123);
+    testDict.put(AssetPackLocationFromDictionary.PATH_KEY, 123);
     AssetPackLocationFromDictionary testSubject = new AssetPackLocationFromDictionary(testDict);
   }
 }

@@ -56,7 +56,7 @@ public class PlayAssetDeliveryUtilsTest {
     Dictionary testDictionary =
         PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
             42, 0, "awesomePack", 2, 65536, 35);
-    testDictionary.remove("bytesDownloaded");
+    testDictionary.remove(AssetPackStateFromDictionary.BYTES_DOWNLOADED_KEY);
     AssetPackState testAssetPackState =
         PlayAssetDeliveryUtils.convertDictionaryToAssetPackState(testDictionary);
   }
@@ -67,7 +67,7 @@ public class PlayAssetDeliveryUtilsTest {
     Dictionary testDictionary =
         PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
             42, 0, "awesomePack", 2, 65536, 35);
-    testDictionary.put("bytesDownloaded", "PAD");
+    testDictionary.put(AssetPackStateFromDictionary.BYTES_DOWNLOADED_KEY, "PAD");
     AssetPackState testAssetPackState =
         PlayAssetDeliveryUtils.convertDictionaryToAssetPackState(testDictionary);
   }
@@ -102,7 +102,7 @@ public class PlayAssetDeliveryUtilsTest {
     // Test failure case where there is a missing key
     Dictionary testDictionary =
         PlayAssetDeliveryUtils.constructAssetLocationDictionary(42, "~/Downloads/dlc.pck", 65536);
-    testDictionary.remove("size");
+    testDictionary.remove(AssetLocationFromDictionary.SIZE_KEY);
     AssetLocation testAssetLocation =
         PlayAssetDeliveryUtils.convertDictionaryToAssetLocation(testDictionary);
   }
@@ -112,7 +112,7 @@ public class PlayAssetDeliveryUtilsTest {
     // Test failure case where there is a type mismatch
     Dictionary testDictionary =
         PlayAssetDeliveryUtils.constructAssetLocationDictionary(42, "~/Downloads/dlc.pck", 65536);
-    testDictionary.put("offset", "invalid type");
+    testDictionary.put(AssetLocationFromDictionary.OFFSET_KEY, "invalid type");
     AssetLocation testAssetLocation =
         PlayAssetDeliveryUtils.convertDictionaryToAssetLocation(testDictionary);
   }
@@ -149,7 +149,7 @@ public class PlayAssetDeliveryUtilsTest {
     Dictionary testDictionary =
         PlayAssetDeliveryUtils.constructAssetPackLocationDictionary(
             "~/Downloads/assetsPath", 0, "~/Downloads/extractedPath");
-    testDictionary.remove("path");
+    testDictionary.remove(AssetPackLocationFromDictionary.PATH_KEY);
     AssetPackLocation testAssetPackLocation =
         PlayAssetDeliveryUtils.convertDictionaryToAssetPackLocation(testDictionary);
   }
@@ -160,7 +160,7 @@ public class PlayAssetDeliveryUtilsTest {
     Dictionary testDictionary =
         PlayAssetDeliveryUtils.constructAssetPackLocationDictionary(
             "~/Downloads/assetsPath", 0, "~/Downloads/extractedPath");
-    testDictionary.put("path", 123);
+    testDictionary.put(AssetPackLocationFromDictionary.PATH_KEY, 123);
     AssetPackLocation testAssetPackLocation =
         PlayAssetDeliveryUtils.convertDictionaryToAssetPackLocation(testDictionary);
   }
