@@ -15,6 +15,7 @@ package com.google.play.core.godot.assetpacks.utils;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import com.google.android.play.core.assetpacks.AssetLocation;
 import com.google.android.play.core.assetpacks.AssetPackState;
 import org.godotengine.godot.Dictionary;
 import org.junit.Test;
@@ -65,5 +66,50 @@ public class PlayAssetDeliveryUtilsTest {
     testDictionary.put("bytesDownloaded", "PAD");
     AssetPackState testAssetPackState =
         PlayAssetDeliveryUtils.convertDictionaryToAssetPackState(testDictionary);
+  }
+
+  @Test
+  public void convertAssetLocationToDictionaryAndBack_valid1() {
+    Dictionary testDictionary =
+        PlayAssetDeliveryUtils.constructAssetLocationDictionary(42, "~/Downloads/dlc.pck", 65536);
+    AssetLocation testAssetLocation =
+        PlayAssetDeliveryUtils.convertDictionaryToAssetLocation(testDictionary);
+    Dictionary resultingDictionary =
+        PlayAssetDeliveryUtils.convertAssetLocationToDictionary(testAssetLocation);
+    assertThat(resultingDictionary).isEqualTo(testDictionary);
+  }
+
+  @Test
+  public void convertAssetLocationToDictionaryAndBack_valid2() {
+    Dictionary testDictionary =
+        PlayAssetDeliveryUtils.constructAssetLocationDictionary(
+            0,
+            "~/Documents/Godot-Play-Asset-Delivery/plugin/PlayAssetDelivery/src/test/java/com/google/play/core/godot/assetpacks/utils/dlc.pck",
+            42);
+    AssetLocation testAssetLocation =
+        PlayAssetDeliveryUtils.convertDictionaryToAssetLocation(testDictionary);
+    Dictionary resultingDictionary =
+        PlayAssetDeliveryUtils.convertAssetLocationToDictionary(testAssetLocation);
+    assertThat(resultingDictionary).isEqualTo(testDictionary);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void convertDictionaryToAssetLocation_missingKey() {
+    // Test failure case where there is a missing key
+    Dictionary testDictionary =
+        PlayAssetDeliveryUtils.constructAssetLocationDictionary(42, "~/Downloads/dlc.pck", 65536);
+    testDictionary.remove("size");
+    AssetLocation testAssetLocation =
+        PlayAssetDeliveryUtils.convertDictionaryToAssetLocation(testDictionary);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void convertDictionaryToAssetLocation_typeMismatch() {
+    // Test failure case where there is a missing key
+    Dictionary testDictionary =
+        PlayAssetDeliveryUtils.constructAssetLocationDictionary(42, "~/Downloads/dlc.pck", 65536);
+    testDictionary.put("offset", "invalid type");
+    AssetLocation testAssetLocation =
+        PlayAssetDeliveryUtils.convertDictionaryToAssetLocation(testDictionary);
   }
 }
