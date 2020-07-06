@@ -63,8 +63,6 @@ public class AssetPackStateFromDictionary extends AssetPackState {
         this.transferProgressPercentage = (int) dict.get(transferProgressPercentageKey);
       } catch (ClassCastException e) {
         throw new IllegalArgumentException("Invalid input Dictionary, value type mismatch!");
-      } catch (Exception e) {
-        throw e;
       }
     } else {
       throw new IllegalArgumentException(
