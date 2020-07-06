@@ -74,25 +74,25 @@ public class PlayAssetDeliveryUtilsTest {
   @Test
   public void convertAssetLocationToDictionaryAndBack_valid1() {
     Dictionary testDictionary =
-            PlayAssetDeliveryUtils.constructAssetLocationDictionary(42, "~/Downloads/dlc.pck", 65536);
+        PlayAssetDeliveryUtils.constructAssetLocationDictionary(42, "~/Downloads/dlc.pck", 65536);
     AssetLocation testAssetLocation =
-            PlayAssetDeliveryUtils.convertDictionaryToAssetLocation(testDictionary);
+        PlayAssetDeliveryUtils.convertDictionaryToAssetLocation(testDictionary);
     Dictionary resultingDictionary =
-            PlayAssetDeliveryUtils.convertAssetLocationToDictionary(testAssetLocation);
+        PlayAssetDeliveryUtils.convertAssetLocationToDictionary(testAssetLocation);
     assertThat(resultingDictionary).isEqualTo(testDictionary);
   }
 
   @Test
   public void convertAssetLocationToDictionaryAndBack_valid2() {
     Dictionary testDictionary =
-            PlayAssetDeliveryUtils.constructAssetLocationDictionary(
-                    0,
-                    "~/Documents/Godot-Play-Asset-Delivery/plugin/PlayAssetDelivery/src/test/java/com/google/play/core/godot/assetpacks/utils/dlc.pck",
-                    42);
+        PlayAssetDeliveryUtils.constructAssetLocationDictionary(
+            0,
+            "~/Documents/Godot-Play-Asset-Delivery/plugin/PlayAssetDelivery/src/test/java/com/google/play/core/godot/assetpacks/utils/dlc.pck",
+            42);
     AssetLocation testAssetLocation =
-            PlayAssetDeliveryUtils.convertDictionaryToAssetLocation(testDictionary);
+        PlayAssetDeliveryUtils.convertDictionaryToAssetLocation(testDictionary);
     Dictionary resultingDictionary =
-            PlayAssetDeliveryUtils.convertAssetLocationToDictionary(testAssetLocation);
+        PlayAssetDeliveryUtils.convertAssetLocationToDictionary(testAssetLocation);
     assertThat(resultingDictionary).isEqualTo(testDictionary);
   }
 
@@ -100,19 +100,19 @@ public class PlayAssetDeliveryUtilsTest {
   public void convertDictionaryToAssetLocation_missingKey() {
     // Test failure case where there is a missing key
     Dictionary testDictionary =
-            PlayAssetDeliveryUtils.constructAssetLocationDictionary(42, "~/Downloads/dlc.pck", 65536);
+        PlayAssetDeliveryUtils.constructAssetLocationDictionary(42, "~/Downloads/dlc.pck", 65536);
     testDictionary.remove("size");
     AssetLocation testAssetLocation =
-            PlayAssetDeliveryUtils.convertDictionaryToAssetLocation(testDictionary);
+        PlayAssetDeliveryUtils.convertDictionaryToAssetLocation(testDictionary);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void convertDictionaryToAssetLocation_typeMismatch() {
     // Test failure case where there is a type mismatch
     Dictionary testDictionary =
-            PlayAssetDeliveryUtils.constructAssetLocationDictionary(42, "~/Downloads/dlc.pck", 65536);
+        PlayAssetDeliveryUtils.constructAssetLocationDictionary(42, "~/Downloads/dlc.pck", 65536);
     testDictionary.put("offset", "invalid type");
     AssetLocation testAssetLocation =
-            PlayAssetDeliveryUtils.convertDictionaryToAssetLocation(testDictionary);
+        PlayAssetDeliveryUtils.convertDictionaryToAssetLocation(testDictionary);
   }
 }
