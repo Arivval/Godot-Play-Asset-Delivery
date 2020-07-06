@@ -45,12 +45,12 @@ public class AssetPackStateFromDictionary extends AssetPackState {
   private static final Set<String> dictionaryRequiredKeySet =
       new HashSet<>(
           Arrays.asList(
-                  NAME_KEY,
-                  STATUS_KEY,
-                  ERROR_CODE_KEY,
-                  BYTES_DOWNLOADED_KEY,
-                  TOTAL_BYTES_TO_DOWNLOAD_KEY,
-                  TRANSFER_PROGRESS_PERCENTAGE_KEY));
+              NAME_KEY,
+              STATUS_KEY,
+              ERROR_CODE_KEY,
+              BYTES_DOWNLOADED_KEY,
+              TOTAL_BYTES_TO_DOWNLOAD_KEY,
+              TRANSFER_PROGRESS_PERCENTAGE_KEY));
 
   public AssetPackStateFromDictionary(Dictionary dict) throws IllegalArgumentException {
     if (dict.keySet().containsAll(dictionaryRequiredKeySet)) {
