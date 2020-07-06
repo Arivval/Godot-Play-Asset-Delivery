@@ -19,6 +19,7 @@ package com.google.play.core.godot.assetpacks.utils;
 import static com.google.common.truth.Truth.assertThat;
 
 import com.google.android.play.core.assetpacks.AssetLocation;
+import com.google.android.play.core.assetpacks.AssetPackLocation;
 import com.google.android.play.core.assetpacks.AssetPackState;
 import org.godotengine.godot.Dictionary;
 import org.junit.Test;
@@ -114,5 +115,53 @@ public class PlayAssetDeliveryUtilsTest {
     testDictionary.put("offset", "invalid type");
     AssetLocation testAssetLocation =
         PlayAssetDeliveryUtils.convertDictionaryToAssetLocation(testDictionary);
+  }
+
+  @Test
+  public void convertAssetPackLocationToDictionaryAndBack_valid1() {
+    Dictionary testDictionary =
+        PlayAssetDeliveryUtils.constructAssetPackLocationDictionary(
+            "~/Downloads/assetsPath", 0, "~/Downloads/extractedPath");
+    AssetPackLocation testAssetPackLocation =
+        PlayAssetDeliveryUtils.convertDictionaryToAssetPackLocation(testDictionary);
+    Dictionary resultingDictionary =
+        PlayAssetDeliveryUtils.convertAssetPackLocationToDictionary(testAssetPackLocation);
+    assertThat(resultingDictionary).isEqualTo(testDictionary);
+  }
+
+  @Test
+  public void convertAssetPackLocationToDictionaryAndBack_valid2() {
+    Dictionary testDictionary =
+        PlayAssetDeliveryUtils.constructAssetPackLocationDictionary(
+            "~/Documents/Godot-Play-Asset-Delivery/plugin/PlayAssetDelivery/src/test/java/com/google/play/core/godot/assetpacks/utils/assetsPath",
+            0,
+            "~/Documents/Godot-Play-Asset-Delivery/plugin/PlayAssetDelivery/src/test/java/com/google/play/core/godot/assetpacks/utils/extractedPath");
+    AssetPackLocation testAssetPackLocation =
+        PlayAssetDeliveryUtils.convertDictionaryToAssetPackLocation(testDictionary);
+    Dictionary resultingDictionary =
+        PlayAssetDeliveryUtils.convertAssetPackLocationToDictionary(testAssetPackLocation);
+    assertThat(resultingDictionary).isEqualTo(testDictionary);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void convertDictionaryToAssetPackLocation_missingKey() {
+    // Test failure case where there is a missing key
+    Dictionary testDictionary =
+        PlayAssetDeliveryUtils.constructAssetPackLocationDictionary(
+            "~/Downloads/assetsPath", 0, "~/Downloads/extractedPath");
+    testDictionary.remove("path");
+    AssetPackLocation testAssetPackLocation =
+        PlayAssetDeliveryUtils.convertDictionaryToAssetPackLocation(testDictionary);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void convertDictionaryToAssetPackLocation_typeMismatch() {
+    // Test failure case where there is a type mismatch
+    Dictionary testDictionary =
+        PlayAssetDeliveryUtils.constructAssetPackLocationDictionary(
+            "~/Downloads/assetsPath", 0, "~/Downloads/extractedPath");
+    testDictionary.put("path", 123);
+    AssetPackLocation testAssetPackLocation =
+        PlayAssetDeliveryUtils.convertDictionaryToAssetPackLocation(testDictionary);
   }
 }
