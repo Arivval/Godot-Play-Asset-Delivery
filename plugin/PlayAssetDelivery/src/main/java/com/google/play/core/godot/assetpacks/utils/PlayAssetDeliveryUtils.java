@@ -13,8 +13,8 @@
 
 package com.google.play.core.godot.assetpacks.utils;
 
-import com.google.android.play.core.assetpacks.AssetPackState;
 import com.google.android.play.core.assetpacks.AssetLocation;
+import com.google.android.play.core.assetpacks.AssetPackState;
 import org.godotengine.godot.Dictionary;
 
 /**

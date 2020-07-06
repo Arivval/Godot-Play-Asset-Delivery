@@ -14,12 +14,10 @@
 package com.google.play.core.godot.assetpacks.utils;
 
 import com.google.android.play.core.assetpacks.AssetLocation;
-
-import org.godotengine.godot.Dictionary;
-
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import org.godotengine.godot.Dictionary;
 
 /**
  * This class extends the AssetLocation abstract class, and provides constructor that allows

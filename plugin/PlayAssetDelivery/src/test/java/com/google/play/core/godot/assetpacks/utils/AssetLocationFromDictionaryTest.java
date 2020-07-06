@@ -13,11 +13,10 @@
 
 package com.google.play.core.godot.assetpacks.utils;
 
+import static com.google.common.truth.Truth.assertThat;
+
 import org.godotengine.godot.Dictionary;
 import org.junit.Test;
-
-import static com.google.common.truth.Truth.assertThat;
-import static org.junit.Assert.*;
 
 public class AssetLocationFromDictionaryTest {
   @Test
