@@ -23,8 +23,6 @@ import org.godotengine.godot.Dictionary;
  */
 public class PlayAssetDeliveryUtils {
 
-  private static final String TAG = "PlayAssetDeliveryUtils";
-
   public static Dictionary constructAssetPackStateDictionary(
       long bytesDownloaded,
       int errorCode,
