@@ -111,12 +111,8 @@ public class PlayAssetDeliveryUtilsTest {
     Dictionary innerDict1 =
         PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
             42, 0, "awesomePack", 2, 65536, 35);
-    Dictionary innerDict2 =
-        PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
-            0, -6, "Lorem ipsum dolor sit amet, consectetur adipiscing elit.", 7, 0, 0);
     Dictionary testDict = PlayAssetDeliveryUtils.constructAssetPackStatesDictionary(65536);
     PlayAssetDeliveryUtils.appendToAssetPackStatesDictionary(testDict, "pack1", innerDict1);
-    PlayAssetDeliveryUtils.appendToAssetPackStatesDictionary(testDict, "pack2", innerDict2);
 
     testDict.remove(AssetPackStatesFromDictionary.TOTAL_BYTES_KEY);
 
@@ -130,12 +126,8 @@ public class PlayAssetDeliveryUtilsTest {
     Dictionary innerDict1 =
         PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
             42, 0, "awesomePack", 2, 65536, 35);
-    Dictionary innerDict2 =
-        PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
-            0, -6, "Lorem ipsum dolor sit amet, consectetur adipiscing elit.", 7, 0, 0);
     Dictionary testDict = PlayAssetDeliveryUtils.constructAssetPackStatesDictionary(65536);
     PlayAssetDeliveryUtils.appendToAssetPackStatesDictionary(testDict, "pack1", innerDict1);
-    PlayAssetDeliveryUtils.appendToAssetPackStatesDictionary(testDict, "pack2", innerDict2);
 
     testDict.put(AssetPackStatesFromDictionary.TOTAL_BYTES_KEY, "wrong key");
 
