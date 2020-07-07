@@ -16,11 +16,9 @@
 
 package com.google.play.core.godot.assetpacks.utils;
 
-import com.google.android.play.core.assetpacks.AssetPackState;
-import com.google.play.core.godot.assetpacks.PlayAssetDelivery;
-
 import static com.google.common.truth.Truth.assertThat;
 
+import com.google.android.play.core.assetpacks.AssetPackState;
 import org.godotengine.godot.Dictionary;
 import org.junit.Test;
 
