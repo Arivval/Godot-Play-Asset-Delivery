@@ -21,6 +21,9 @@ import com.google.android.play.core.assetpacks.AssetPackLocation;
 import com.google.android.play.core.assetpacks.AssetPackState;
 import org.godotengine.godot.Dictionary;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * This class contains all the helper methods for serializing/deserializing custom objects used in
  * the Play Asset Delivery API. The Java objects are serialized into
@@ -86,6 +89,18 @@ public class PlayAssetDeliveryUtils {
         assetPackLocation.path());
   }
 
+  public static Dictionary convertAssetPackLocationsToDictionary(
+      Map<String, AssetPackLocation> assetPackLocations) {
+    Dictionary returnDict = new Dictionary();
+    for (Map.Entry<String, AssetPackLocation> entry : assetPackLocations.entrySet()) {
+      String packName = entry.getKey();
+      AssetPackLocation packLocation = entry.getValue();
+      Dictionary packLocationDict = convertAssetPackLocationToDictionary(packLocation);
+      returnDict.put(packName, packLocationDict);
+    }
+    return returnDict;
+  }
+
   public static AssetPackState convertDictionaryToAssetPackState(Dictionary dict)
       throws IllegalArgumentException {
     return new AssetPackStateFromDictionary(dict);
@@ -99,5 +114,17 @@ public class PlayAssetDeliveryUtils {
   public static AssetPackLocation convertDictionaryToAssetPackLocation(Dictionary dict)
       throws IllegalArgumentException {
     return new AssetPackLocationFromDictionary(dict);
+  }
+
+  public static Map<String, AssetPackLocation> convertDictionaryToAssetPackLocations(
+      Dictionary dict) throws IllegalArgumentException {
+    Map<String, AssetPackLocation> returnMap = new HashMap<String, AssetPackLocation>();
+    for (Map.Entry<String, Object> entry : dict.entrySet()) {
+      // TODO here
+      AssetPackLocation currentPackLocation =
+          convertDictionaryToAssetPackLocation((Dictionary) entry.getValue());
+      returnMap.put(entry.getKey(), currentPackLocation);
+    }
+    return returnMap;
   }
 }
