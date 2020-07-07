@@ -22,6 +22,8 @@ import com.google.android.play.core.assetpacks.AssetPackState;
 import com.google.android.play.core.assetpacks.AssetPackStates;
 import org.godotengine.godot.Dictionary;
 
+import java.util.Map;
+
 /**
  * This class contains all the helper methods for serializing/deserializing custom objects used in
  * the Play Asset Delivery API. The Java objects are serialized into
@@ -98,7 +100,7 @@ public class PlayAssetDeliveryUtils {
             .collect(
                 Dictionary::new,
                 (d, e) -> d.put(e.getKey(), convertAssetPackStateToDictionary(e.getValue())),
-                (d1, d2) -> {});
+                (d1, d2) -> d1.putAll(d2));
     Dictionary returnDict =
         constructAssetPackStatesDictionary(assetPackStates.totalBytes(), packStatesDictionary);
     return returnDict;
