@@ -22,8 +22,6 @@ import com.google.android.play.core.assetpacks.AssetPackState;
 import com.google.android.play.core.assetpacks.AssetPackStates;
 import org.godotengine.godot.Dictionary;
 
-import java.util.Map;
-
 /**
  * This class contains all the helper methods for serializing/deserializing custom objects used in
  * the Play Asset Delivery API. The Java objects are serialized into
