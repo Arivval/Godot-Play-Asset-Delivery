@@ -21,6 +21,8 @@ import com.google.android.play.core.assetpacks.AssetPackLocation;
 import com.google.android.play.core.assetpacks.AssetPackState;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.godotengine.godot.Dictionary;
 
 /**
@@ -118,12 +120,12 @@ public class PlayAssetDeliveryUtils {
   public static Map<String, AssetPackLocation> convertDictionaryToAssetPackLocations(
       Dictionary dict) throws IllegalArgumentException {
     try {
-      Map<String, AssetPackLocation> returnMap = new HashMap<String, AssetPackLocation>();
-      for (Map.Entry<String, Object> entry : dict.entrySet()) {
-        AssetPackLocation currentPackLocation =
-            convertDictionaryToAssetPackLocation((Dictionary) entry.getValue());
-        returnMap.put(entry.getKey(), currentPackLocation);
-      }
+      Map<String, AssetPackLocation> returnMap =
+          dict.entrySet().stream()
+              .collect(
+                  Collectors.toMap(
+                      e -> e.getKey(),
+                      e -> convertDictionaryToAssetPackLocation((Dictionary) e.getValue())));
       return returnMap;
     } catch (ClassCastException e) {
       throw new IllegalArgumentException(
