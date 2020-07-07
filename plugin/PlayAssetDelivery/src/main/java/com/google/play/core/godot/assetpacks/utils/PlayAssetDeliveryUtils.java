@@ -55,12 +55,11 @@ public class PlayAssetDeliveryUtils {
     return returnDict;
   }
 
-  public static Dictionary appendToAssetPackStatesDictionary(
+  public static void appendToAssetPackStatesDictionary(
       Dictionary assetPackStatesDict, String packName, AssetPackState packState) {
     Dictionary packStatesDict =
         (Dictionary) assetPackStatesDict.get(AssetPackStatesFromDictionary.PACK_STATES_KEY);
     packStatesDict.put(packName, packState);
-    return packStatesDict;
   }
 
   public static Dictionary constructAssetLocationDictionary(long offset, String path, long size) {
@@ -91,7 +90,7 @@ public class PlayAssetDeliveryUtils {
   }
 
   public static Dictionary convertAssetPackStatesToDictionary(AssetPackStates assetPackStates) {
-    Dictionary returnDict = convertAssetPackStatesToDictionary(assetPackStates);
+    Dictionary returnDict = constructAssetPackStatesDictionary(assetPackStates.totalBytes());
     Map<String, AssetPackState> packNameStateMap = assetPackStates.packStates();
     for (Map.Entry<String, AssetPackState> entry : packNameStateMap.entrySet()) {
       appendToAssetPackStatesDictionary(returnDict, entry.getKey(), entry.getValue());
