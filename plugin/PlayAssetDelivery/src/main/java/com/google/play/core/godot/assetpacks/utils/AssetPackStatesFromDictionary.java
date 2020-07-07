@@ -18,12 +18,11 @@ package com.google.play.core.godot.assetpacks.utils;
 
 import com.google.android.play.core.assetpacks.AssetPackState;
 import com.google.android.play.core.assetpacks.AssetPackStates;
-
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
 import org.godotengine.godot.Dictionary;
 
 public class AssetPackStatesFromDictionary extends AssetPackStates {
@@ -41,7 +40,13 @@ public class AssetPackStatesFromDictionary extends AssetPackStates {
       try {
         this.totalBytes = (long) dict.get(TOTAL_BYTES_KEY);
         Dictionary packStatesDictionary = (Dictionary) dict.get(PACK_STATES_KEY);
-
+        Map<String, AssetPackState> returnMap = new HashMap<String, AssetPackState>();
+        for (Map.Entry<String, Object> entry : packStatesDictionary.entrySet()) {
+          AssetPackStateFromDictionary currentPackState =
+              new AssetPackStateFromDictionary((Dictionary) entry.getValue());
+          returnMap.put(entry.getKey(), currentPackState);
+        }
+        this.packStates = returnMap;
       } catch (ClassCastException e) {
         throw new IllegalArgumentException("Invalid input Dictionary, value type mismatch!");
       }
