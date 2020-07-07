@@ -122,4 +122,18 @@ public class AssetPackStatesFromDictionaryTest {
 
     AssetPackStatesFromDictionary testSubject = new AssetPackStatesFromDictionary(testDict);
   }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void assetPackStateFromDictionary_typeMismatch3() {
+    Dictionary innerDict1 =
+            PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
+                    42, 0, "awesomePack", 2, 65536, 35);
+    Dictionary testDict = PlayAssetDeliveryUtils.constructAssetPackStatesDictionary(65536);
+    PlayAssetDeliveryUtils.appendToAssetPackStatesDictionary(testDict, "pack1", innerDict1);
+
+    Dictionary packStatesDict = (Dictionary) testDict.get(AssetPackStatesFromDictionary.PACK_STATES_KEY);
+    packStatesDict.put("pack1", "wrong type");
+
+    AssetPackStatesFromDictionary testSubject = new AssetPackStatesFromDictionary(testDict);
+  }
 }
