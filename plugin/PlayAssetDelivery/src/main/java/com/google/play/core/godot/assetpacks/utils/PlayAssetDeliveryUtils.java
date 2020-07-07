@@ -19,10 +19,9 @@ package com.google.play.core.godot.assetpacks.utils;
 import com.google.android.play.core.assetpacks.AssetLocation;
 import com.google.android.play.core.assetpacks.AssetPackLocation;
 import com.google.android.play.core.assetpacks.AssetPackState;
-import org.godotengine.godot.Dictionary;
-
 import java.util.HashMap;
 import java.util.Map;
+import org.godotengine.godot.Dictionary;
 
 /**
  * This class contains all the helper methods for serializing/deserializing custom objects used in
@@ -118,13 +117,17 @@ public class PlayAssetDeliveryUtils {
 
   public static Map<String, AssetPackLocation> convertDictionaryToAssetPackLocations(
       Dictionary dict) throws IllegalArgumentException {
-    Map<String, AssetPackLocation> returnMap = new HashMap<String, AssetPackLocation>();
-    for (Map.Entry<String, Object> entry : dict.entrySet()) {
-      // TODO here
-      AssetPackLocation currentPackLocation =
-          convertDictionaryToAssetPackLocation((Dictionary) entry.getValue());
-      returnMap.put(entry.getKey(), currentPackLocation);
+    try {
+      Map<String, AssetPackLocation> returnMap = new HashMap<String, AssetPackLocation>();
+      for (Map.Entry<String, Object> entry : dict.entrySet()) {
+        AssetPackLocation currentPackLocation =
+            convertDictionaryToAssetPackLocation((Dictionary) entry.getValue());
+        returnMap.put(entry.getKey(), currentPackLocation);
+      }
+      return returnMap;
+    } catch (ClassCastException e) {
+      throw new IllegalArgumentException(
+          "Invalid input Dictionary, unable to cast entry to Dictionary");
     }
-    return returnMap;
   }
 }
