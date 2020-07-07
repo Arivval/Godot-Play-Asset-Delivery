@@ -19,6 +19,8 @@ package com.google.play.core.godot.assetpacks.utils;
 import com.google.android.play.core.assetpacks.AssetLocation;
 import com.google.android.play.core.assetpacks.AssetPackLocation;
 import com.google.android.play.core.assetpacks.AssetPackState;
+import com.google.android.play.core.assetpacks.AssetPackStates;
+
 import org.godotengine.godot.Dictionary;
 
 /**
@@ -89,6 +91,11 @@ public class PlayAssetDeliveryUtils {
   public static AssetPackState convertDictionaryToAssetPackState(Dictionary dict)
       throws IllegalArgumentException {
     return new AssetPackStateFromDictionary(dict);
+  }
+
+  public static AssetPackStates convertDictionaryToAssetPackStates(Dictionary dict)
+      throws IllegalArgumentException {
+    return null;
   }
 
   public static AssetLocation convertDictionaryToAssetLocation(Dictionary dict)
