@@ -25,6 +25,11 @@ import java.util.Map;
 import java.util.Set;
 import org.godotengine.godot.Dictionary;
 
+/**
+ * This class extends the AssetPackStates abstract class, and provides constructor that allows
+ * PlayAssetDeliveryUtils class to instantiate AssetPackStatesFromDictionary given a Godot
+ * Dictionary.
+ */
 public class AssetPackStatesFromDictionary extends AssetPackStates {
   private long totalBytes;
   private Map<String, AssetPackState> packStates;
