@@ -22,6 +22,7 @@ import com.google.android.play.core.assetpacks.AssetLocation;
 import com.google.android.play.core.assetpacks.AssetPackLocation;
 import com.google.android.play.core.assetpacks.AssetPackState;
 import java.util.Map;
+import com.google.android.play.core.assetpacks.AssetPackStates;
 import org.godotengine.godot.Dictionary;
 import org.junit.Test;
 
@@ -71,6 +72,72 @@ public class PlayAssetDeliveryUtilsTest {
     testDictionary.put(AssetPackStateFromDictionary.BYTES_DOWNLOADED_KEY, "PAD");
     AssetPackState testAssetPackState =
         PlayAssetDeliveryUtils.convertDictionaryToAssetPackState(testDictionary);
+  }
+
+  @Test
+  public void convertAssetPackStatesToDictionaryAndBack_valid1() {
+    Dictionary innerDict1 =
+        PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
+            42, 0, "awesomePack", 2, 65536, 35);
+    Dictionary innerDict2 =
+        PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
+            0, -6, "Lorem ipsum dolor sit amet, consectetur adipiscing elit.", 7, 0, 0);
+    Dictionary testDict =
+        PlayAssetDeliveryUtils.constructAssetPackStatesDictionary(65536, new Dictionary());
+    PlayAssetDeliveryUtils.appendToAssetPackStatesDictionary(testDict, "pack1", innerDict1);
+    PlayAssetDeliveryUtils.appendToAssetPackStatesDictionary(testDict, "pack2", innerDict2);
+
+    AssetPackStates testSubject = new AssetPackStatesFromDictionary(testDict);
+    Dictionary resultingDictionary =
+        PlayAssetDeliveryUtils.convertAssetPackStatesToDictionary(testSubject);
+    assertThat(resultingDictionary).isEqualTo(testDict);
+  }
+
+  @Test
+  public void convertAssetPackStatesToDictionaryAndBack_valid2() {
+    Dictionary innerDict1 =
+        PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
+            42, 0, "awesomePack", 2, 65536, 35);
+    Dictionary testDict =
+        PlayAssetDeliveryUtils.constructAssetPackStatesDictionary(65536, new Dictionary());
+    PlayAssetDeliveryUtils.appendToAssetPackStatesDictionary(testDict, "pack1", innerDict1);
+
+    AssetPackStates testSubject = new AssetPackStatesFromDictionary(testDict);
+    Dictionary resultingDictionary =
+        PlayAssetDeliveryUtils.convertAssetPackStatesToDictionary(testSubject);
+    assertThat(resultingDictionary).isEqualTo(testDict);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void convertDictionaryToAssetPackStates_missingKey() {
+    // Test failure case where there is a missing key
+    Dictionary innerDict1 =
+        PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
+            42, 0, "awesomePack", 2, 65536, 35);
+    Dictionary testDict =
+        PlayAssetDeliveryUtils.constructAssetPackStatesDictionary(65536, new Dictionary());
+    PlayAssetDeliveryUtils.appendToAssetPackStatesDictionary(testDict, "pack1", innerDict1);
+
+    testDict.remove(AssetPackStatesFromDictionary.TOTAL_BYTES_KEY);
+
+    AssetPackStates testAssetPackStates =
+        PlayAssetDeliveryUtils.convertDictionaryToAssetPackStates(testDict);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void convertDictionaryToAssetPackStates_typeMismatch() {
+    // Test failure case where there is a type mismatch
+    Dictionary innerDict1 =
+        PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
+            42, 0, "awesomePack", 2, 65536, 35);
+    Dictionary testDict =
+        PlayAssetDeliveryUtils.constructAssetPackStatesDictionary(65536, new Dictionary());
+    PlayAssetDeliveryUtils.appendToAssetPackStatesDictionary(testDict, "pack1", innerDict1);
+
+    testDict.put(AssetPackStatesFromDictionary.TOTAL_BYTES_KEY, "wrong key");
+
+    AssetPackStates testAssetPackStates =
+        PlayAssetDeliveryUtils.convertDictionaryToAssetPackStates(testDict);
   }
 
   @Test
