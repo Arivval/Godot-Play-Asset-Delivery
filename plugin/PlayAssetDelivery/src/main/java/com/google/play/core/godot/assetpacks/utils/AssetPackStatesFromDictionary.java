@@ -19,12 +19,10 @@ package com.google.play.core.godot.assetpacks.utils;
 import com.google.android.play.core.assetpacks.AssetPackState;
 import com.google.android.play.core.assetpacks.AssetPackStates;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import org.godotengine.godot.Dictionary;
 
 /**
@@ -48,7 +46,9 @@ public class AssetPackStatesFromDictionary extends AssetPackStates {
         this.totalBytes = (long) dict.get(TOTAL_BYTES_KEY);
         Dictionary packStatesDictionary = (Dictionary) dict.get(PACK_STATES_KEY);
         this.packStates =
-            packStatesDictionary.entrySet().stream()
+            packStatesDictionary
+                .entrySet()
+                .stream()
                 .collect(
                     Collectors.toMap(
                         e -> e.getKey(),

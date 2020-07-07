@@ -20,7 +20,6 @@ import com.google.android.play.core.assetpacks.AssetLocation;
 import com.google.android.play.core.assetpacks.AssetPackLocation;
 import com.google.android.play.core.assetpacks.AssetPackState;
 import com.google.android.play.core.assetpacks.AssetPackStates;
-import java.util.Map;
 import org.godotengine.godot.Dictionary;
 
 /**
@@ -48,10 +47,11 @@ public class PlayAssetDeliveryUtils {
     return returnDict;
   }
 
-  public static Dictionary constructAssetPackStatesDictionary(long totalBytes) {
+  public static Dictionary constructAssetPackStatesDictionary(
+      long totalBytes, Dictionary packStatesDictionary) {
     Dictionary returnDict = new Dictionary();
     returnDict.put(AssetPackStatesFromDictionary.TOTAL_BYTES_KEY, totalBytes);
-    returnDict.put(AssetPackStatesFromDictionary.PACK_STATES_KEY, new Dictionary());
+    returnDict.put(AssetPackStatesFromDictionary.PACK_STATES_KEY, packStatesDictionary);
     return returnDict;
   }
 
@@ -90,12 +90,17 @@ public class PlayAssetDeliveryUtils {
   }
 
   public static Dictionary convertAssetPackStatesToDictionary(AssetPackStates assetPackStates) {
-    Dictionary returnDict = constructAssetPackStatesDictionary(assetPackStates.totalBytes());
-    Map<String, AssetPackState> packNameStateMap = assetPackStates.packStates();
-    for (Map.Entry<String, AssetPackState> entry : packNameStateMap.entrySet()) {
-      appendToAssetPackStatesDictionary(
-          returnDict, entry.getKey(), convertAssetPackStateToDictionary(entry.getValue()));
-    }
+    Dictionary packStatesDictionary =
+        assetPackStates
+            .packStates()
+            .entrySet()
+            .stream()
+            .collect(
+                Dictionary::new,
+                (d, e) -> d.put(e.getKey(), convertAssetPackStateToDictionary(e.getValue())),
+                (d1, d2) -> {});
+    Dictionary returnDict =
+        constructAssetPackStatesDictionary(assetPackStates.totalBytes(), packStatesDictionary);
     return returnDict;
   }
 

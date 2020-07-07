@@ -30,7 +30,8 @@ public class AssetPackStatesFromDictionaryTest {
     Dictionary innerDict2 =
         PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
             0, -6, "Lorem ipsum dolor sit amet, consectetur adipiscing elit.", 7, 0, 0);
-    Dictionary testDict = PlayAssetDeliveryUtils.constructAssetPackStatesDictionary(65536);
+    Dictionary testDict =
+        PlayAssetDeliveryUtils.constructAssetPackStatesDictionary(65536, new Dictionary());
     PlayAssetDeliveryUtils.appendToAssetPackStatesDictionary(testDict, "pack1", innerDict1);
     PlayAssetDeliveryUtils.appendToAssetPackStatesDictionary(testDict, "pack2", innerDict2);
     return testDict;
