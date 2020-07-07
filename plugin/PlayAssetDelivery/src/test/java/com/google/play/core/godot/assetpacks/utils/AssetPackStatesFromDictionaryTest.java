@@ -118,7 +118,7 @@ public class AssetPackStatesFromDictionaryTest {
     PlayAssetDeliveryUtils.appendToAssetPackStatesDictionary(testDict, "pack1", innerDict1);
     PlayAssetDeliveryUtils.appendToAssetPackStatesDictionary(testDict, "pack2", innerDict2);
 
-    innerDict1.put(AssetPackStateFromDictionary.STATUS_KEY, "wrong key");
+    innerDict1.put(AssetPackStateFromDictionary.STATUS_KEY, "wrong type");
 
     AssetPackStatesFromDictionary testSubject = new AssetPackStatesFromDictionary(testDict);
   }
