@@ -19,9 +19,9 @@ package com.google.play.core.godot.assetpacks.utils;
 import com.google.android.play.core.assetpacks.AssetLocation;
 import com.google.android.play.core.assetpacks.AssetPackLocation;
 import com.google.android.play.core.assetpacks.AssetPackState;
+import com.google.android.play.core.assetpacks.AssetPackStates;
 import java.util.Map;
 import java.util.stream.Collectors;
-import com.google.android.play.core.assetpacks.AssetPackStates;
 import org.godotengine.godot.Dictionary;
 
 /**
@@ -121,13 +121,14 @@ public class PlayAssetDeliveryUtils {
 
   public static Dictionary convertAssetPackLocationsToDictionary(
       Map<String, AssetPackLocation> assetPackLocations) {
-    Dictionary returnDict = new Dictionary();
-    for (Map.Entry<String, AssetPackLocation> entry : assetPackLocations.entrySet()) {
-      String packName = entry.getKey();
-      AssetPackLocation packLocation = entry.getValue();
-      Dictionary packLocationDict = convertAssetPackLocationToDictionary(packLocation);
-      returnDict.put(packName, packLocationDict);
-    }
+    Dictionary returnDict =
+        assetPackLocations
+            .entrySet()
+            .stream()
+            .collect(
+                Dictionary::new,
+                (d, e) -> d.put(e.getKey(), convertAssetPackLocationToDictionary(e.getValue())),
+                (d1, d2) -> d1.putAll(d2));
     return returnDict;
   }
 
@@ -155,7 +156,8 @@ public class PlayAssetDeliveryUtils {
       Dictionary dict) throws IllegalArgumentException {
     try {
       Map<String, AssetPackLocation> returnMap =
-          dict.entrySet().stream()
+          dict.entrySet()
+              .stream()
               .collect(
                   Collectors.toMap(
                       e -> e.getKey(),

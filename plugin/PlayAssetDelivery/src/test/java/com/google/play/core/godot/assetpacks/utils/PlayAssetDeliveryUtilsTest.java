@@ -21,8 +21,8 @@ import static com.google.common.truth.Truth.assertThat;
 import com.google.android.play.core.assetpacks.AssetLocation;
 import com.google.android.play.core.assetpacks.AssetPackLocation;
 import com.google.android.play.core.assetpacks.AssetPackState;
-import java.util.Map;
 import com.google.android.play.core.assetpacks.AssetPackStates;
+import java.util.Map;
 import org.godotengine.godot.Dictionary;
 import org.junit.Test;
 
