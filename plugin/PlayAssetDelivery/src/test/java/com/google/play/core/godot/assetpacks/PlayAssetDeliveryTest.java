@@ -170,15 +170,7 @@ public class PlayAssetDeliveryTest {
   @Test
   public void getPackLocations_success() {
     PlayAssetDelivery testSubject = createPlayAssetDeliveryInstance();
-    Dictionary innerDict1 =
-        PlayAssetDeliveryUtils.constructAssetPackLocationDictionary(
-            "~/Downloads/assetsPath", 0, "~/Downloads/extractedPath");
-    Dictionary innerDict2 =
-        PlayAssetDeliveryUtils.constructAssetPackLocationDictionary(
-            "~/Downloads/assetsPath2", 0, "~/Downloads/extractedPath2");
-    Dictionary testDict = new Dictionary();
-    testDict.put("location1", innerDict1);
-    testDict.put("location2", innerDict2);
+    Dictionary testDict = PlayAssetDeliveryTestHelper.createAssetPackLocationsDictionary();
 
     when(assetPackManagerMock.getPackLocations())
         .thenReturn(PlayAssetDeliveryUtils.convertDictionaryToAssetPackLocations(testDict));
