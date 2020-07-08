@@ -173,4 +173,14 @@ public class PlayAssetDeliveryTest {
     Dictionary resultDict = testSubject.getPackLocation("packName");
     assertThat(resultDict).isEqualTo(testDict);
   }
+
+  @Test
+  public void getPackLocations_exist() {
+
+  }
+
+  @Test
+  public void getPackLocations_not_exist() {
+
+  }
 }
