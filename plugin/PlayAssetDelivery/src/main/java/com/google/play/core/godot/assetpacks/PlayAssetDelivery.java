@@ -44,16 +44,38 @@ public class PlayAssetDelivery extends GodotPlugin {
 
   private AssetPackManager assetPackManager;
 
+  private final String ASSET_PACK_STATE_UPDATED = "assetPackStateUpdated";
+  private final String FETCH_STATE_UPDATED = "fetchStateUpdated";
+  private final String FETCH_SUCCESS = "fetchSuccess";
+  private final String FETCH_ERROR = "fetchError";
+  private final String GET_PACK_STATES_SUCCESS = "getPackStatesSuccess";
+  private final String GET_PACK_STATES_ERROR = "getPackStatesError";
+  private final String REMOVE_PACK_SUCCESS = "removePackSuccess";
+  private final String REMOVE_PACK_ERROR = "removePackError";
+  private final String SHOW_CELLULAR_DATA_CONFIRMATION_SUCCESS =
+      "showCellularDataConfirmationSuccess";
+  private final String SHOW_CELLULAR_DATA_CONFIRMATION_ERROR = "showCellularDataConfirmationError";
+
   public PlayAssetDelivery(Godot godot) {
     super(godot);
     Context applicationContext = godot.getApplicationContext();
     assetPackManager = AssetPackManagerFactory.getInstance(applicationContext);
+    registerAssetPackStateUpdatedListener();
   }
 
   /** Package-private constructor used to instantiate PlayAssetDelivery class with mock objects. */
   PlayAssetDelivery(Godot godot, AssetPackManager assetPackManager) {
     super(godot);
     this.assetPackManager = assetPackManager;
+  }
+
+  void registerAssetPackStateUpdatedListener() {
+    assetPackManager.registerListener(
+        state -> {
+          emitSignal(
+              ASSET_PACK_STATE_UPDATED,
+              PlayAssetDeliveryUtils.convertAssetPackStateToDictionary(state));
+        });
   }
 
   @NonNull
@@ -77,6 +99,7 @@ public class PlayAssetDelivery extends GodotPlugin {
         "showCellularDataConfirmation");
   }
 
+  // TODO Refactor these to const
   /**
    * Returns a set containing all the signals the Godot runtime is able to receive.
    * Below is the documentation for all signals registered.
@@ -99,19 +122,18 @@ public class PlayAssetDelivery extends GodotPlugin {
   @Override
   public Set<SignalInfo> getPluginSignals() {
     Set<SignalInfo> availableSignals = new HashSet<>();
-    availableSignals.add(new SignalInfo("assetPackStateUpdateSignal", String.class));
-    availableSignals.add(new SignalInfo("fetchStateUpdated", String.class, Integer.class));
-    availableSignals.add(new SignalInfo("fetchSuccess", String.class, Integer.class));
-    availableSignals.add(new SignalInfo("fetchError", String.class, Integer.class));
-    availableSignals.add(new SignalInfo("getPackStatesSuccess", String.class, Integer.class));
-    availableSignals.add(new SignalInfo("getPackStatesError", String.class, Integer.class));
-    availableSignals.add(new SignalInfo("removePackSuccess", String.class, Integer.class));
+    availableSignals.add(new SignalInfo(ASSET_PACK_STATE_UPDATED, Dictionary.class));
+    availableSignals.add(new SignalInfo(FETCH_STATE_UPDATED, Dictionary.class, Integer.class));
+    availableSignals.add(new SignalInfo(FETCH_SUCCESS, Dictionary.class, Integer.class));
+    availableSignals.add(new SignalInfo(FETCH_ERROR, String.class, Integer.class));
+    availableSignals.add(new SignalInfo(GET_PACK_STATES_SUCCESS, Dictionary.class, Integer.class));
+    availableSignals.add(new SignalInfo(GET_PACK_STATES_ERROR, String.class, Integer.class));
+    availableSignals.add(new SignalInfo(REMOVE_PACK_SUCCESS, Integer.class));
+    availableSignals.add(new SignalInfo(REMOVE_PACK_ERROR, String.class, Integer.class));
     availableSignals.add(
-        new SignalInfo("removePackError", String.class, String.class, Integer.class));
+        new SignalInfo(SHOW_CELLULAR_DATA_CONFIRMATION_SUCCESS, Integer.class, Integer.class));
     availableSignals.add(
-        new SignalInfo("showCellularDataConfirmationSuccess", Integer.class, Integer.class));
-    availableSignals.add(
-        new SignalInfo("showCellularDataConfirmationError", String.class, Integer.class));
+        new SignalInfo(SHOW_CELLULAR_DATA_CONFIRMATION_ERROR, String.class, Integer.class));
     return availableSignals;
   }
 
@@ -124,6 +146,32 @@ public class PlayAssetDelivery extends GodotPlugin {
   public Dictionary cancel(String[] packNames) {
     AssetPackStates updatedStates = assetPackManager.cancel(Arrays.asList(packNames));
     return PlayAssetDeliveryUtils.convertAssetPackStatesToDictionary(updatedStates);
+  }
+
+  /**
+   * Calls fetch(List<String> packNames) method in the Play Core Library. Requests to download the
+   * specified asset packs. Emits fetchStateUpdated, fetchSuccess and fetchError signals.
+   */
+  public void fetch(List<String> packNames, int signalID) {
+    assetPackManager
+        .fetch(packNames)
+        .addOnSuccessListener(
+            result ->
+                emitSignal(
+                    FETCH_SUCCESS,
+                    PlayAssetDeliveryUtils.convertAssetPackStatesToDictionary(result),
+                    signalID))
+        .addOnFailureListener(e -> emitSignal(FETCH_ERROR, e.toString(), signalID));
+
+    assetPackManager.registerListener(
+        state -> {
+          if (packNames.contains(state.name())) {
+            emitSignal(
+                FETCH_STATE_UPDATED,
+                PlayAssetDeliveryUtils.convertAssetPackStateToDictionary(state),
+                signalID);
+          }
+        });
   }
 
   /**
@@ -164,5 +212,53 @@ public class PlayAssetDelivery extends GodotPlugin {
   public Dictionary getPackLocations() {
     Map<String, AssetPackLocation> packLocationsMap = assetPackManager.getPackLocations();
     return PlayAssetDeliveryUtils.convertAssetPackLocationsToDictionary(packLocationsMap);
+  }
+
+  /**
+   * Calls getPackStates(List<String> packNames) method in the Play Core Library. Requests download
+   * state or details for the specified asset packs. Emits getPackStatesSuccess and
+   * getPackStatesError signals.
+   *
+   * @param packNames
+   */
+  public void getPackStates(List<String> packNames, int signalID) {
+    assetPackManager
+        .getPackStates(packNames)
+        .addOnSuccessListener(
+            result ->
+                emitSignal(
+                    GET_PACK_STATES_SUCCESS,
+                    PlayAssetDeliveryUtils.convertAssetPackStatesToDictionary(result),
+                    signalID))
+        .addOnFailureListener(e -> emitSignal(GET_PACK_STATES_ERROR, e.toString(), signalID));
+  }
+
+  /**
+   * Calls removePack(String packName, int signalID) method in the Play Core Library. Deletes the
+   * specified asset pack from the internal storage of the app. Emits removePackSuccess and
+   * removePackError signals.
+   *
+   * @param packName
+   */
+  public void removePack(String packName, int signalID) {
+    assetPackManager
+        .removePack(packName)
+        .addOnSuccessListener(result -> emitSignal(REMOVE_PACK_SUCCESS, signalID))
+        .addOnFailureListener(e -> emitSignal(REMOVE_PACK_ERROR, e.toString(), signalID));
+  }
+
+  /**
+   * Directly calls showCellularDataConfirmation(Activity activity). The current activity can be
+   * accessed using (Context) getGodot().getApplicationContext(); Shows a confirmation dialog to
+   * resume all pack downloads that are currently in the WAITING_FOR_WIFI state. Emits
+   * showCellularDataConfirmationSuccess and showCellularDataConfirmationError signals.
+   */
+  public void showCellularDataConfirmation(int signalID) {
+    assetPackManager
+        .showCellularDataConfirmation(this.getGodot())
+        .addOnSuccessListener(
+            result -> emitSignal(SHOW_CELLULAR_DATA_CONFIRMATION_SUCCESS, result, signalID))
+        .addOnFailureListener(
+            e -> emitSignal(SHOW_CELLULAR_DATA_CONFIRMATION_ERROR, e.toString(), signalID));
   }
 }
