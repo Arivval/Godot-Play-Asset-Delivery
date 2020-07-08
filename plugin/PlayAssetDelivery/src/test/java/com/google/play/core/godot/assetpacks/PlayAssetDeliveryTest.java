@@ -132,7 +132,7 @@ public class PlayAssetDeliveryTest {
   @Test
   public void getAssetLocation_not_exist() {
     PlayAssetDelivery testSubject = createPlayAssetDeliveryInstance();
-    Dictionary testDict = new Dictionary();
+    Dictionary testDict = null;
 
     when(assetPackManagerMock.getAssetLocation(any(String.class), any(String.class)))
         .thenReturn(null);

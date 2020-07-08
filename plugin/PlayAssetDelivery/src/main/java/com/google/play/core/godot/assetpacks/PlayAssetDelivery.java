@@ -126,15 +126,15 @@ public class PlayAssetDelivery extends GodotPlugin {
 
   /**
    * Calls getAssetLocation(String packName, String assetPath) method in the Play Core Library.
-   * Returns the location of an asset in a pack, or empty Dictionary if the asset is not present in
-   * the given pack.
+   * Returns the location of an asset in a pack, or null if the asset is not present in the given
+   * pack.
    *
    * @return serialized AssetLocation object
    */
   public Dictionary getAssetLocation(String packName, String assetPath) {
     AssetLocation retrievedAssetLocation = assetPackManager.getAssetLocation(packName, assetPath);
     if (retrievedAssetLocation == null) {
-      return new Dictionary();
+      return null;
     }
     return PlayAssetDeliveryUtils.convertAssetLocationToDictionary(retrievedAssetLocation);
   }
