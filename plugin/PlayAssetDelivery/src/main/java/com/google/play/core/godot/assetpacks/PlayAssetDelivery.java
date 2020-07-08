@@ -150,7 +150,7 @@ public class PlayAssetDelivery extends GodotPlugin {
   }
 
   /**
-   * calls getPackLocation(String packName) method in the Play Core Library Returns the location of
+   * Calls getPackLocation(String packName) method in the Play Core Library. Returns the location of
    * the specified asset pack on the device or empty Dictionary if this pack is not downloaded or is
    * outdated.
    *
@@ -166,7 +166,7 @@ public class PlayAssetDelivery extends GodotPlugin {
   }
 
   /**
-   * calls getPackLocations() method in the Play Core Library Returns the location of all installed
+   * Calls getPackLocations() method in the Play Core Library. Returns the location of all installed
    * asset packs as a mapping from the asset pack name to an AssetPackLocation.
    *
    * @return serialized abstract Map<String, AssetPackLocation> object
