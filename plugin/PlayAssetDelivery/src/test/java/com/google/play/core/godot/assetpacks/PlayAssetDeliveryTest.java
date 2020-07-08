@@ -133,13 +133,12 @@ public class PlayAssetDeliveryTest {
   @Test
   public void getAssetLocation_notExist() {
     PlayAssetDelivery testSubject = createPlayAssetDeliveryInstance();
-    Dictionary testDict = null;
 
     when(assetPackManagerMock.getAssetLocation(any(String.class), any(String.class)))
         .thenReturn(null);
 
     Dictionary resultDict = testSubject.getAssetLocation("packName", "assetPath");
-    assertThat(resultDict).isEqualTo(testDict);
+    assertThat(resultDict).isEqualTo(null);
   }
 
   @Test
@@ -159,12 +158,11 @@ public class PlayAssetDeliveryTest {
   @Test
   public void getPackLocation_notExist() {
     PlayAssetDelivery testSubject = createPlayAssetDeliveryInstance();
-    Dictionary testDict = null;
 
     when(assetPackManagerMock.getPackLocation(any(String.class))).thenReturn(null);
 
     Dictionary resultDict = testSubject.getPackLocation("packName");
-    assertThat(resultDict).isEqualTo(testDict);
+    assertThat(resultDict).isEqualTo(null);
   }
 
   @Test
