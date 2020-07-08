@@ -20,6 +20,8 @@ import com.google.android.play.core.assetpacks.AssetLocation;
 import com.google.android.play.core.assetpacks.AssetPackLocation;
 import com.google.android.play.core.assetpacks.AssetPackState;
 import com.google.android.play.core.assetpacks.AssetPackStates;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.godotengine.godot.Dictionary;
 
 /**
@@ -117,6 +119,17 @@ public class PlayAssetDeliveryUtils {
         assetPackLocation.path());
   }
 
+  public static Dictionary convertAssetPackLocationsToDictionary(
+      Map<String, AssetPackLocation> assetPackLocations) {
+    return assetPackLocations
+        .entrySet()
+        .stream()
+        .collect(
+            Dictionary::new,
+            (d, e) -> d.put(e.getKey(), convertAssetPackLocationToDictionary(e.getValue())),
+            (d1, d2) -> d1.putAll(d2));
+  }
+
   public static AssetPackState convertDictionaryToAssetPackState(Dictionary dict)
       throws IllegalArgumentException {
     return new AssetPackStateFromDictionary(dict);
@@ -135,5 +148,20 @@ public class PlayAssetDeliveryUtils {
   public static AssetPackLocation convertDictionaryToAssetPackLocation(Dictionary dict)
       throws IllegalArgumentException {
     return new AssetPackLocationFromDictionary(dict);
+  }
+
+  public static Map<String, AssetPackLocation> convertDictionaryToAssetPackLocations(
+      Dictionary dict) throws IllegalArgumentException {
+    try {
+      return dict.entrySet()
+          .stream()
+          .collect(
+              Collectors.toMap(
+                  e -> e.getKey(),
+                  e -> convertDictionaryToAssetPackLocation((Dictionary) e.getValue())));
+    } catch (ClassCastException e) {
+      throw new IllegalArgumentException(
+          "Invalid input Dictionary, unable to cast entry to Dictionary");
+    }
   }
 }

@@ -22,6 +22,7 @@ import com.google.android.play.core.assetpacks.AssetLocation;
 import com.google.android.play.core.assetpacks.AssetPackLocation;
 import com.google.android.play.core.assetpacks.AssetPackState;
 import com.google.android.play.core.assetpacks.AssetPackStates;
+import java.util.Map;
 import org.godotengine.godot.Dictionary;
 import org.junit.Test;
 
@@ -230,5 +231,67 @@ public class PlayAssetDeliveryUtilsTest {
     testDictionary.put(AssetPackLocationFromDictionary.PATH_KEY, 123);
     AssetPackLocation testAssetPackLocation =
         PlayAssetDeliveryUtils.convertDictionaryToAssetPackLocation(testDictionary);
+  }
+
+  @Test
+  public void convertAssetPackLocationsToDictionaryAndBack_valid() {
+    Dictionary innerDict1 =
+        PlayAssetDeliveryUtils.constructAssetPackLocationDictionary(
+            "~/Downloads/assetsPath", 0, "~/Downloads/extractedPath");
+    Dictionary innerDict2 =
+        PlayAssetDeliveryUtils.constructAssetPackLocationDictionary(
+            "~/Downloads/assetsPath2", 0, "~/Downloads/extractedPath2");
+    Dictionary testDictionary = new Dictionary();
+    testDictionary.put("location1", innerDict1);
+    testDictionary.put("location2", innerDict2);
+
+    Map<String, AssetPackLocation> testAssetPackLocations =
+        PlayAssetDeliveryUtils.convertDictionaryToAssetPackLocations(testDictionary);
+    Dictionary resultingDictionary =
+        PlayAssetDeliveryUtils.convertAssetPackLocationsToDictionary(testAssetPackLocations);
+    assertThat(resultingDictionary).isEqualTo(testDictionary);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void convertDictionaryToAssetPackLocations_missingKey() {
+    // Test failure case where there is a missing key
+    Dictionary innerDict =
+        PlayAssetDeliveryUtils.constructAssetPackLocationDictionary(
+            "~/Downloads/assetsPath", 0, "~/Downloads/extractedPath");
+    Dictionary testDictionary = new Dictionary();
+    testDictionary.put("location1", innerDict);
+
+    innerDict.remove(AssetPackLocationFromDictionary.ASSETS_PATH_KEY);
+
+    Map<String, AssetPackLocation> testAssetPackLocations =
+        PlayAssetDeliveryUtils.convertDictionaryToAssetPackLocations(testDictionary);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void convertDictionaryToAssetPackLocations_typeMismatch1() {
+    // Test failure case where there is a type mismatch
+    Dictionary innerDict =
+        PlayAssetDeliveryUtils.constructAssetPackLocationDictionary(
+            "~/Downloads/assetsPath", 0, "~/Downloads/extractedPath");
+    Dictionary testDictionary = new Dictionary();
+    testDictionary.put("location1", innerDict);
+
+    innerDict.put(AssetPackLocationFromDictionary.ASSETS_PATH_KEY, -1);
+
+    Map<String, AssetPackLocation> testAssetPackLocations =
+        PlayAssetDeliveryUtils.convertDictionaryToAssetPackLocations(testDictionary);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void convertDictionaryToAssetPackLocations_typeMismatch2() {
+    // Test failure case where there is a type mismatch
+    Dictionary innerDict =
+        PlayAssetDeliveryUtils.constructAssetPackLocationDictionary(
+            "~/Downloads/assetsPath", 0, "~/Downloads/extractedPath");
+    Dictionary testDictionary = new Dictionary();
+    testDictionary.put("location1", "innerDict");
+
+    Map<String, AssetPackLocation> testAssetPackLocations =
+        PlayAssetDeliveryUtils.convertDictionaryToAssetPackLocations(testDictionary);
   }
 }
