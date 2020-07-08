@@ -23,6 +23,7 @@ import static org.mockito.Mockito.when;
 
 import com.google.android.play.core.assetpacks.AssetPackManager;
 import com.google.play.core.godot.assetpacks.utils.AssetLocationFromDictionary;
+import com.google.play.core.godot.assetpacks.utils.AssetPackLocationFromDictionary;
 import com.google.play.core.godot.assetpacks.utils.AssetPackStatesFromDictionary;
 import com.google.play.core.godot.assetpacks.utils.PlayAssetDeliveryUtils;
 import java.util.List;
@@ -130,14 +131,49 @@ public class PlayAssetDeliveryTest {
   }
 
   @Test
-  public void getAssetLocation_not_exist() {
+  public void getAssetLocation_notExist() {
     PlayAssetDelivery testSubject = createPlayAssetDeliveryInstance();
-    Dictionary testDict = null;
 
     when(assetPackManagerMock.getAssetLocation(any(String.class), any(String.class)))
         .thenReturn(null);
 
     Dictionary resultDict = testSubject.getAssetLocation("packName", "assetPath");
+    assertThat(resultDict).isEqualTo(null);
+  }
+
+  @Test
+  public void getPackLocation_exist() {
+    PlayAssetDelivery testSubject = createPlayAssetDeliveryInstance();
+    Dictionary testDict =
+        PlayAssetDeliveryUtils.constructAssetPackLocationDictionary(
+            "~/Documents/assetsPath/", 0, "~/Documents/path/");
+
+    when(assetPackManagerMock.getPackLocation(any(String.class)))
+        .thenReturn(new AssetPackLocationFromDictionary(testDict));
+
+    Dictionary resultDict = testSubject.getPackLocation("packName");
+    assertThat(resultDict).isEqualTo(testDict);
+  }
+
+  @Test
+  public void getPackLocation_notExist() {
+    PlayAssetDelivery testSubject = createPlayAssetDeliveryInstance();
+
+    when(assetPackManagerMock.getPackLocation(any(String.class))).thenReturn(null);
+
+    Dictionary resultDict = testSubject.getPackLocation("packName");
+    assertThat(resultDict).isEqualTo(null);
+  }
+
+  @Test
+  public void getPackLocations_success() {
+    PlayAssetDelivery testSubject = createPlayAssetDeliveryInstance();
+    Dictionary testDict = PlayAssetDeliveryTestHelper.createAssetPackLocationsDictionary();
+
+    when(assetPackManagerMock.getPackLocations())
+        .thenReturn(PlayAssetDeliveryUtils.convertDictionaryToAssetPackLocations(testDict));
+
+    Dictionary resultDict = testSubject.getPackLocations();
     assertThat(resultDict).isEqualTo(testDict);
   }
 }
