@@ -17,12 +17,20 @@
 package com.google.play.core.godot.assetpacks;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyListOf;
+import static org.mockito.Mockito.when;
 
+import com.google.android.play.core.assetpacks.AssetPackManager;
+import com.google.play.core.godot.assetpacks.utils.AssetLocationFromDictionary;
+import com.google.play.core.godot.assetpacks.utils.AssetPackStatesFromDictionary;
+import com.google.play.core.godot.assetpacks.utils.PlayAssetDeliveryUtils;
 import java.util.List;
 import java.util.Set;
+import org.godotengine.godot.Dictionary;
 import org.godotengine.godot.Godot;
 import org.godotengine.godot.plugin.SignalInfo;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -31,17 +39,22 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class PlayAssetDeliveryTest {
 
   @Mock Godot godotMock;
+  @Mock AssetPackManager assetPackManagerMock;
+
+  private PlayAssetDelivery createPlayAssetDeliveryInstance() {
+    return new PlayAssetDelivery(godotMock, assetPackManagerMock);
+  }
 
   @Test
   public void getPluginName() {
-    PlayAssetDelivery testSubject = new PlayAssetDelivery(godotMock);
+    PlayAssetDelivery testSubject = createPlayAssetDeliveryInstance();
     String actualName = testSubject.getPluginName();
     assertThat(actualName).isEqualTo("PlayAssetDelivery");
   }
 
   @Test
   public void getPluginMethods() {
-    PlayAssetDelivery testSubject = new PlayAssetDelivery(godotMock);
+    PlayAssetDelivery testSubject = createPlayAssetDeliveryInstance();
     List<String> actualList = testSubject.getPluginMethods();
     assertThat(actualList)
         .containsExactly(
@@ -57,7 +70,7 @@ public class PlayAssetDeliveryTest {
 
   @Test
   public void getPluginSignals() {
-    PlayAssetDelivery testSubject = new PlayAssetDelivery(godotMock);
+    PlayAssetDelivery testSubject = createPlayAssetDeliveryInstance();
     Set<SignalInfo> testSet = testSubject.getPluginSignals();
 
     SignalInfo assetPackStateUpdateSignal =
@@ -88,5 +101,43 @@ public class PlayAssetDeliveryTest {
             removePackError,
             showCellularDataConfirmationSuccess,
             showCellularDataConfirmationError);
+  }
+
+  @Test
+  public void cancel_success() {
+    PlayAssetDelivery testSubject = createPlayAssetDeliveryInstance();
+    String[] testPackNames = {"Test pack 1", "Test pack 2"};
+    Dictionary testDict = PlayAssetDeliveryTestHelper.createAssetPackStatesTestDictionary();
+
+    when(assetPackManagerMock.cancel(anyListOf(String.class)))
+        .thenReturn(new AssetPackStatesFromDictionary(testDict));
+
+    Dictionary resultDict = testSubject.cancel(testPackNames);
+    assertThat(resultDict).isEqualTo(testDict);
+  }
+
+  @Test
+  public void getAssetLocation_exist() {
+    PlayAssetDelivery testSubject = createPlayAssetDeliveryInstance();
+    Dictionary testDict =
+        PlayAssetDeliveryUtils.constructAssetLocationDictionary(0, "~/Documents/", 256);
+
+    when(assetPackManagerMock.getAssetLocation(any(String.class), any(String.class)))
+        .thenReturn(new AssetLocationFromDictionary(testDict));
+
+    Dictionary resultDict = testSubject.getAssetLocation("packName", "assetPath");
+    assertThat(resultDict).isEqualTo(testDict);
+  }
+
+  @Test
+  public void getAssetLocation_not_exist() {
+    PlayAssetDelivery testSubject = createPlayAssetDeliveryInstance();
+    Dictionary testDict = null;
+
+    when(assetPackManagerMock.getAssetLocation(any(String.class), any(String.class)))
+        .thenReturn(null);
+
+    Dictionary resultDict = testSubject.getAssetLocation("packName", "assetPath");
+    assertThat(resultDict).isEqualTo(testDict);
   }
 }

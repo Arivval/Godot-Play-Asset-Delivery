@@ -16,11 +16,18 @@
 
 package com.google.play.core.godot.assetpacks;
 
+import android.content.Context;
 import androidx.annotation.NonNull;
+import com.google.android.play.core.assetpacks.AssetLocation;
+import com.google.android.play.core.assetpacks.AssetPackManager;
+import com.google.android.play.core.assetpacks.AssetPackManagerFactory;
+import com.google.android.play.core.assetpacks.AssetPackStates;
+import com.google.play.core.godot.assetpacks.utils.PlayAssetDeliveryUtils;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.godotengine.godot.Dictionary;
 import org.godotengine.godot.Godot;
 import org.godotengine.godot.plugin.GodotPlugin;
 import org.godotengine.godot.plugin.SignalInfo;
@@ -33,8 +40,18 @@ import org.godotengine.godot.plugin.SignalInfo;
  */
 public class PlayAssetDelivery extends GodotPlugin {
 
+  private AssetPackManager assetPackManager;
+
   public PlayAssetDelivery(Godot godot) {
     super(godot);
+    Context applicationContext = godot.getApplicationContext();
+    assetPackManager = AssetPackManagerFactory.getInstance(applicationContext);
+  }
+
+  /** Package-private constructor used to instantiate PlayAssetDelivery class with mock objects. */
+  PlayAssetDelivery(Godot godot, AssetPackManager assetPackManager) {
+    super(godot);
+    this.assetPackManager = assetPackManager;
   }
 
   @NonNull
@@ -94,5 +111,31 @@ public class PlayAssetDelivery extends GodotPlugin {
     availableSignals.add(
         new SignalInfo("showCellularDataConfirmationError", String.class, Integer.class));
     return availableSignals;
+  }
+
+  /**
+   * Calls cancel(List<String> packNames) method in the Play Core Library. Requests to cancel the
+   * download of the specified asset packs.
+   *
+   * @return serialized AssetPackStates object
+   */
+  public Dictionary cancel(String[] packNames) {
+    AssetPackStates updatedStates = assetPackManager.cancel(Arrays.asList(packNames));
+    return PlayAssetDeliveryUtils.convertAssetPackStatesToDictionary(updatedStates);
+  }
+
+  /**
+   * Calls getAssetLocation(String packName, String assetPath) method in the Play Core Library.
+   * Returns the location of an asset in a pack, or null if the asset is not present in the given
+   * pack.
+   *
+   * @return serialized AssetLocation object
+   */
+  public Dictionary getAssetLocation(String packName, String assetPath) {
+    AssetLocation retrievedAssetLocation = assetPackManager.getAssetLocation(packName, assetPath);
+    if (retrievedAssetLocation == null) {
+      return null;
+    }
+    return PlayAssetDeliveryUtils.convertAssetLocationToDictionary(retrievedAssetLocation);
   }
 }
