@@ -44,7 +44,7 @@ public class PlayAssetDelivery extends GodotPlugin {
 
   /**
    * Helper function that returns an AssetPackManager instance. Initially part of the constructor,
-   * refactored to provide easy access for mockito
+   * refactored to provide easy access for writing mock tests.
    *
    * @param godot
    * @return
