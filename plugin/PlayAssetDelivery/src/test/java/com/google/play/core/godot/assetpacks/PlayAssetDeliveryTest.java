@@ -42,12 +42,7 @@ public class PlayAssetDeliveryTest {
   @Mock AssetPackManager assetPackManagerMock;
 
   private PlayAssetDelivery createPlayAssetDeliveryInstance() {
-    return new PlayAssetDelivery(godotMock) {
-      @Override
-      AssetPackManager getAssetPackManagerInstance(Godot godot) {
-        return assetPackManagerMock;
-      }
-    };
+    return new PlayAssetDelivery(godotMock, assetPackManagerMock);
   }
 
   @Test
