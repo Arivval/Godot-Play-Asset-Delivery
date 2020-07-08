@@ -16,14 +16,26 @@
 
 package com.google.play.core.godot.assetpacks;
 
+import android.content.Context;
+
 import androidx.annotation.NonNull;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
+import org.godotengine.godot.Dictionary;
 import org.godotengine.godot.Godot;
 import org.godotengine.godot.plugin.GodotPlugin;
 import org.godotengine.godot.plugin.SignalInfo;
+
+import com.google.android.play.core.assetpacks.AssetLocation;
+import com.google.android.play.core.assetpacks.AssetPackLocation;
+import com.google.android.play.core.assetpacks.AssetPackManager;
+import com.google.android.play.core.assetpacks.AssetPackManagerFactory;
+import com.google.android.play.core.assetpacks.AssetPackStates;
+import com.google.play.core.godot.assetpacks.utils.PlayAssetDeliveryUtils;
 
 /**
  * This class is served as a middleware, to expose the Play Core Java library to the Godot runtime,
@@ -33,8 +45,12 @@ import org.godotengine.godot.plugin.SignalInfo;
  */
 public class PlayAssetDelivery extends GodotPlugin {
 
+  private AssetPackManager assetPackManager;
+
   public PlayAssetDelivery(Godot godot) {
     super(godot);
+    Context applicationContext = godot.getApplicationContext();
+    assetPackManager = AssetPackManagerFactory.getInstance(applicationContext);
   }
 
   @NonNull
@@ -94,5 +110,61 @@ public class PlayAssetDelivery extends GodotPlugin {
     availableSignals.add(
         new SignalInfo("showCellularDataConfirmationError", String.class, Integer.class));
     return availableSignals;
+  }
+
+  /**
+   * calls cancel(String[] packNames) method in the Play Core Library Requests to cancel the
+   * download of the specified asset packs.
+   *
+   * @param packNames
+   * @return serialized AssetPackStates object
+   */
+  public Dictionary cancel(String[] packNames) {
+    AssetPackStates updatedStates = assetPackManager.cancel(Arrays.asList(packNames));
+    return PlayAssetDeliveryUtils.convertAssetPackStatesToDictionary(updatedStates);
+  }
+
+  /**
+   * calls getAssetLocation(String packName, String assetPath) method in the Play Core Library
+   * Returns the location of an asset in a pack, or empty Dictionary if the asset is not present in
+   * the given pack.
+   *
+   * @param packName
+   * @param assetPath
+   * @return serialized AssetLocation object
+   */
+  public Dictionary getAssetLocation(String packName, String assetPath) {
+    AssetLocation retrievedAssetLocation = assetPackManager.getAssetLocation(packName, assetPath);
+    if (retrievedAssetLocation == null) {
+      return new Dictionary();
+    }
+    return PlayAssetDeliveryUtils.convertAssetLocationToDictionary(retrievedAssetLocation);
+  }
+
+  /**
+   * calls getPackLocation(String packName) method in the Play Core Library Returns the location of
+   * the specified asset pack on the device or empty Dictionary if this pack is not downloaded or is
+   * outdated.
+   *
+   * @param packName
+   * @return serialized AssetPackLocation object
+   */
+  public Dictionary getPackLocation(String packName) {
+    AssetPackLocation retrievedPackLocation = assetPackManager.getPackLocation(packName);
+    if (retrievedPackLocation == null) {
+      return new Dictionary();
+    }
+    return PlayAssetDeliveryUtils.convertAssetPackLocationToDictionary(retrievedPackLocation);
+  }
+
+  /**
+   * calls getPackLocations() method in the Play Core Library Returns the location of all installed
+   * asset packs as a mapping from the asset pack name to an AssetPackLocation.
+   *
+   * @return serialized abstract Map<String, AssetPackLocation> object
+   */
+  public Dictionary getPackLocations() {
+    Map<String, AssetPackLocation> packLocationsMap = assetPackManager.getPackLocations();
+    return PlayAssetDeliveryUtils.convertAssetPackLocationsToDictionary(packLocationsMap);
   }
 }
