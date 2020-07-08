@@ -21,7 +21,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Mockito.when;
 
-import com.google.android.play.core.assetpacks.AssetPackLocation;
 import com.google.android.play.core.assetpacks.AssetPackManager;
 import com.google.play.core.godot.assetpacks.utils.AssetLocationFromDictionary;
 import com.google.play.core.godot.assetpacks.utils.AssetPackLocationFromDictionary;
@@ -175,12 +174,22 @@ public class PlayAssetDeliveryTest {
   }
 
   @Test
-  public void getPackLocations_exist() {
+  public void getPackLocations_success() {
+    PlayAssetDelivery testSubject = createPlayAssetDeliveryInstance();
+    Dictionary innerDict1 =
+        PlayAssetDeliveryUtils.constructAssetPackLocationDictionary(
+            "~/Downloads/assetsPath", 0, "~/Downloads/extractedPath");
+    Dictionary innerDict2 =
+        PlayAssetDeliveryUtils.constructAssetPackLocationDictionary(
+            "~/Downloads/assetsPath2", 0, "~/Downloads/extractedPath2");
+    Dictionary testDict = new Dictionary();
+    testDict.put("location1", innerDict1);
+    testDict.put("location2", innerDict2);
 
-  }
+    when(assetPackManagerMock.getPackLocations())
+        .thenReturn(PlayAssetDeliveryUtils.convertDictionaryToAssetPackLocations(testDict));
 
-  @Test
-  public void getPackLocations_not_exist() {
-
+    Dictionary resultDict = testSubject.getPackLocations();
+    assertThat(resultDict).isEqualTo(testDict);
   }
 }
