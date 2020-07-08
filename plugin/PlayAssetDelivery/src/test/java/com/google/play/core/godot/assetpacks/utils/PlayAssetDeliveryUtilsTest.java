@@ -268,7 +268,7 @@ public class PlayAssetDeliveryUtilsTest {
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void convertDictionaryToAssetPackLocations_typeMismatch() {
+  public void convertDictionaryToAssetPackLocations_typeMismatch1() {
     // Test failure case where there is a type mismatch
     Dictionary innerDict =
         PlayAssetDeliveryUtils.constructAssetPackLocationDictionary(
@@ -283,7 +283,7 @@ public class PlayAssetDeliveryUtilsTest {
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void convertDictionaryToAssetPackLocations_castError() {
+  public void convertDictionaryToAssetPackLocations_typeMismatch2() {
     // Test failure case where there is a type mismatch
     Dictionary innerDict =
         PlayAssetDeliveryUtils.constructAssetPackLocationDictionary(
