@@ -75,12 +75,13 @@ public class PlayAssetDeliveryTest {
     Set<SignalInfo> testSet = testSubject.getPluginSignals();
 
     SignalInfo assetPackStateUpdateSignal =
-        new SignalInfo("assetPackStateUpdateSignal", String.class);
-    SignalInfo fetchStateUpdated = new SignalInfo("fetchStateUpdated", String.class, Integer.class);
-    SignalInfo fetchSuccess = new SignalInfo("fetchSuccess", String.class, Integer.class);
+        new SignalInfo("assetPackStateUpdated", Dictionary.class);
+    SignalInfo fetchStateUpdated =
+        new SignalInfo("fetchStateUpdated", Dictionary.class, Integer.class);
+    SignalInfo fetchSuccess = new SignalInfo("fetchSuccess", Dictionary.class, Integer.class);
     SignalInfo fetchError = new SignalInfo("fetchError", String.class, Integer.class);
     SignalInfo getPackStatesSuccess =
-        new SignalInfo("getPackStatesSuccess", String.class, Integer.class);
+        new SignalInfo("getPackStatesSuccess", Dictionary.class, Integer.class);
     SignalInfo getPackStatesError =
         new SignalInfo("getPackStatesError", String.class, Integer.class);
     SignalInfo removePackSuccess = new SignalInfo("removePackSuccess", String.class, Integer.class);
