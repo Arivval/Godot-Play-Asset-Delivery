@@ -121,15 +121,13 @@ public class PlayAssetDeliveryUtils {
 
   public static Dictionary convertAssetPackLocationsToDictionary(
       Map<String, AssetPackLocation> assetPackLocations) {
-    Dictionary returnDict =
-        assetPackLocations
-            .entrySet()
-            .stream()
-            .collect(
-                Dictionary::new,
-                (d, e) -> d.put(e.getKey(), convertAssetPackLocationToDictionary(e.getValue())),
-                (d1, d2) -> d1.putAll(d2));
-    return returnDict;
+    return assetPackLocations
+        .entrySet()
+        .stream()
+        .collect(
+            Dictionary::new,
+            (d, e) -> d.put(e.getKey(), convertAssetPackLocationToDictionary(e.getValue())),
+            (d1, d2) -> d1.putAll(d2));
   }
 
   public static AssetPackState convertDictionaryToAssetPackState(Dictionary dict)
@@ -155,14 +153,12 @@ public class PlayAssetDeliveryUtils {
   public static Map<String, AssetPackLocation> convertDictionaryToAssetPackLocations(
       Dictionary dict) throws IllegalArgumentException {
     try {
-      Map<String, AssetPackLocation> returnMap =
-          dict.entrySet()
-              .stream()
-              .collect(
-                  Collectors.toMap(
-                      e -> e.getKey(),
-                      e -> convertDictionaryToAssetPackLocation((Dictionary) e.getValue())));
-      return returnMap;
+      return dict.entrySet()
+          .stream()
+          .collect(
+              Collectors.toMap(
+                  e -> e.getKey(),
+                  e -> convertDictionaryToAssetPackLocation((Dictionary) e.getValue())));
     } catch (ClassCastException e) {
       throw new IllegalArgumentException(
           "Invalid input Dictionary, unable to cast entry to Dictionary");
