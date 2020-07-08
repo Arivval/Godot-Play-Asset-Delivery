@@ -46,7 +46,7 @@ public class PlayAssetDelivery extends GodotPlugin {
    * Helper function that returns an AssetPackManager instance. Initially part of the constructor,
    * refactored to provide easy access for writing mock tests.
    *
-   * @param godot
+   * @param godot Godot object required for GodotPlugin instantiation
    * @return
    */
   AssetPackManager getAssetPackManagerInstance(Godot godot) {
@@ -122,7 +122,6 @@ public class PlayAssetDelivery extends GodotPlugin {
    * Calls cancel(List<String> packNames) method in the Play Core Library. Requests to cancel the
    * download of the specified asset packs.
    *
-   * @param packNames
    * @return serialized AssetPackStates object
    */
   public Dictionary cancel(String[] packNames) {
@@ -135,8 +134,6 @@ public class PlayAssetDelivery extends GodotPlugin {
    * Returns the location of an asset in a pack, or empty Dictionary if the asset is not present in
    * the given pack.
    *
-   * @param packName
-   * @param assetPath
    * @return serialized AssetLocation object
    */
   public Dictionary getAssetLocation(String packName, String assetPath) {
