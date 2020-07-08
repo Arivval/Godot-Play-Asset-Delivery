@@ -21,8 +21,10 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Mockito.when;
 
+import com.google.android.play.core.assetpacks.AssetPackLocation;
 import com.google.android.play.core.assetpacks.AssetPackManager;
 import com.google.play.core.godot.assetpacks.utils.AssetLocationFromDictionary;
+import com.google.play.core.godot.assetpacks.utils.AssetPackLocationFromDictionary;
 import com.google.play.core.godot.assetpacks.utils.AssetPackStatesFromDictionary;
 import com.google.play.core.godot.assetpacks.utils.AssetPackStatesFromDictionaryTest;
 import com.google.play.core.godot.assetpacks.utils.PlayAssetDeliveryUtils;
@@ -144,6 +146,31 @@ public class PlayAssetDeliveryTest {
         .thenReturn(null);
 
     Dictionary resultDict = testSubject.getAssetLocation("packName", "assetPath");
+    assertThat(resultDict).isEqualTo(testDict);
+  }
+
+  @Test
+  public void getPackLocation_exist() {
+    PlayAssetDelivery testSubject = createPlayAssetDeliveryInstance();
+    Dictionary testDict =
+        PlayAssetDeliveryUtils.constructAssetPackLocationDictionary(
+            "~/Documents/assetsPath/", 0, "~/Documents/path/");
+
+    when(assetPackManagerMock.getPackLocation(any(String.class)))
+        .thenReturn(new AssetPackLocationFromDictionary(testDict));
+
+    Dictionary resultDict = testSubject.getPackLocation("packName");
+    assertThat(resultDict).isEqualTo(testDict);
+  }
+
+  @Test
+  public void getPackLocation_not_exist() {
+    PlayAssetDelivery testSubject = createPlayAssetDeliveryInstance();
+    Dictionary testDict = new Dictionary();
+
+    when(assetPackManagerMock.getPackLocation(any(String.class))).thenReturn(null);
+
+    Dictionary resultDict = testSubject.getPackLocation("packName");
     assertThat(resultDict).isEqualTo(testDict);
   }
 }
