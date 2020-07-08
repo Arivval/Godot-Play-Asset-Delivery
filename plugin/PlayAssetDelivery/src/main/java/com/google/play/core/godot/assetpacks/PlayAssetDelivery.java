@@ -44,21 +44,16 @@ public class PlayAssetDelivery extends GodotPlugin {
 
   private AssetPackManager assetPackManager;
 
-  /**
-   * Helper function that returns an AssetPackManager instance. Initially part of the constructor,
-   * refactored to provide easy access for writing mock tests.
-   *
-   * @param godot Godot object required for GodotPlugin instantiation
-   * @return
-   */
-  AssetPackManager getAssetPackManagerInstance(Godot godot) {
-    Context applicationContext = godot.getApplicationContext();
-    return AssetPackManagerFactory.getInstance(applicationContext);
-  }
-
   public PlayAssetDelivery(Godot godot) {
     super(godot);
-    assetPackManager = getAssetPackManagerInstance(godot);
+    Context applicationContext = godot.getApplicationContext();
+    assetPackManager = AssetPackManagerFactory.getInstance(applicationContext);
+  }
+
+  /** Package-private constructor used to instantiate PlayAssetDelivery class with mock objects. */
+  PlayAssetDelivery(Godot godot, AssetPackManager assetPackManager) {
+    super(godot);
+    this.assetPackManager = assetPackManager;
   }
 
   @NonNull
@@ -133,15 +128,15 @@ public class PlayAssetDelivery extends GodotPlugin {
 
   /**
    * Calls getAssetLocation(String packName, String assetPath) method in the Play Core Library.
-   * Returns the location of an asset in a pack, or empty Dictionary if the asset is not present in
-   * the given pack.
+   * Returns the location of an asset in a pack, or null if the asset is not present in the given
+   * pack.
    *
    * @return serialized AssetLocation object
    */
   public Dictionary getAssetLocation(String packName, String assetPath) {
     AssetLocation retrievedAssetLocation = assetPackManager.getAssetLocation(packName, assetPath);
     if (retrievedAssetLocation == null) {
-      return new Dictionary();
+      return null;
     }
     return PlayAssetDeliveryUtils.convertAssetLocationToDictionary(retrievedAssetLocation);
   }
@@ -156,7 +151,7 @@ public class PlayAssetDelivery extends GodotPlugin {
   public Dictionary getPackLocation(String packName) {
     AssetPackLocation retrievedPackLocation = assetPackManager.getPackLocation(packName);
     if (retrievedPackLocation == null) {
-      return new Dictionary();
+      return null;
     }
     return PlayAssetDeliveryUtils.convertAssetPackLocationToDictionary(retrievedPackLocation);
   }

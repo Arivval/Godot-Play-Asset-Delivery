@@ -25,7 +25,6 @@ import com.google.android.play.core.assetpacks.AssetPackManager;
 import com.google.play.core.godot.assetpacks.utils.AssetLocationFromDictionary;
 import com.google.play.core.godot.assetpacks.utils.AssetPackLocationFromDictionary;
 import com.google.play.core.godot.assetpacks.utils.AssetPackStatesFromDictionary;
-import com.google.play.core.godot.assetpacks.utils.AssetPackStatesFromDictionaryTest;
 import com.google.play.core.godot.assetpacks.utils.PlayAssetDeliveryUtils;
 import java.util.List;
 import java.util.Set;
@@ -44,12 +43,7 @@ public class PlayAssetDeliveryTest {
   @Mock AssetPackManager assetPackManagerMock;
 
   private PlayAssetDelivery createPlayAssetDeliveryInstance() {
-    return new PlayAssetDelivery(godotMock) {
-      @Override
-      AssetPackManager getAssetPackManagerInstance(Godot godot) {
-        return assetPackManagerMock;
-      }
-    };
+    return new PlayAssetDelivery(godotMock, assetPackManagerMock);
   }
 
   @Test
@@ -114,7 +108,7 @@ public class PlayAssetDeliveryTest {
   public void cancel_success() {
     PlayAssetDelivery testSubject = createPlayAssetDeliveryInstance();
     String[] testPackNames = {"Test pack 1", "Test pack 2"};
-    Dictionary testDict = AssetPackStatesFromDictionaryTest.createDefaultTestDictionary();
+    Dictionary testDict = PlayAssetDeliveryTestHelper.createAssetPackStatesTestDictionary();
 
     when(assetPackManagerMock.cancel(anyListOf(String.class)))
         .thenReturn(new AssetPackStatesFromDictionary(testDict));
@@ -139,7 +133,7 @@ public class PlayAssetDeliveryTest {
   @Test
   public void getAssetLocation_not_exist() {
     PlayAssetDelivery testSubject = createPlayAssetDeliveryInstance();
-    Dictionary testDict = new Dictionary();
+    Dictionary testDict = null;
 
     when(assetPackManagerMock.getAssetLocation(any(String.class), any(String.class)))
         .thenReturn(null);
@@ -165,7 +159,7 @@ public class PlayAssetDeliveryTest {
   @Test
   public void getPackLocation_not_exist() {
     PlayAssetDelivery testSubject = createPlayAssetDeliveryInstance();
-    Dictionary testDict = new Dictionary();
+    Dictionary testDict = null;
 
     when(assetPackManagerMock.getPackLocation(any(String.class))).thenReturn(null);
 

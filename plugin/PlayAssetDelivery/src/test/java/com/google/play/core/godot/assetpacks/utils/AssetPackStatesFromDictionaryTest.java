@@ -19,27 +19,14 @@ package com.google.play.core.godot.assetpacks.utils;
 import static com.google.common.truth.Truth.assertThat;
 
 import com.google.android.play.core.assetpacks.AssetPackState;
+import com.google.play.core.godot.assetpacks.PlayAssetDeliveryTestHelper;
 import org.godotengine.godot.Dictionary;
 import org.junit.Test;
 
 public class AssetPackStatesFromDictionaryTest {
-  public static Dictionary createDefaultTestDictionary() {
-    Dictionary innerDict1 =
-        PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
-            42, 0, "awesomePack", 2, 65536, 35);
-    Dictionary innerDict2 =
-        PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
-            0, -6, "Lorem ipsum dolor sit amet, consectetur adipiscing elit.", 7, 0, 0);
-    Dictionary testDict =
-        PlayAssetDeliveryUtils.constructAssetPackStatesDictionary(65536, new Dictionary());
-    PlayAssetDeliveryUtils.appendToAssetPackStatesDictionary(testDict, "pack1", innerDict1);
-    PlayAssetDeliveryUtils.appendToAssetPackStatesDictionary(testDict, "pack2", innerDict2);
-    return testDict;
-  }
-
   @Test
   public void assetPackStateFromDictionary_valid() {
-    Dictionary testDict = createDefaultTestDictionary();
+    Dictionary testDict = PlayAssetDeliveryTestHelper.createAssetPackStatesTestDictionary();
 
     AssetPackStatesFromDictionary testSubject = new AssetPackStatesFromDictionary(testDict);
     assertThat(testSubject.totalBytes()).isEqualTo(65536);
@@ -63,14 +50,14 @@ public class AssetPackStatesFromDictionaryTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void assetPackStateFromDictionary_missingKey1() {
-    Dictionary testDict = createDefaultTestDictionary();
+    Dictionary testDict = PlayAssetDeliveryTestHelper.createAssetPackStatesTestDictionary();
     testDict.remove(AssetPackStatesFromDictionary.TOTAL_BYTES_KEY);
     AssetPackStatesFromDictionary testSubject = new AssetPackStatesFromDictionary(testDict);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void assetPackStateFromDictionary_missingKey2() {
-    Dictionary testDict = createDefaultTestDictionary();
+    Dictionary testDict = PlayAssetDeliveryTestHelper.createAssetPackStatesTestDictionary();
     Dictionary packStatesDict =
         (Dictionary) testDict.get(AssetPackStatesFromDictionary.PACK_STATES_KEY);
     Dictionary innerDict1 = (Dictionary) packStatesDict.get("pack1");
@@ -80,14 +67,14 @@ public class AssetPackStatesFromDictionaryTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void assetPackStateFromDictionary_typeMismatch1() {
-    Dictionary testDict = createDefaultTestDictionary();
+    Dictionary testDict = PlayAssetDeliveryTestHelper.createAssetPackStatesTestDictionary();
     testDict.put(AssetPackStatesFromDictionary.TOTAL_BYTES_KEY, "wrong type");
     AssetPackStatesFromDictionary testSubject = new AssetPackStatesFromDictionary(testDict);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void assetPackStateFromDictionary_typeMismatch2() {
-    Dictionary testDict = createDefaultTestDictionary();
+    Dictionary testDict = PlayAssetDeliveryTestHelper.createAssetPackStatesTestDictionary();
     Dictionary packStatesDict =
         (Dictionary) testDict.get(AssetPackStatesFromDictionary.PACK_STATES_KEY);
     Dictionary innerDict1 = (Dictionary) packStatesDict.get("pack1");
@@ -97,7 +84,7 @@ public class AssetPackStatesFromDictionaryTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void assetPackStateFromDictionary_typeMismatch3() {
-    Dictionary testDict = createDefaultTestDictionary();
+    Dictionary testDict = PlayAssetDeliveryTestHelper.createAssetPackStatesTestDictionary();
     Dictionary packStatesDict =
         (Dictionary) testDict.get(AssetPackStatesFromDictionary.PACK_STATES_KEY);
     packStatesDict.put("pack1", "wrong type");

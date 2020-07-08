@@ -22,6 +22,7 @@ import com.google.android.play.core.assetpacks.AssetLocation;
 import com.google.android.play.core.assetpacks.AssetPackLocation;
 import com.google.android.play.core.assetpacks.AssetPackState;
 import com.google.android.play.core.assetpacks.AssetPackStates;
+import com.google.play.core.godot.assetpacks.PlayAssetDeliveryTestHelper;
 import java.util.Map;
 import org.godotengine.godot.Dictionary;
 import org.junit.Test;
@@ -235,15 +236,7 @@ public class PlayAssetDeliveryUtilsTest {
 
   @Test
   public void convertAssetPackLocationsToDictionaryAndBack_valid() {
-    Dictionary innerDict1 =
-        PlayAssetDeliveryUtils.constructAssetPackLocationDictionary(
-            "~/Downloads/assetsPath", 0, "~/Downloads/extractedPath");
-    Dictionary innerDict2 =
-        PlayAssetDeliveryUtils.constructAssetPackLocationDictionary(
-            "~/Downloads/assetsPath2", 0, "~/Downloads/extractedPath2");
-    Dictionary testDictionary = new Dictionary();
-    testDictionary.put("location1", innerDict1);
-    testDictionary.put("location2", innerDict2);
+    Dictionary testDictionary = PlayAssetDeliveryTestHelper.createAssetPackLocationsDictionary();
 
     Map<String, AssetPackLocation> testAssetPackLocations =
         PlayAssetDeliveryUtils.convertDictionaryToAssetPackLocations(testDictionary);
