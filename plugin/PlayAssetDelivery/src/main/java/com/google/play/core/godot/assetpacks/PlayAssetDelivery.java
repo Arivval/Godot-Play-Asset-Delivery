@@ -19,6 +19,7 @@ package com.google.play.core.godot.assetpacks;
 import android.content.Context;
 import androidx.annotation.NonNull;
 import com.google.android.play.core.assetpacks.AssetLocation;
+import com.google.android.play.core.assetpacks.AssetPackLocation;
 import com.google.android.play.core.assetpacks.AssetPackManager;
 import com.google.android.play.core.assetpacks.AssetPackManagerFactory;
 import com.google.android.play.core.assetpacks.AssetPackStates;
@@ -26,6 +27,7 @@ import com.google.play.core.godot.assetpacks.utils.PlayAssetDeliveryUtils;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.godotengine.godot.Dictionary;
 import org.godotengine.godot.Godot;
@@ -145,5 +147,32 @@ public class PlayAssetDelivery extends GodotPlugin {
       return new Dictionary();
     }
     return PlayAssetDeliveryUtils.convertAssetLocationToDictionary(retrievedAssetLocation);
+  }
+
+  /**
+   * calls getPackLocation(String packName) method in the Play Core Library Returns the location of
+   * the specified asset pack on the device or empty Dictionary if this pack is not downloaded or is
+   * outdated.
+   *
+   * @param packName
+   * @return serialized AssetPackLocation object
+   */
+  public Dictionary getPackLocation(String packName) {
+    AssetPackLocation retrievedPackLocation = assetPackManager.getPackLocation(packName);
+    if (retrievedPackLocation == null) {
+      return new Dictionary();
+    }
+    return PlayAssetDeliveryUtils.convertAssetPackLocationToDictionary(retrievedPackLocation);
+  }
+
+  /**
+   * calls getPackLocations() method in the Play Core Library Returns the location of all installed
+   * asset packs as a mapping from the asset pack name to an AssetPackLocation.
+   *
+   * @return serialized abstract Map<String, AssetPackLocation> object
+   */
+  public Dictionary getPackLocations() {
+    Map<String, AssetPackLocation> packLocationsMap = assetPackManager.getPackLocations();
+    return PlayAssetDeliveryUtils.convertAssetPackLocationsToDictionary(packLocationsMap);
   }
 }
