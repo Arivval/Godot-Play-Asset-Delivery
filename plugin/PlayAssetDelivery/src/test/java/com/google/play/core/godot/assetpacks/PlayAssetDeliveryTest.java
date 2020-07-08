@@ -131,7 +131,7 @@ public class PlayAssetDeliveryTest {
   }
 
   @Test
-  public void getAssetLocation_not_exist() {
+  public void getAssetLocation_notExist() {
     PlayAssetDelivery testSubject = createPlayAssetDeliveryInstance();
     Dictionary testDict = null;
 
@@ -157,7 +157,7 @@ public class PlayAssetDeliveryTest {
   }
 
   @Test
-  public void getPackLocation_not_exist() {
+  public void getPackLocation_notExist() {
     PlayAssetDelivery testSubject = createPlayAssetDeliveryInstance();
     Dictionary testDict = null;
 
