@@ -23,7 +23,7 @@ import org.godotengine.godot.Dictionary;
 import org.junit.Test;
 
 public class AssetPackStatesFromDictionaryTest {
-  private Dictionary createDefaultTestDictionary() {
+  public static Dictionary createDefaultTestDictionary() {
     Dictionary innerDict1 =
         PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
             42, 0, "awesomePack", 2, 65536, 35);
