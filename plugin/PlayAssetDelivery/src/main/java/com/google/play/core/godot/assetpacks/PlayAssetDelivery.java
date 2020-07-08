@@ -17,25 +17,22 @@
 package com.google.play.core.godot.assetpacks;
 
 import android.content.Context;
-
 import androidx.annotation.NonNull;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.godotengine.godot.Dictionary;
-import org.godotengine.godot.Godot;
-import org.godotengine.godot.plugin.GodotPlugin;
-import org.godotengine.godot.plugin.SignalInfo;
-
 import com.google.android.play.core.assetpacks.AssetLocation;
 import com.google.android.play.core.assetpacks.AssetPackLocation;
 import com.google.android.play.core.assetpacks.AssetPackManager;
 import com.google.android.play.core.assetpacks.AssetPackManagerFactory;
 import com.google.android.play.core.assetpacks.AssetPackStates;
 import com.google.play.core.godot.assetpacks.utils.PlayAssetDeliveryUtils;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import org.godotengine.godot.Dictionary;
+import org.godotengine.godot.Godot;
+import org.godotengine.godot.plugin.GodotPlugin;
+import org.godotengine.godot.plugin.SignalInfo;
 
 /**
  * This class is served as a middleware, to expose the Play Core Java library to the Godot runtime,
@@ -47,10 +44,21 @@ public class PlayAssetDelivery extends GodotPlugin {
 
   private AssetPackManager assetPackManager;
 
+  /**
+   * Helper function that returns an AssetPackManager instance. Initially part of the constructor,
+   * refactored to provide setup for mockito
+   *
+   * @param godot
+   * @return
+   */
+  AssetPackManager getAssetPackManagerInstance(Godot godot) {
+    Context applicationContext = godot.getApplicationContext();
+    return AssetPackManagerFactory.getInstance(applicationContext);
+  }
+
   public PlayAssetDelivery(Godot godot) {
     super(godot);
-    Context applicationContext = godot.getApplicationContext();
-    assetPackManager = AssetPackManagerFactory.getInstance(applicationContext);
+    assetPackManager = getAssetPackManagerInstance(godot);
   }
 
   @NonNull

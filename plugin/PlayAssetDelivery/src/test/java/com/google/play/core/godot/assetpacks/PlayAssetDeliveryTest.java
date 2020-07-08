@@ -18,6 +18,7 @@ package com.google.play.core.godot.assetpacks;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import com.google.android.play.core.assetpacks.AssetPackManager;
 import java.util.List;
 import java.util.Set;
 import org.godotengine.godot.Godot;
@@ -31,17 +32,27 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class PlayAssetDeliveryTest {
 
   @Mock Godot godotMock;
+  @Mock AssetPackManager assetPackManagerMock;
+
+  private PlayAssetDelivery createPlayAssetDeliveryInstance() {
+    return new PlayAssetDelivery(godotMock) {
+      @Override
+      AssetPackManager getAssetPackManagerInstance(Godot godot) {
+        return assetPackManagerMock;
+      }
+    };
+  }
 
   @Test
   public void getPluginName() {
-    PlayAssetDelivery testSubject = new PlayAssetDelivery(godotMock);
+    PlayAssetDelivery testSubject = createPlayAssetDeliveryInstance();
     String actualName = testSubject.getPluginName();
     assertThat(actualName).isEqualTo("PlayAssetDelivery");
   }
 
   @Test
   public void getPluginMethods() {
-    PlayAssetDelivery testSubject = new PlayAssetDelivery(godotMock);
+    PlayAssetDelivery testSubject = createPlayAssetDeliveryInstance();
     List<String> actualList = testSubject.getPluginMethods();
     assertThat(actualList)
         .containsExactly(
@@ -57,7 +68,7 @@ public class PlayAssetDeliveryTest {
 
   @Test
   public void getPluginSignals() {
-    PlayAssetDelivery testSubject = new PlayAssetDelivery(godotMock);
+    PlayAssetDelivery testSubject = createPlayAssetDeliveryInstance();
     Set<SignalInfo> testSet = testSubject.getPluginSignals();
 
     SignalInfo assetPackStateUpdateSignal =
