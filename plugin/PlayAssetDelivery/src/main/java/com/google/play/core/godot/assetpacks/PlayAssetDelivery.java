@@ -119,7 +119,7 @@ public class PlayAssetDelivery extends GodotPlugin {
   }
 
   /**
-   * Calls cancel(String[] packNames) method in the Play Core Library. Requests to cancel the
+   * Calls cancel(List<String> packNames) method in the Play Core Library. Requests to cancel the
    * download of the specified asset packs.
    *
    * @param packNames
