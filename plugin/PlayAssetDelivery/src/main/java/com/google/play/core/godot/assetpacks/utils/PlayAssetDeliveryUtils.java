@@ -19,6 +19,7 @@ package com.google.play.core.godot.assetpacks.utils;
 import com.google.android.play.core.assetpacks.AssetLocation;
 import com.google.android.play.core.assetpacks.AssetPackLocation;
 import com.google.android.play.core.assetpacks.AssetPackState;
+import com.google.android.play.core.assetpacks.AssetPackStates;
 import org.godotengine.godot.Dictionary;
 
 /**
@@ -44,6 +45,21 @@ public class PlayAssetDeliveryUtils {
     returnDict.put(
         AssetPackStateFromDictionary.TRANSFER_PROGRESS_PERCENTAGE_KEY, transferProgressPercentage);
     return returnDict;
+  }
+
+  public static Dictionary constructAssetPackStatesDictionary(
+      long totalBytes, Dictionary packStatesDictionary) {
+    Dictionary returnDict = new Dictionary();
+    returnDict.put(AssetPackStatesFromDictionary.TOTAL_BYTES_KEY, totalBytes);
+    returnDict.put(AssetPackStatesFromDictionary.PACK_STATES_KEY, packStatesDictionary);
+    return returnDict;
+  }
+
+  public static void appendToAssetPackStatesDictionary(
+      Dictionary assetPackStatesDict, String packName, Dictionary packStateDict) {
+    Dictionary packStatesDict =
+        (Dictionary) assetPackStatesDict.get(AssetPackStatesFromDictionary.PACK_STATES_KEY);
+    packStatesDict.put(packName, packStateDict);
   }
 
   public static Dictionary constructAssetLocationDictionary(long offset, String path, long size) {
@@ -73,6 +89,21 @@ public class PlayAssetDeliveryUtils {
         assetPackState.transferProgressPercentage());
   }
 
+  public static Dictionary convertAssetPackStatesToDictionary(AssetPackStates assetPackStates) {
+    Dictionary packStatesDictionary =
+        assetPackStates
+            .packStates()
+            .entrySet()
+            .stream()
+            .collect(
+                Dictionary::new,
+                (d, e) -> d.put(e.getKey(), convertAssetPackStateToDictionary(e.getValue())),
+                (d1, d2) -> d1.putAll(d2));
+    Dictionary returnDict =
+        constructAssetPackStatesDictionary(assetPackStates.totalBytes(), packStatesDictionary);
+    return returnDict;
+  }
+
   public static Dictionary convertAssetLocationToDictionary(AssetLocation assetLocation) {
     return constructAssetLocationDictionary(
         assetLocation.offset(), assetLocation.path(), assetLocation.size());
@@ -89,6 +120,11 @@ public class PlayAssetDeliveryUtils {
   public static AssetPackState convertDictionaryToAssetPackState(Dictionary dict)
       throws IllegalArgumentException {
     return new AssetPackStateFromDictionary(dict);
+  }
+
+  public static AssetPackStates convertDictionaryToAssetPackStates(Dictionary dict)
+      throws IllegalArgumentException {
+    return new AssetPackStatesFromDictionary(dict);
   }
 
   public static AssetLocation convertDictionaryToAssetLocation(Dictionary dict)
