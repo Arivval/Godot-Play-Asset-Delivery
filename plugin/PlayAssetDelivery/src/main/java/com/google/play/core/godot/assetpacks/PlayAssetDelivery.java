@@ -148,31 +148,4 @@ public class PlayAssetDelivery extends GodotPlugin {
     }
     return PlayAssetDeliveryUtils.convertAssetLocationToDictionary(retrievedAssetLocation);
   }
-
-  /**
-   * calls getPackLocation(String packName) method in the Play Core Library Returns the location of
-   * the specified asset pack on the device or empty Dictionary if this pack is not downloaded or is
-   * outdated.
-   *
-   * @param packName
-   * @return serialized AssetPackLocation object
-   */
-  public Dictionary getPackLocation(String packName) {
-    AssetPackLocation retrievedPackLocation = assetPackManager.getPackLocation(packName);
-    if (retrievedPackLocation == null) {
-      return new Dictionary();
-    }
-    return PlayAssetDeliveryUtils.convertAssetPackLocationToDictionary(retrievedPackLocation);
-  }
-
-  /**
-   * calls getPackLocations() method in the Play Core Library Returns the location of all installed
-   * asset packs as a mapping from the asset pack name to an AssetPackLocation.
-   *
-   * @return serialized abstract Map<String, AssetPackLocation> object
-   */
-  public Dictionary getPackLocations() {
-    Map<String, AssetPackLocation> packLocationsMap = assetPackManager.getPackLocations();
-    return PlayAssetDeliveryUtils.convertAssetPackLocationsToDictionary(packLocationsMap);
-  }
 }

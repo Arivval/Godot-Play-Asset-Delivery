@@ -146,10 +146,4 @@ public class PlayAssetDeliveryTest {
     Dictionary resultDict = testSubject.getAssetLocation("packName", "assetPath");
     assertThat(resultDict).isEqualTo(testDict);
   }
-
-  @Test
-  public void getAssetPackLocation() {}
-
-  @Test
-  public void getAssetPackLocations() {}
 }
