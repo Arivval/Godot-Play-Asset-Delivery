@@ -19,7 +19,6 @@ package com.google.play.core.godot.assetpacks;
 import android.content.Context;
 import androidx.annotation.NonNull;
 import com.google.android.play.core.assetpacks.AssetLocation;
-import com.google.android.play.core.assetpacks.AssetPackLocation;
 import com.google.android.play.core.assetpacks.AssetPackManager;
 import com.google.android.play.core.assetpacks.AssetPackManagerFactory;
 import com.google.android.play.core.assetpacks.AssetPackStates;
@@ -27,7 +26,6 @@ import com.google.play.core.godot.assetpacks.utils.PlayAssetDeliveryUtils;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import org.godotengine.godot.Dictionary;
 import org.godotengine.godot.Godot;
@@ -46,7 +44,7 @@ public class PlayAssetDelivery extends GodotPlugin {
 
   /**
    * Helper function that returns an AssetPackManager instance. Initially part of the constructor,
-   * refactored to provide setup for mockito
+   * refactored to provide easy access for mockito
    *
    * @param godot
    * @return
