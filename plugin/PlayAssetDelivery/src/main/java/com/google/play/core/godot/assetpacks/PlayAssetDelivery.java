@@ -22,6 +22,8 @@ import com.google.android.play.core.assetpacks.AssetLocation;
 import com.google.android.play.core.assetpacks.AssetPackLocation;
 import com.google.android.play.core.assetpacks.AssetPackManager;
 import com.google.android.play.core.assetpacks.AssetPackManagerFactory;
+import com.google.android.play.core.assetpacks.AssetPackState;
+import com.google.android.play.core.assetpacks.AssetPackStateUpdateListener;
 import com.google.android.play.core.assetpacks.AssetPackStates;
 import com.google.play.core.godot.assetpacks.utils.PlayAssetDeliveryUtils;
 import java.util.Arrays;
@@ -153,17 +155,7 @@ public class PlayAssetDelivery extends GodotPlugin {
    * specified asset packs. Emits fetchStateUpdated, fetchSuccess and fetchError signals.
    */
   public void fetch(List<String> packNames, int signalID) {
-    assetPackManager
-        .fetch(packNames)
-        .addOnSuccessListener(
-            result ->
-                emitSignal(
-                    FETCH_SUCCESS,
-                    PlayAssetDeliveryUtils.convertAssetPackStatesToDictionary(result),
-                    signalID))
-        .addOnFailureListener(e -> emitSignal(FETCH_ERROR, e.toString(), signalID));
-
-    assetPackManager.registerListener(
+    AssetPackStateUpdateListener fetchStateListener =
         state -> {
           if (packNames.contains(state.name())) {
             emitSignal(
@@ -171,7 +163,25 @@ public class PlayAssetDelivery extends GodotPlugin {
                 PlayAssetDeliveryUtils.convertAssetPackStateToDictionary(state),
                 signalID);
           }
-        });
+        };
+
+    assetPackManager
+        .fetch(packNames)
+        .addOnSuccessListener(
+            result -> {
+              assetPackManager.unregisterListener(fetchStateListener);
+              emitSignal(
+                  FETCH_SUCCESS,
+                  PlayAssetDeliveryUtils.convertAssetPackStatesToDictionary(result),
+                  signalID);
+            })
+        .addOnFailureListener(
+            e -> {
+              assetPackManager.unregisterListener(fetchStateListener);
+              emitSignal(FETCH_ERROR, e.toString(), signalID);
+            });
+
+    assetPackManager.registerListener(fetchStateListener);
   }
 
   /**
