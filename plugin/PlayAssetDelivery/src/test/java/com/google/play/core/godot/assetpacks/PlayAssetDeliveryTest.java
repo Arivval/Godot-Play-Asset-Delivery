@@ -24,7 +24,6 @@ import static org.mockito.Mockito.when;
 import com.google.android.play.core.assetpacks.AssetPackManager;
 import com.google.play.core.godot.assetpacks.utils.AssetLocationFromDictionary;
 import com.google.play.core.godot.assetpacks.utils.AssetPackStatesFromDictionary;
-import com.google.play.core.godot.assetpacks.utils.AssetPackStatesFromDictionaryTest;
 import com.google.play.core.godot.assetpacks.utils.PlayAssetDeliveryUtils;
 import java.util.List;
 import java.util.Set;
@@ -113,7 +112,7 @@ public class PlayAssetDeliveryTest {
   public void cancel_success() {
     PlayAssetDelivery testSubject = createPlayAssetDeliveryInstance();
     String[] testPackNames = {"Test pack 1", "Test pack 2"};
-    Dictionary testDict = AssetPackStatesFromDictionaryTest.createDefaultTestDictionary();
+    Dictionary testDict = PlayAssetDeliveryTestHelper.createAssetPackStatesTestDictionary();
 
     when(assetPackManagerMock.cancel(anyListOf(String.class)))
         .thenReturn(new AssetPackStatesFromDictionary(testDict));
