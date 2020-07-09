@@ -23,6 +23,9 @@ import com.google.android.play.core.assetpacks.AssetPackLocation;
 import com.google.android.play.core.assetpacks.AssetPackManager;
 import com.google.android.play.core.assetpacks.AssetPackManagerFactory;
 import com.google.android.play.core.assetpacks.AssetPackStates;
+import com.google.android.play.core.tasks.OnFailureListener;
+import com.google.android.play.core.tasks.OnSuccessListener;
+import com.google.android.play.core.tasks.Task;
 import com.google.play.core.godot.assetpacks.utils.PlayAssetDeliveryUtils;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -44,6 +47,18 @@ public class PlayAssetDelivery extends GodotPlugin {
 
   private AssetPackManager assetPackManager;
 
+  private final String ASSET_PACK_STATE_UPDATED = "assetPackStateUpdated";
+  private final String FETCH_STATE_UPDATED = "fetchStateUpdated";
+  private final String FETCH_SUCCESS = "fetchSuccess";
+  private final String FETCH_ERROR = "fetchError";
+  private final String GET_PACK_STATES_SUCCESS = "getPackStatesSuccess";
+  private final String GET_PACK_STATES_ERROR = "getPackStatesError";
+  private final String REMOVE_PACK_SUCCESS = "removePackSuccess";
+  private final String REMOVE_PACK_ERROR = "removePackError";
+  private final String SHOW_CELLULAR_DATA_CONFIRMATION_SUCCESS =
+      "showCellularDataConfirmationSuccess";
+  private final String SHOW_CELLULAR_DATA_CONFIRMATION_ERROR = "showCellularDataConfirmationError";
+
   public PlayAssetDelivery(Godot godot) {
     super(godot);
     Context applicationContext = godot.getApplicationContext();
@@ -54,6 +69,13 @@ public class PlayAssetDelivery extends GodotPlugin {
   PlayAssetDelivery(Godot godot, AssetPackManager assetPackManager) {
     super(godot);
     this.assetPackManager = assetPackManager;
+  }
+
+  /**
+   * Package-private wrapper function used for argument captor (since emitSignal() is protected).
+   */
+  void emitSignalWrapper(String signalName, Object... signalArgs) {
+    emitSignal(signalName, signalArgs);
   }
 
   @NonNull
@@ -99,19 +121,18 @@ public class PlayAssetDelivery extends GodotPlugin {
   @Override
   public Set<SignalInfo> getPluginSignals() {
     Set<SignalInfo> availableSignals = new HashSet<>();
-    availableSignals.add(new SignalInfo("assetPackStateUpdateSignal", String.class));
-    availableSignals.add(new SignalInfo("fetchStateUpdated", String.class, Integer.class));
-    availableSignals.add(new SignalInfo("fetchSuccess", String.class, Integer.class));
-    availableSignals.add(new SignalInfo("fetchError", String.class, Integer.class));
-    availableSignals.add(new SignalInfo("getPackStatesSuccess", String.class, Integer.class));
-    availableSignals.add(new SignalInfo("getPackStatesError", String.class, Integer.class));
-    availableSignals.add(new SignalInfo("removePackSuccess", String.class, Integer.class));
+    availableSignals.add(new SignalInfo(ASSET_PACK_STATE_UPDATED, Dictionary.class));
+    availableSignals.add(new SignalInfo(FETCH_STATE_UPDATED, Dictionary.class, Integer.class));
+    availableSignals.add(new SignalInfo(FETCH_SUCCESS, Dictionary.class, Integer.class));
+    availableSignals.add(new SignalInfo(FETCH_ERROR, String.class, Integer.class));
+    availableSignals.add(new SignalInfo(GET_PACK_STATES_SUCCESS, Dictionary.class, Integer.class));
+    availableSignals.add(new SignalInfo(GET_PACK_STATES_ERROR, String.class, Integer.class));
+    availableSignals.add(new SignalInfo(REMOVE_PACK_SUCCESS, Integer.class));
+    availableSignals.add(new SignalInfo(REMOVE_PACK_ERROR, String.class, Integer.class));
     availableSignals.add(
-        new SignalInfo("removePackError", String.class, String.class, Integer.class));
+        new SignalInfo(SHOW_CELLULAR_DATA_CONFIRMATION_SUCCESS, Integer.class, Integer.class));
     availableSignals.add(
-        new SignalInfo("showCellularDataConfirmationSuccess", Integer.class, Integer.class));
-    availableSignals.add(
-        new SignalInfo("showCellularDataConfirmationError", String.class, Integer.class));
+        new SignalInfo(SHOW_CELLULAR_DATA_CONFIRMATION_ERROR, String.class, Integer.class));
     return availableSignals;
   }
 
@@ -164,5 +185,24 @@ public class PlayAssetDelivery extends GodotPlugin {
   public Dictionary getPackLocations() {
     Map<String, AssetPackLocation> packLocationsMap = assetPackManager.getPackLocations();
     return PlayAssetDeliveryUtils.convertAssetPackLocationsToDictionary(packLocationsMap);
+  }
+
+  /**
+   * Calls removePack(String packName, int signalID) method in the Play Core Library. Deletes the
+   * specified asset pack from the internal storage of the app. Emits removePackSuccess and
+   * removePackError signals when the underlying task succeeds/fails.
+   *
+   * @param packName name of the asset pack to be removed
+   * @param signalID signalID used to track mapping of signals to Tasks
+   */
+  public void removePack(String packName, int signalID) {
+    OnSuccessListener<Void> removePackOnSuccessListener =
+        result -> emitSignalWrapper(REMOVE_PACK_SUCCESS, signalID);
+    OnFailureListener removePackOnFailureListener =
+        e -> emitSignalWrapper(REMOVE_PACK_ERROR, e.toString(), signalID);
+
+    Task<Void> removePackTask = assetPackManager.removePack(packName);
+    removePackTask.addOnSuccessListener(removePackOnSuccessListener);
+    removePackTask.addOnFailureListener(removePackOnFailureListener);
   }
 }

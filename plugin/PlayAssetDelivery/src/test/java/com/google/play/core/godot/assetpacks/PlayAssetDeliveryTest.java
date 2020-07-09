@@ -19,9 +19,15 @@ package com.google.play.core.godot.assetpacks;
 import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.google.android.play.core.assetpacks.AssetPackManager;
+import com.google.android.play.core.tasks.OnFailureListener;
+import com.google.android.play.core.tasks.OnSuccessListener;
+import com.google.android.play.core.tasks.Task;
 import com.google.play.core.godot.assetpacks.utils.AssetLocationFromDictionary;
 import com.google.play.core.godot.assetpacks.utils.AssetPackLocationFromDictionary;
 import com.google.play.core.godot.assetpacks.utils.AssetPackStatesFromDictionary;
@@ -33,6 +39,7 @@ import org.godotengine.godot.Godot;
 import org.godotengine.godot.plugin.SignalInfo;
 import org.junit.*;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -41,7 +48,10 @@ public class PlayAssetDeliveryTest {
 
   @Mock Godot godotMock;
   @Mock AssetPackManager assetPackManagerMock;
+  @Mock Task<Void> voidSuccessTaskMock;
+  @Mock Task<Void> voidFailureTaskMock;
 
+  /** Creates a mock PlayAssetDelivery instance with mock objects. */
   private PlayAssetDelivery createPlayAssetDeliveryInstance() {
     return new PlayAssetDelivery(godotMock, assetPackManagerMock);
   }
@@ -75,12 +85,13 @@ public class PlayAssetDeliveryTest {
     Set<SignalInfo> testSet = testSubject.getPluginSignals();
 
     SignalInfo assetPackStateUpdateSignal =
-        new SignalInfo("assetPackStateUpdateSignal", String.class);
-    SignalInfo fetchStateUpdated = new SignalInfo("fetchStateUpdated", String.class, Integer.class);
-    SignalInfo fetchSuccess = new SignalInfo("fetchSuccess", String.class, Integer.class);
+        new SignalInfo("assetPackStateUpdated", Dictionary.class);
+    SignalInfo fetchStateUpdated =
+        new SignalInfo("fetchStateUpdated", Dictionary.class, Integer.class);
+    SignalInfo fetchSuccess = new SignalInfo("fetchSuccess", Dictionary.class, Integer.class);
     SignalInfo fetchError = new SignalInfo("fetchError", String.class, Integer.class);
     SignalInfo getPackStatesSuccess =
-        new SignalInfo("getPackStatesSuccess", String.class, Integer.class);
+        new SignalInfo("getPackStatesSuccess", Dictionary.class, Integer.class);
     SignalInfo getPackStatesError =
         new SignalInfo("getPackStatesError", String.class, Integer.class);
     SignalInfo removePackSuccess = new SignalInfo("removePackSuccess", String.class, Integer.class);
@@ -175,5 +186,66 @@ public class PlayAssetDeliveryTest {
 
     Dictionary resultDict = testSubject.getPackLocations();
     assertThat(resultDict).isEqualTo(testDict);
+  }
+
+  @Test
+  public void remove_success() {
+    // Mock the side effects of removePackSuccessTaskMock object, call onSuccessListener the instant
+    // it is registered.
+    doAnswer(
+            invocation -> {
+              OnSuccessListener<?> listener = (OnSuccessListener<?>) invocation.getArguments()[0];
+              listener.onSuccess(null);
+              return null;
+            })
+        .when(voidSuccessTaskMock)
+        .addOnSuccessListener(any(OnSuccessListener.class));
+
+    PlayAssetDelivery testSubject = spy(new PlayAssetDelivery(godotMock, assetPackManagerMock));
+    when(assetPackManagerMock.removePack(any(String.class))).thenReturn(voidSuccessTaskMock);
+
+    // Set up ArgumentCaptors to get the arguments received by emitSignalWrapper()
+    ArgumentCaptor<String> signalNameCaptor = ArgumentCaptor.forClass(String.class);
+    ArgumentCaptor<Object> signalArgsCaptor = ArgumentCaptor.forClass(Object.class);
+
+    testSubject.removePack("packName", 10);
+
+    verify(testSubject).emitSignalWrapper(signalNameCaptor.capture(), signalArgsCaptor.capture());
+
+    assertThat(signalNameCaptor.getValue()).isEqualTo("removePackSuccess");
+    List<Object> receivedArgs = signalArgsCaptor.getAllValues();
+    assertThat(receivedArgs).hasSize(1);
+    assertThat(receivedArgs.get(0)).isEqualTo(10);
+  }
+
+  @Test
+  public void remove_error() {
+    // Mock the side effects of removePackFailureTaskMock object, call onFailureListener the instant
+    // it is registered.
+    doAnswer(
+            invocation -> {
+              OnFailureListener listener = (OnFailureListener) invocation.getArguments()[0];
+              listener.onFailure(new Exception("Test Exception!"));
+              return null;
+            })
+        .when(voidFailureTaskMock)
+        .addOnFailureListener(any(OnFailureListener.class));
+
+    PlayAssetDelivery testSubject = spy(new PlayAssetDelivery(godotMock, assetPackManagerMock));
+    when(assetPackManagerMock.removePack(any(String.class))).thenReturn(voidFailureTaskMock);
+
+    // Set up ArgumentCaptors to get the arguments received by emitSignalWrapper()
+    ArgumentCaptor<String> signalNameCaptor = ArgumentCaptor.forClass(String.class);
+    ArgumentCaptor<Object> signalArgsCaptor = ArgumentCaptor.forClass(Object.class);
+
+    testSubject.removePack("packName", 11);
+
+    verify(testSubject).emitSignalWrapper(signalNameCaptor.capture(), signalArgsCaptor.capture());
+
+    assertThat(signalNameCaptor.getValue()).isEqualTo("removePackError");
+    List<Object> receivedArgs = signalArgsCaptor.getAllValues();
+    assertThat(receivedArgs).hasSize(2);
+    assertThat(receivedArgs.get(0)).isEqualTo("java.lang.Exception: Test Exception!");
+    assertThat(receivedArgs.get(1)).isEqualTo(11);
   }
 }
