@@ -46,6 +46,11 @@ public class PlayAssetDeliveryTest {
   private String receivedSignalName;
   private Object[] receivedSignalObjects;
 
+  /**
+   * Creates a mock PlayAssetDelivery instance. Overrides the emitSignal method inherited from
+   * GodotPlugin. In this way whenever emitSignal() is called, we can assert the side-effects it
+   * resulted on receivedSignalName and receivedSignalObjects variables.
+   */
   private PlayAssetDelivery createPlayAssetDeliveryInstance() {
     return new PlayAssetDelivery(godotMock, assetPackManagerMock) {
       @Override
@@ -54,6 +59,12 @@ public class PlayAssetDeliveryTest {
         receivedSignalObjects = signalArgs;
       }
     };
+  }
+
+  @Before
+  public void setUp() {
+    receivedSignalName = null;
+    receivedSignalObjects = null;
   }
 
   @Test
