@@ -185,7 +185,8 @@ public class PlayAssetDelivery extends GodotPlugin {
    * specified asset pack from the internal storage of the app. Emits removePackSuccess and
    * removePackError signals.
    *
-   * @param packName
+   * @param packName name of the asset pack to be removed
+   * @param signalID signalID used to track mapping of signals to Tasks
    */
   public void removePack(String packName, int signalID) {
     OnSuccessListener<Void> removePackOnSuccessListener =
