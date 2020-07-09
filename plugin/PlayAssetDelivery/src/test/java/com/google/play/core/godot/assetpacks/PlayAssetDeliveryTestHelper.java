@@ -53,8 +53,8 @@ public class PlayAssetDeliveryTestHelper {
   }
 
   /**
-   * Creates an anonymous class, used for testing removePackSuccess(), that calls onSuccessListener
-   * the instant the listener is added.
+   * Creates an anonymous class, used for testing removePackSuccess(). Calls onSuccessListener the
+   * instant the listener is added.
    */
   public static Task<Void> createRemovePackSuccessTask() {
     return new Task<Void>() {
@@ -119,8 +119,8 @@ public class PlayAssetDeliveryTestHelper {
   }
 
   /**
-   * Creates an anonymous class, used for testing removePackFailure(), that calls onFailureListener
-   * the instant the listener is added.
+   * Creates an anonymous class, used for testing removePackFailure(). Calls onFailureListener the
+   * instant the listener is added.
    */
   public static Task<Void> createRemovePackFailureTask() {
     return new Task<Void>() {
