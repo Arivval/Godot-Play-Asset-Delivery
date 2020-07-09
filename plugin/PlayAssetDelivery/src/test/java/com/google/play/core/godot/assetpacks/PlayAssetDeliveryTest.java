@@ -19,6 +19,8 @@ package com.google.play.core.godot.assetpacks;
 import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.google.android.play.core.assetpacks.AssetPackManager;
@@ -34,6 +36,7 @@ import org.godotengine.godot.Godot;
 import org.godotengine.godot.plugin.SignalInfo;
 import org.junit.*;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -43,28 +46,9 @@ public class PlayAssetDeliveryTest {
   @Mock Godot godotMock;
   @Mock AssetPackManager assetPackManagerMock;
 
-  private String receivedSignalName;
-  private Object[] receivedSignalObjects;
-
-  /**
-   * Creates a mock PlayAssetDelivery instance. Overrides the emitSignal method inherited from
-   * GodotPlugin. In this way whenever emitSignal() is called, we can assert the side-effects it
-   * resulted on receivedSignalName and receivedSignalObjects variables.
-   */
+  /** Creates a mock PlayAssetDelivery instance with mock objects. */
   private PlayAssetDelivery createPlayAssetDeliveryInstance() {
-    return new PlayAssetDelivery(godotMock, assetPackManagerMock) {
-      @Override
-      protected void emitSignal(java.lang.String signalName, java.lang.Object... signalArgs) {
-        receivedSignalName = signalName;
-        receivedSignalObjects = signalArgs;
-      }
-    };
-  }
-
-  @Before
-  public void setUp() {
-    receivedSignalName = null;
-    receivedSignalObjects = null;
+    return new PlayAssetDelivery(godotMock, assetPackManagerMock);
   }
 
   @Test
@@ -202,27 +186,39 @@ public class PlayAssetDeliveryTest {
   @Test
   public void remove_success() {
     Task<Void> removePackTaskMock = PlayAssetDeliveryTestHelper.createRemovePackSuccessTask();
-    PlayAssetDelivery testSubject = createPlayAssetDeliveryInstance();
+    PlayAssetDelivery testSubject = spy(new PlayAssetDelivery(godotMock, assetPackManagerMock));
     when(assetPackManagerMock.removePack(any(String.class))).thenReturn(removePackTaskMock);
+
+    ArgumentCaptor<String> signalNameCaptor = ArgumentCaptor.forClass(String.class);
+    ArgumentCaptor<Object> signalArgsCaptor = ArgumentCaptor.forClass(Object.class);
 
     testSubject.removePack("packName", 10);
 
-    assertThat(receivedSignalName).isEqualTo("removePackSuccess");
-    assertThat(receivedSignalObjects).hasLength(1);
-    assertThat(receivedSignalObjects[0]).isEqualTo(10);
+    verify(testSubject).emitSignalWrapper(signalNameCaptor.capture(), signalArgsCaptor.capture());
+
+    assertThat(signalNameCaptor.getValue()).isEqualTo("removePackSuccess");
+    List<Object> receivedArgs = signalArgsCaptor.getAllValues();
+    assertThat(receivedArgs).hasSize(1);
+    assertThat(receivedArgs.get(0)).isEqualTo(10);
   }
 
   @Test
   public void remove_error() {
     Task<Void> removePackTaskMock = PlayAssetDeliveryTestHelper.createRemovePackFailureTask();
-    PlayAssetDelivery testSubject = createPlayAssetDeliveryInstance();
+    PlayAssetDelivery testSubject = spy(new PlayAssetDelivery(godotMock, assetPackManagerMock));
     when(assetPackManagerMock.removePack(any(String.class))).thenReturn(removePackTaskMock);
+
+    ArgumentCaptor<String> signalNameCaptor = ArgumentCaptor.forClass(String.class);
+    ArgumentCaptor<Object> signalArgsCaptor = ArgumentCaptor.forClass(Object.class);
 
     testSubject.removePack("packName", 11);
 
-    assertThat(receivedSignalName).isEqualTo("removePackError");
-    assertThat(receivedSignalObjects).hasLength(2);
-    assertThat(receivedSignalObjects[0]).isEqualTo("java.lang.Exception: Test Exception!");
-    assertThat(receivedSignalObjects[1]).isEqualTo(11);
+    verify(testSubject).emitSignalWrapper(signalNameCaptor.capture(), signalArgsCaptor.capture());
+
+    assertThat(signalNameCaptor.getValue()).isEqualTo("removePackError");
+    List<Object> receivedArgs = signalArgsCaptor.getAllValues();
+    assertThat(receivedArgs).hasSize(2);
+    assertThat(receivedArgs.get(0)).isEqualTo("java.lang.Exception: Test Exception!");
+    assertThat(receivedArgs.get(1)).isEqualTo(11);
   }
 }

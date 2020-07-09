@@ -71,6 +71,13 @@ public class PlayAssetDelivery extends GodotPlugin {
     this.assetPackManager = assetPackManager;
   }
 
+  /**
+   * Package-private wrapper function used for argument captor (since emitSignal() is protected).
+   */
+  void emitSignalWrapper(String signalName, Object... signalArgs) {
+    emitSignal(signalName, signalArgs);
+  }
+
   @NonNull
   @Override
   public String getPluginName() {
@@ -190,9 +197,9 @@ public class PlayAssetDelivery extends GodotPlugin {
    */
   public void removePack(String packName, int signalID) {
     OnSuccessListener<Void> removePackOnSuccessListener =
-        result -> emitSignal(REMOVE_PACK_SUCCESS, signalID);
+        result -> emitSignalWrapper(REMOVE_PACK_SUCCESS, signalID);
     OnFailureListener removePackOnFailureListener =
-        e -> emitSignal(REMOVE_PACK_ERROR, e.toString(), signalID);
+        e -> emitSignalWrapper(REMOVE_PACK_ERROR, e.toString(), signalID);
 
     Task<Void> removePackTask = assetPackManager.removePack(packName);
     removePackTask.addOnSuccessListener(removePackOnSuccessListener);

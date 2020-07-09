@@ -49,6 +49,7 @@ dependencies {
     testImplementation 'org.mockito:mockito-all:1.10.19'
     testImplementation project(':godot-lib.3.2.2.rc1.release')
     testImplementation 'com.google.truth:truth:1.0.1'
+    testImplementation 'org.khronos:opengl-api:gl1.1-android-2.1_r1'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     compileOnly project(':godot-lib.3.2.2.rc1.release')
