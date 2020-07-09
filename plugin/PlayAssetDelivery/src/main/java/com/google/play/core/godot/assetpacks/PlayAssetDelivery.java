@@ -22,6 +22,7 @@ import com.google.android.play.core.assetpacks.AssetLocation;
 import com.google.android.play.core.assetpacks.AssetPackLocation;
 import com.google.android.play.core.assetpacks.AssetPackManager;
 import com.google.android.play.core.assetpacks.AssetPackManagerFactory;
+import com.google.android.play.core.assetpacks.AssetPackState;
 import com.google.android.play.core.assetpacks.AssetPackStates;
 import com.google.android.play.core.tasks.OnFailureListener;
 import com.google.android.play.core.tasks.OnSuccessListener;
@@ -185,6 +186,29 @@ public class PlayAssetDelivery extends GodotPlugin {
   public Dictionary getPackLocations() {
     Map<String, AssetPackLocation> packLocationsMap = assetPackManager.getPackLocations();
     return PlayAssetDeliveryUtils.convertAssetPackLocationsToDictionary(packLocationsMap);
+  }
+
+  /**
+   * Calls getPackStates(List<String> packNames) method in the Play Core Library. Requests download
+   * state or details for the specified asset packs. Emits getPackStatesSuccess and
+   * getPackStatesError signals when the underlying task succeeds/fails.
+   *
+   * @param packNames list of name for all the packs to request states
+   * @param signalID signalID used to track mapping of signals to Tasks
+   */
+  public void getPackStates(List<String> packNames, int signalID) {
+    OnSuccessListener<AssetPackStates> getPackStatesSuccessListener =
+        result ->
+            emitSignalWrapper(
+                GET_PACK_STATES_SUCCESS,
+                PlayAssetDeliveryUtils.convertAssetPackStatesToDictionary(result),
+                signalID);
+    OnFailureListener getPackStatesFailureListener =
+        e -> emitSignalWrapper(GET_PACK_STATES_ERROR, e.toString(), signalID);
+
+    Task<AssetPackStates> getPackStatesTask = assetPackManager.getPackStates(packNames);
+    getPackStatesTask.addOnSuccessListener(getPackStatesSuccessListener);
+    getPackStatesTask.addOnFailureListener(getPackStatesFailureListener);
   }
 
   /**
