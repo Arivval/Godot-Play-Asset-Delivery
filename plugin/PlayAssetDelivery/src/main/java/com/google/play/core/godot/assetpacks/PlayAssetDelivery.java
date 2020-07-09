@@ -193,8 +193,8 @@ public class PlayAssetDelivery extends GodotPlugin {
         result -> emitSignal(REMOVE_PACK_SUCCESS, signalID);
     OnFailureListener removePackOnFailureListener =
         e -> emitSignal(REMOVE_PACK_ERROR, e.toString(), signalID);
-    Task<Void> removePackTask = assetPackManager.removePack(packName);
 
+    Task<Void> removePackTask = assetPackManager.removePack(packName);
     removePackTask.addOnSuccessListener(removePackOnSuccessListener);
     removePackTask.addOnFailureListener(removePackOnFailureListener);
   }
