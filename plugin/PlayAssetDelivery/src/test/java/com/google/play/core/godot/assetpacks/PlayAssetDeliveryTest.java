@@ -48,8 +48,8 @@ public class PlayAssetDeliveryTest {
 
   @Mock Godot godotMock;
   @Mock AssetPackManager assetPackManagerMock;
-  @Mock Task<Void> removePackSuccessTaskMock;
-  @Mock Task<Void> removePackFailureTaskMock;
+  @Mock Task<Void> voidSuccessTaskMock;
+  @Mock Task<Void> voidFailureTaskMock;
 
   /** Creates a mock PlayAssetDelivery instance with mock objects. */
   private PlayAssetDelivery createPlayAssetDeliveryInstance() {
@@ -198,11 +198,11 @@ public class PlayAssetDeliveryTest {
               listener.onSuccess(null);
               return null;
             })
-        .when(removePackSuccessTaskMock)
+        .when(voidSuccessTaskMock)
         .addOnSuccessListener(any(OnSuccessListener.class));
 
     PlayAssetDelivery testSubject = spy(new PlayAssetDelivery(godotMock, assetPackManagerMock));
-    when(assetPackManagerMock.removePack(any(String.class))).thenReturn(removePackSuccessTaskMock);
+    when(assetPackManagerMock.removePack(any(String.class))).thenReturn(voidSuccessTaskMock);
 
     // Set up ArgumentCaptors to get the arguments received by emitSignalWrapper()
     ArgumentCaptor<String> signalNameCaptor = ArgumentCaptor.forClass(String.class);
@@ -228,11 +228,11 @@ public class PlayAssetDeliveryTest {
               listener.onFailure(new Exception("Test Exception!"));
               return null;
             })
-        .when(removePackFailureTaskMock)
+        .when(voidFailureTaskMock)
         .addOnFailureListener(any(OnFailureListener.class));
 
     PlayAssetDelivery testSubject = spy(new PlayAssetDelivery(godotMock, assetPackManagerMock));
-    when(assetPackManagerMock.removePack(any(String.class))).thenReturn(removePackFailureTaskMock);
+    when(assetPackManagerMock.removePack(any(String.class))).thenReturn(voidFailureTaskMock);
 
     // Set up ArgumentCaptors to get the arguments received by emitSignalWrapper()
     ArgumentCaptor<String> signalNameCaptor = ArgumentCaptor.forClass(String.class);
