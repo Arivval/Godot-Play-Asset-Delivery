@@ -64,22 +64,12 @@ public class PlayAssetDelivery extends GodotPlugin {
     super(godot);
     Context applicationContext = godot.getApplicationContext();
     assetPackManager = AssetPackManagerFactory.getInstance(applicationContext);
-    registerAssetPackStateUpdatedListener();
   }
 
   /** Package-private constructor used to instantiate PlayAssetDelivery class with mock objects. */
   PlayAssetDelivery(Godot godot, AssetPackManager assetPackManager) {
     super(godot);
     this.assetPackManager = assetPackManager;
-  }
-
-  void registerAssetPackStateUpdatedListener() {
-    assetPackManager.registerListener(
-        state -> {
-          emitSignal(
-              ASSET_PACK_STATE_UPDATED,
-              PlayAssetDeliveryUtils.convertAssetPackStateToDictionary(state));
-        });
   }
 
   @NonNull
@@ -153,40 +143,6 @@ public class PlayAssetDelivery extends GodotPlugin {
   }
 
   /**
-   * Calls fetch(List<String> packNames) method in the Play Core Library. Requests to download the
-   * specified asset packs. Emits fetchStateUpdated, fetchSuccess and fetchError signals.
-   */
-  public void fetch(List<String> packNames, int signalID) {
-    AssetPackStateUpdateListener fetchStateListener =
-        state -> {
-          if (packNames.contains(state.name())) {
-            emitSignal(
-                FETCH_STATE_UPDATED,
-                PlayAssetDeliveryUtils.convertAssetPackStateToDictionary(state),
-                signalID);
-          }
-        };
-
-    assetPackManager
-        .fetch(packNames)
-        .addOnSuccessListener(
-            result -> {
-              assetPackManager.unregisterListener(fetchStateListener);
-              emitSignal(
-                  FETCH_SUCCESS,
-                  PlayAssetDeliveryUtils.convertAssetPackStatesToDictionary(result),
-                  signalID);
-            })
-        .addOnFailureListener(
-            e -> {
-              assetPackManager.unregisterListener(fetchStateListener);
-              emitSignal(FETCH_ERROR, e.toString(), signalID);
-            });
-
-    assetPackManager.registerListener(fetchStateListener);
-  }
-
-  /**
    * Calls getAssetLocation(String packName, String assetPath) method in the Play Core Library.
    * Returns the location of an asset in a pack, or null if the asset is not present in the given
    * pack.
@@ -227,25 +183,6 @@ public class PlayAssetDelivery extends GodotPlugin {
   }
 
   /**
-   * Calls getPackStates(List<String> packNames) method in the Play Core Library. Requests download
-   * state or details for the specified asset packs. Emits getPackStatesSuccess and
-   * getPackStatesError signals.
-   *
-   * @param packNames
-   */
-  public void getPackStates(List<String> packNames, int signalID) {
-    assetPackManager
-        .getPackStates(packNames)
-        .addOnSuccessListener(
-            result ->
-                emitSignal(
-                    GET_PACK_STATES_SUCCESS,
-                    PlayAssetDeliveryUtils.convertAssetPackStatesToDictionary(result),
-                    signalID))
-        .addOnFailureListener(e -> emitSignal(GET_PACK_STATES_ERROR, e.toString(), signalID));
-  }
-
-  /**
    * Calls removePack(String packName, int signalID) method in the Play Core Library. Deletes the
    * specified asset pack from the internal storage of the app. Emits removePackSuccess and
    * removePackError signals.
@@ -261,20 +198,5 @@ public class PlayAssetDelivery extends GodotPlugin {
 
     removePackTask.addOnSuccessListener(removePackOnSuccessListener);
     removePackTask.addOnFailureListener(removePackOnFailureListener);
-  }
-
-  /**
-   * Directly calls showCellularDataConfirmation(Activity activity). The current activity can be
-   * accessed using (Context) getGodot().getApplicationContext(); Shows a confirmation dialog to
-   * resume all pack downloads that are currently in the WAITING_FOR_WIFI state. Emits
-   * showCellularDataConfirmationSuccess and showCellularDataConfirmationError signals.
-   */
-  public void showCellularDataConfirmation(int signalID) {
-    assetPackManager
-        .showCellularDataConfirmation(this.getGodot())
-        .addOnSuccessListener(
-            result -> emitSignal(SHOW_CELLULAR_DATA_CONFIRMATION_SUCCESS, result, signalID))
-        .addOnFailureListener(
-            e -> emitSignal(SHOW_CELLULAR_DATA_CONFIRMATION_ERROR, e.toString(), signalID));
   }
 }
