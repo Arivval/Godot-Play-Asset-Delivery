@@ -22,6 +22,7 @@ import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Mockito.when;
 
 import com.google.android.play.core.assetpacks.AssetPackManager;
+import com.google.android.play.core.tasks.Task;
 import com.google.play.core.godot.assetpacks.utils.AssetLocationFromDictionary;
 import com.google.play.core.godot.assetpacks.utils.AssetPackLocationFromDictionary;
 import com.google.play.core.godot.assetpacks.utils.AssetPackStatesFromDictionary;
@@ -42,8 +43,17 @@ public class PlayAssetDeliveryTest {
   @Mock Godot godotMock;
   @Mock AssetPackManager assetPackManagerMock;
 
+  private String receivedSignalName;
+  private Object[] receivedSignalObjects;
+
   private PlayAssetDelivery createPlayAssetDeliveryInstance() {
-    return new PlayAssetDelivery(godotMock, assetPackManagerMock);
+    return new PlayAssetDelivery(godotMock, assetPackManagerMock) {
+      @Override
+      protected void emitSignal(java.lang.String signalName, java.lang.Object... signalArgs) {
+        receivedSignalName = signalName;
+        receivedSignalObjects = signalArgs;
+      }
+    };
   }
 
   @Test
@@ -104,6 +114,9 @@ public class PlayAssetDeliveryTest {
             showCellularDataConfirmationSuccess,
             showCellularDataConfirmationError);
   }
+
+  @Test
+  public void fetch_success() {}
 
   @Test
   public void cancel_success() {
@@ -177,4 +190,34 @@ public class PlayAssetDeliveryTest {
     Dictionary resultDict = testSubject.getPackLocations();
     assertThat(resultDict).isEqualTo(testDict);
   }
+
+  @Test
+  public void remove_success() {
+    Task<Void> removePackTaskMock = PlayAssetDeliveryTestHelper.createRemovePackSuccessTask();
+    PlayAssetDelivery testSubject = createPlayAssetDeliveryInstance();
+    when(assetPackManagerMock.removePack(any(String.class))).thenReturn(removePackTaskMock);
+
+    testSubject.removePack("packName", 10);
+
+    assertThat(receivedSignalName).isEqualTo("removePackSuccess");
+    assertThat(receivedSignalObjects).hasLength(1);
+    assertThat(receivedSignalObjects[0]).isEqualTo(10);
+  }
+
+  @Test
+  public void remove_error() {
+    Task<Void> removePackTaskMock = PlayAssetDeliveryTestHelper.createRemovePackFailureTask();
+    PlayAssetDelivery testSubject = createPlayAssetDeliveryInstance();
+    when(assetPackManagerMock.removePack(any(String.class))).thenReturn(removePackTaskMock);
+
+    testSubject.removePack("packName", 11);
+
+    assertThat(receivedSignalName).isEqualTo("removePackError");
+    assertThat(receivedSignalObjects).hasLength(2);
+    assertThat(receivedSignalObjects[0]).isEqualTo("java.lang.Exception: Test Exception!");
+    assertThat(receivedSignalObjects[1]).isEqualTo(11);
+  }
+
+  @Test
+  public void remove_failed() {}
 }

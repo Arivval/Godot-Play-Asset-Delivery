@@ -16,7 +16,12 @@
 
 package com.google.play.core.godot.assetpacks;
 
+import com.google.android.play.core.tasks.OnCompleteListener;
+import com.google.android.play.core.tasks.OnFailureListener;
+import com.google.android.play.core.tasks.OnSuccessListener;
+import com.google.android.play.core.tasks.Task;
 import com.google.play.core.godot.assetpacks.utils.PlayAssetDeliveryUtils;
+import java.util.concurrent.Executor;
 import org.godotengine.godot.Dictionary;
 
 public class PlayAssetDeliveryTestHelper {
@@ -45,5 +50,129 @@ public class PlayAssetDeliveryTestHelper {
     testDict.put("location1", innerDict1);
     testDict.put("location2", innerDict2);
     return testDict;
+  }
+
+  public static Task<Void> createRemovePackSuccessTask() {
+    return new Task<Void>() {
+      @Override
+      public boolean isComplete() {
+        return false;
+      }
+
+      @Override
+      public boolean isSuccessful() {
+        return false;
+      }
+
+      @Override
+      public Void getResult() {
+        return null;
+      }
+
+      @Override
+      public <X extends Throwable> Void getResult(Class<X> exceptionType) throws X {
+        return null;
+      }
+
+      @Override
+      public Exception getException() {
+        return null;
+      }
+
+      @Override
+      public Task<Void> addOnSuccessListener(OnSuccessListener<? super Void> listener) {
+        listener.onSuccess(null);
+        return null;
+      }
+
+      @Override
+      public Task<Void> addOnSuccessListener(
+          Executor executor, OnSuccessListener<? super Void> listener) {
+        return null;
+      }
+
+      @Override
+      public Task<Void> addOnFailureListener(OnFailureListener listener) {
+        return null;
+      }
+
+      @Override
+      public Task<Void> addOnFailureListener(Executor executor, OnFailureListener listener) {
+        return null;
+      }
+
+      @Override
+      public Task<Void> addOnCompleteListener(OnCompleteListener<Void> listener) {
+        return null;
+      }
+
+      @Override
+      public Task<Void> addOnCompleteListener(
+          Executor executor, OnCompleteListener<Void> listener) {
+        return null;
+      }
+    };
+  }
+
+  public static Task<Void> createRemovePackFailureTask() {
+    return new Task<Void>() {
+      @Override
+      public boolean isComplete() {
+        return false;
+      }
+
+      @Override
+      public boolean isSuccessful() {
+        return false;
+      }
+
+      @Override
+      public Void getResult() {
+        return null;
+      }
+
+      @Override
+      public <X extends Throwable> Void getResult(Class<X> exceptionType) throws X {
+        return null;
+      }
+
+      @Override
+      public Exception getException() {
+        return null;
+      }
+
+      @Override
+      public Task<Void> addOnSuccessListener(OnSuccessListener<? super Void> listener) {
+        return null;
+      }
+
+      @Override
+      public Task<Void> addOnSuccessListener(
+          Executor executor, OnSuccessListener<? super Void> listener) {
+        return null;
+      }
+
+      @Override
+      public Task<Void> addOnFailureListener(OnFailureListener listener) {
+        listener.onFailure(new Exception("Test Exception!"));
+        return null;
+      }
+
+      @Override
+      public Task<Void> addOnFailureListener(Executor executor, OnFailureListener listener) {
+        return null;
+      }
+
+      @Override
+      public Task<Void> addOnCompleteListener(OnCompleteListener<Void> listener) {
+        return null;
+      }
+
+      @Override
+      public Task<Void> addOnCompleteListener(
+          Executor executor, OnCompleteListener<Void> listener) {
+        return null;
+      }
+    };
   }
 }

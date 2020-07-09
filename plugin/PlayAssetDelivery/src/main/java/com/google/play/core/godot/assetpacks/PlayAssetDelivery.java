@@ -22,9 +22,11 @@ import com.google.android.play.core.assetpacks.AssetLocation;
 import com.google.android.play.core.assetpacks.AssetPackLocation;
 import com.google.android.play.core.assetpacks.AssetPackManager;
 import com.google.android.play.core.assetpacks.AssetPackManagerFactory;
-import com.google.android.play.core.assetpacks.AssetPackState;
 import com.google.android.play.core.assetpacks.AssetPackStateUpdateListener;
 import com.google.android.play.core.assetpacks.AssetPackStates;
+import com.google.android.play.core.tasks.OnFailureListener;
+import com.google.android.play.core.tasks.OnSuccessListener;
+import com.google.android.play.core.tasks.Task;
 import com.google.play.core.godot.assetpacks.utils.PlayAssetDeliveryUtils;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -251,10 +253,14 @@ public class PlayAssetDelivery extends GodotPlugin {
    * @param packName
    */
   public void removePack(String packName, int signalID) {
-    assetPackManager
-        .removePack(packName)
-        .addOnSuccessListener(result -> emitSignal(REMOVE_PACK_SUCCESS, signalID))
-        .addOnFailureListener(e -> emitSignal(REMOVE_PACK_ERROR, e.toString(), signalID));
+    OnSuccessListener<Void> removePackOnSuccessListener =
+        result -> emitSignal(REMOVE_PACK_SUCCESS, signalID);
+    OnFailureListener removePackOnFailureListener =
+        e -> emitSignal(REMOVE_PACK_ERROR, e.toString(), signalID);
+    Task<Void> removePackTask = assetPackManager.removePack(packName);
+
+    removePackTask.addOnSuccessListener(removePackOnSuccessListener);
+    removePackTask.addOnFailureListener(removePackOnFailureListener);
   }
 
   /**
