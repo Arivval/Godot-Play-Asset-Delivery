@@ -93,7 +93,6 @@ public class PlayAssetDelivery extends GodotPlugin {
         "showCellularDataConfirmation");
   }
 
-  // TODO Refactor these to const
   /**
    * Returns a set containing all the signals the Godot runtime is able to receive.
    * Below is the documentation for all signals registered.
