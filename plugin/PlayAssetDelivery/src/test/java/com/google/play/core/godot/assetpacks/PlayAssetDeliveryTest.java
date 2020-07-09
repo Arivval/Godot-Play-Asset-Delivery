@@ -24,6 +24,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import android.app.Activity;
 import com.google.android.play.core.assetpacks.AssetPackManager;
 import com.google.android.play.core.tasks.OnFailureListener;
 import com.google.android.play.core.tasks.OnSuccessListener;
@@ -50,6 +51,8 @@ public class PlayAssetDeliveryTest {
   @Mock AssetPackManager assetPackManagerMock;
   @Mock Task<Void> voidSuccessTaskMock;
   @Mock Task<Void> voidFailureTaskMock;
+  @Mock Task<Integer> integerSuccessTaskMock;
+  @Mock Task<Integer> integerFailureTaskMock;
 
   /** Creates a mock PlayAssetDelivery instance with mock objects. */
   private PlayAssetDelivery createPlayAssetDeliveryInstance() {
@@ -189,8 +192,8 @@ public class PlayAssetDeliveryTest {
   }
 
   @Test
-  public void remove_success() {
-    // Mock the side effects of removePackSuccessTaskMock object, call onSuccessListener the instant
+  public void removePack_success() {
+    // Mock the side effects of voidSuccessTaskMock object, call onSuccessListener the instant
     // it is registered.
     doAnswer(
             invocation -> {
@@ -219,8 +222,8 @@ public class PlayAssetDeliveryTest {
   }
 
   @Test
-  public void remove_error() {
-    // Mock the side effects of removePackFailureTaskMock object, call onFailureListener the instant
+  public void removePack_error() {
+    // Mock the side effects of voidFailureTaskMock object, call onFailureListener the instant
     // it is registered.
     doAnswer(
             invocation -> {
@@ -247,5 +250,70 @@ public class PlayAssetDeliveryTest {
     assertThat(receivedArgs).hasSize(2);
     assertThat(receivedArgs.get(0)).isEqualTo("java.lang.Exception: Test Exception!");
     assertThat(receivedArgs.get(1)).isEqualTo(11);
+  }
+
+  @Test
+  public void showCellularDataConfirmation_success() {
+    // Mock the side effects of integerSuccessTaskMock object, call onSuccessListener the instant
+    // it is registered.
+    doAnswer(
+            invocation -> {
+              OnSuccessListener<Integer> listener =
+                  (OnSuccessListener<Integer>) invocation.getArguments()[0];
+              listener.onSuccess(1);
+              return null;
+            })
+        .when(integerSuccessTaskMock)
+        .addOnSuccessListener(any(OnSuccessListener.class));
+
+    PlayAssetDelivery testSubject = spy(new PlayAssetDelivery(godotMock, assetPackManagerMock));
+    when(assetPackManagerMock.showCellularDataConfirmation(any(Activity.class)))
+        .thenReturn(integerSuccessTaskMock);
+
+    // Set up ArgumentCaptors to get the arguments received by emitSignalWrapper()
+    ArgumentCaptor<String> signalNameCaptor = ArgumentCaptor.forClass(String.class);
+    ArgumentCaptor<Object> signalArgsCaptor = ArgumentCaptor.forClass(Object.class);
+
+    testSubject.showCellularDataConfirmation(12);
+
+    verify(testSubject).emitSignalWrapper(signalNameCaptor.capture(), signalArgsCaptor.capture());
+
+    assertThat(signalNameCaptor.getValue()).isEqualTo("showCellularDataConfirmationSuccess");
+    List<Object> receivedArgs = signalArgsCaptor.getAllValues();
+    assertThat(receivedArgs).hasSize(2);
+    assertThat(receivedArgs.get(0)).isEqualTo(1);
+    assertThat(receivedArgs.get(1)).isEqualTo(12);
+  }
+
+  @Test
+  public void showCellularDataConfirmation_error() {
+    // Mock the side effects of integerFailureTaskMock object, call onFailureListener the instant
+    // it is registered.
+    doAnswer(
+            invocation -> {
+              OnFailureListener listener = (OnFailureListener) invocation.getArguments()[0];
+              listener.onFailure(new Exception("Test Exception!"));
+              return null;
+            })
+        .when(integerFailureTaskMock)
+        .addOnFailureListener(any(OnFailureListener.class));
+
+    PlayAssetDelivery testSubject = spy(new PlayAssetDelivery(godotMock, assetPackManagerMock));
+    when(assetPackManagerMock.showCellularDataConfirmation(any(Activity.class)))
+        .thenReturn(integerFailureTaskMock);
+
+    // Set up ArgumentCaptors to get the arguments received by emitSignalWrapper()
+    ArgumentCaptor<String> signalNameCaptor = ArgumentCaptor.forClass(String.class);
+    ArgumentCaptor<Object> signalArgsCaptor = ArgumentCaptor.forClass(Object.class);
+
+    testSubject.showCellularDataConfirmation(13);
+
+    verify(testSubject).emitSignalWrapper(signalNameCaptor.capture(), signalArgsCaptor.capture());
+
+    assertThat(signalNameCaptor.getValue()).isEqualTo("showCellularDataConfirmationError");
+    List<Object> receivedArgs = signalArgsCaptor.getAllValues();
+    assertThat(receivedArgs).hasSize(2);
+    assertThat(receivedArgs.get(0)).isEqualTo("java.lang.Exception: Test Exception!");
+    assertThat(receivedArgs.get(1)).isEqualTo(13);
   }
 }
