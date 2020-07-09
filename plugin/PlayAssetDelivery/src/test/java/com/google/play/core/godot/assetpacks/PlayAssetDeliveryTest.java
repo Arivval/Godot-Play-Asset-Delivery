@@ -116,9 +116,6 @@ public class PlayAssetDeliveryTest {
   }
 
   @Test
-  public void fetch_success() {}
-
-  @Test
   public void cancel_success() {
     PlayAssetDelivery testSubject = createPlayAssetDeliveryInstance();
     String[] testPackNames = {"Test pack 1", "Test pack 2"};
@@ -217,7 +214,4 @@ public class PlayAssetDeliveryTest {
     assertThat(receivedSignalObjects[0]).isEqualTo("java.lang.Exception: Test Exception!");
     assertThat(receivedSignalObjects[1]).isEqualTo(11);
   }
-
-  @Test
-  public void remove_failed() {}
 }
