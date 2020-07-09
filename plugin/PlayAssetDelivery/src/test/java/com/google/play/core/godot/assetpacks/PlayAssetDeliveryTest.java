@@ -191,8 +191,7 @@ public class PlayAssetDeliveryTest {
   @Test
   public void remove_success() {
     // mock the side effects of removePackSuccessTaskMock object, call onSuccessListener the instant
-    // it is
-    // registered.
+    // it is registered.
     doAnswer(
             invocation -> {
               OnSuccessListener<?> listener = (OnSuccessListener<?>) invocation.getArguments()[0];
@@ -222,8 +221,7 @@ public class PlayAssetDeliveryTest {
   @Test
   public void remove_error() {
     // mock the side effects of removePackFailureTaskMock object, call onFailureListener the instant
-    // it is
-    // registered.
+    // it is registered.
     doAnswer(
             invocation -> {
               OnFailureListener listener = (OnFailureListener) invocation.getArguments()[0];
