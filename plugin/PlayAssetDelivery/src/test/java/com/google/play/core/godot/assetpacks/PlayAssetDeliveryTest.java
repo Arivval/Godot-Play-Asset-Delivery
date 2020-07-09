@@ -190,7 +190,7 @@ public class PlayAssetDeliveryTest {
 
   @Test
   public void remove_success() {
-    // mock the side effects of removePackSuccessTaskMock object, call onSuccessListener the instant
+    // Mock the side effects of removePackSuccessTaskMock object, call onSuccessListener the instant
     // it is registered.
     doAnswer(
             invocation -> {
@@ -220,7 +220,7 @@ public class PlayAssetDeliveryTest {
 
   @Test
   public void remove_error() {
-    // mock the side effects of removePackFailureTaskMock object, call onFailureListener the instant
+    // Mock the side effects of removePackFailureTaskMock object, call onFailureListener the instant
     // it is registered.
     doAnswer(
             invocation -> {
