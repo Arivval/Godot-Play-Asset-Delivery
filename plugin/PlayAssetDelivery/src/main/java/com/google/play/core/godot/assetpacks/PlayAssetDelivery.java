@@ -22,7 +22,6 @@ import com.google.android.play.core.assetpacks.AssetLocation;
 import com.google.android.play.core.assetpacks.AssetPackLocation;
 import com.google.android.play.core.assetpacks.AssetPackManager;
 import com.google.android.play.core.assetpacks.AssetPackManagerFactory;
-import com.google.android.play.core.assetpacks.AssetPackState;
 import com.google.android.play.core.assetpacks.AssetPackStates;
 import com.google.android.play.core.tasks.OnFailureListener;
 import com.google.android.play.core.tasks.OnSuccessListener;

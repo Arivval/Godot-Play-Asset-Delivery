@@ -26,7 +26,6 @@ import static org.mockito.Mockito.when;
 
 import android.app.Activity;
 import com.google.android.play.core.assetpacks.AssetPackManager;
-import com.google.android.play.core.assetpacks.AssetPackState;
 import com.google.android.play.core.assetpacks.AssetPackStates;
 import com.google.android.play.core.tasks.OnFailureListener;
 import com.google.android.play.core.tasks.OnSuccessListener;
@@ -35,7 +34,6 @@ import com.google.play.core.godot.assetpacks.utils.AssetLocationFromDictionary;
 import com.google.play.core.godot.assetpacks.utils.AssetPackLocationFromDictionary;
 import com.google.play.core.godot.assetpacks.utils.AssetPackStatesFromDictionary;
 import com.google.play.core.godot.assetpacks.utils.PlayAssetDeliveryUtils;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
