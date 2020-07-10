@@ -23,6 +23,7 @@ import com.google.android.play.core.assetpacks.AssetPackException;
 import com.google.android.play.core.assetpacks.AssetPackLocation;
 import com.google.android.play.core.assetpacks.AssetPackState;
 import com.google.android.play.core.assetpacks.AssetPackStates;
+import com.google.android.play.core.assetpacks.model.AssetPackErrorCode;
 import com.google.play.core.godot.assetpacks.PlayAssetDeliveryTestHelper;
 import java.util.Map;
 import org.godotengine.godot.Dictionary;
@@ -295,9 +296,9 @@ public class PlayAssetDeliveryUtilsTest {
     Dictionary testDict = PlayAssetDeliveryUtils.convertExceptionToDictionary(testException);
 
     Dictionary expectedDict = new Dictionary();
-    expectedDict.put("type", Exception.class.getCanonicalName());
-    expectedDict.put("message", testException.getMessage());
-    expectedDict.put("errorCode", -100);
+    expectedDict.put(PlayAssetDeliveryUtils.ASSETPACK_DICTIONARY_TYPE_KEY, Exception.class.getCanonicalName());
+    expectedDict.put(PlayAssetDeliveryUtils.ASSETPACK_DICTIONARY_MESSAGE_KEY, testException.getMessage());
+    expectedDict.put(PlayAssetDeliveryUtils.ASSETPACK_DICTIONARY_ERROR_CODE_KEY, AssetPackErrorCode.INTERNAL_ERROR);
 
     assertThat(testDict).isEqualTo(expectedDict);
   }
@@ -305,10 +306,10 @@ public class PlayAssetDeliveryUtilsTest {
   @Test
   public void convertExceptionToDictionary_assetPackException() {
     AssetPackException testException =
-        PlayAssetDeliveryTestHelper.createMockAssetPackException("Test message.", -7);
+        PlayAssetDeliveryTestHelper.createMockAssetPackException("Test message.", AssetPackErrorCode.ACCESS_DENIED);
     Dictionary testDict = PlayAssetDeliveryUtils.convertExceptionToDictionary(testException);
 
     PlayAssetDeliveryTestHelper.assertMockAssetPackExceptionDictionaryIsExpected(
-        testDict, "Test message.", -7);
+        testDict, "Test message.", AssetPackErrorCode.ACCESS_DENIED);
   }
 }

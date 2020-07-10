@@ -27,6 +27,7 @@ import android.app.Activity;
 import com.google.android.play.core.assetpacks.AssetPackException;
 import com.google.android.play.core.assetpacks.AssetPackManager;
 import com.google.android.play.core.assetpacks.AssetPackStates;
+import com.google.android.play.core.assetpacks.model.AssetPackErrorCode;
 import com.google.android.play.core.tasks.Task;
 import com.google.play.core.godot.assetpacks.utils.AssetLocationFromDictionary;
 import com.google.play.core.godot.assetpacks.utils.AssetPackLocationFromDictionary;
@@ -221,7 +222,7 @@ public class PlayAssetDeliveryTest {
     // Mock the side effects of Task<AssetPackStates> object, call onFailureListener the instant
     // it is registered.
     AssetPackException testException =
-        PlayAssetDeliveryTestHelper.createMockAssetPackException("pack error test.", -7);
+        PlayAssetDeliveryTestHelper.createMockAssetPackException("pack error test.", AssetPackErrorCode.ACCESS_DENIED);
 
     Task<AssetPackStates> assetPackStatesFailureTaskMock =
         PlayAssetDeliveryTestHelper.createMockOnFailureTask(testException);
@@ -243,7 +244,7 @@ public class PlayAssetDeliveryTest {
     assertThat(receivedArgs).hasSize(2);
 
     PlayAssetDeliveryTestHelper.assertMockAssetPackExceptionDictionaryIsExpected(
-        (Dictionary) receivedArgs.get(0), "pack error test.", -7);
+        (Dictionary) receivedArgs.get(0), "pack error test.", AssetPackErrorCode.ACCESS_DENIED);
 
     assertThat(receivedArgs.get(1)).isEqualTo(15);
   }
@@ -276,7 +277,7 @@ public class PlayAssetDeliveryTest {
     // Mock the side effects of Task<Void> object, call onFailureListener the instant
     // it is registered.
     AssetPackException testException =
-        PlayAssetDeliveryTestHelper.createMockAssetPackException("pack error test.", -7);
+        PlayAssetDeliveryTestHelper.createMockAssetPackException("pack error test.", AssetPackErrorCode.ACCESS_DENIED);
     Task<Void> voidFailureTaskMock =
         PlayAssetDeliveryTestHelper.createMockOnFailureTask(testException);
 
@@ -296,7 +297,7 @@ public class PlayAssetDeliveryTest {
     assertThat(receivedArgs).hasSize(2);
 
     PlayAssetDeliveryTestHelper.assertMockAssetPackExceptionDictionaryIsExpected(
-        (Dictionary) receivedArgs.get(0), "pack error test.", -7);
+        (Dictionary) receivedArgs.get(0), "pack error test.", AssetPackErrorCode.ACCESS_DENIED);
 
     assertThat(receivedArgs.get(1)).isEqualTo(11);
   }
