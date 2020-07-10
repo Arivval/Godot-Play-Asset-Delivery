@@ -245,7 +245,7 @@ public class PlayAssetDelivery extends GodotPlugin {
         e -> emitSignalWrapper(SHOW_CELLULAR_DATA_CONFIRMATION_ERROR, e.toString(), signalID);
 
     Task<Integer> showCellularDataConfirmationTask =
-        assetPackManager.showCellularDataConfirmation(this.getGodot());
+        assetPackManager.showCellularDataConfirmation(getGodot());
     showCellularDataConfirmationTask.addOnSuccessListener(
         showCellularDataConfirmationSuccessListener);
     showCellularDataConfirmationTask.addOnFailureListener(
