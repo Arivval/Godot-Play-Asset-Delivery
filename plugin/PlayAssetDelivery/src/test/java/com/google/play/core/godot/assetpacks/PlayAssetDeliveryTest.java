@@ -88,18 +88,17 @@ public class PlayAssetDeliveryTest {
     SignalInfo fetchStateUpdated =
         new SignalInfo("fetchStateUpdated", Dictionary.class, Integer.class);
     SignalInfo fetchSuccess = new SignalInfo("fetchSuccess", Dictionary.class, Integer.class);
-    SignalInfo fetchError = new SignalInfo("fetchError", String.class, Integer.class);
+    SignalInfo fetchError = new SignalInfo("fetchError", Dictionary.class, Integer.class);
     SignalInfo getPackStatesSuccess =
         new SignalInfo("getPackStatesSuccess", Dictionary.class, Integer.class);
     SignalInfo getPackStatesError =
-        new SignalInfo("getPackStatesError", String.class, Integer.class);
+        new SignalInfo("getPackStatesError", Dictionary.class, Integer.class);
     SignalInfo removePackSuccess = new SignalInfo("removePackSuccess", String.class, Integer.class);
-    SignalInfo removePackError =
-        new SignalInfo("removePackError", String.class, String.class, Integer.class);
+    SignalInfo removePackError = new SignalInfo("removePackError", Dictionary.class, Integer.class);
     SignalInfo showCellularDataConfirmationSuccess =
         new SignalInfo("showCellularDataConfirmationSuccess", Integer.class, Integer.class);
     SignalInfo showCellularDataConfirmationError =
-        new SignalInfo("showCellularDataConfirmationError", String.class, Integer.class);
+        new SignalInfo("showCellularDataConfirmationError", Dictionary.class, Integer.class);
     assertThat(testSet)
         .containsExactly(
             assetPackStateUpdateSignal,
