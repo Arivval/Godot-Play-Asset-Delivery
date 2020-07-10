@@ -295,20 +295,20 @@ public class PlayAssetDeliveryUtilsTest {
     Dictionary testDict = PlayAssetDeliveryUtils.convertExceptionToDictionary(testException);
 
     Dictionary expectedDict = new Dictionary();
-    expectedDict.put("toString", "java.lang.Exception: Just testing, don't panic.");
+    expectedDict.put("type", Exception.class.getCanonicalName());
+    expectedDict.put("message", testException.getMessage());
+    expectedDict.put("errorCode", -100);
 
     assertThat(testDict).isEqualTo(expectedDict);
   }
 
   @Test
   public void convertExceptionToDictionary_assetPackException() {
-    AssetPackException testException = PlayAssetDeliveryTestHelper.createMockAssetPackException();
+    AssetPackException testException =
+        PlayAssetDeliveryTestHelper.createMockAssetPackException("Test message.", -7);
     Dictionary testDict = PlayAssetDeliveryUtils.convertExceptionToDictionary(testException);
 
-    Dictionary expectedDict = new Dictionary();
-    expectedDict.put("toString", "java.lang.RuntimeException.AssetPackException: testException!");
-    expectedDict.put("errorCode", -7);
-
-    assertThat(testDict).isEqualTo(expectedDict);
+    PlayAssetDeliveryTestHelper.assertMockAssetPackExceptionDictionaryIsExpected(
+        testDict, "Test message.", -7);
   }
 }

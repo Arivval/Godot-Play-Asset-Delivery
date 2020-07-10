@@ -16,6 +16,7 @@
 
 package com.google.play.core.godot.assetpacks;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -54,6 +55,22 @@ public class PlayAssetDeliveryTestHelper {
     testDict.put("location1", innerDict1);
     testDict.put("location2", innerDict2);
     return testDict;
+  }
+
+  public static void assertMockAssetPackExceptionDictionaryIsExpected(
+      Dictionary mockExceptionDictionary, String expectedMessage, int expectedErrorCode) {
+    // when calling get class methods on Mocked objects, the returned named will contain Mockito
+    // specific suffix such as
+    // com.google.android.play.core.assetpacks.AssetPackException$$EnhancerByMockitoWithCGLIB$$c5.
+    // Hence we need to apply string operations to only take the prefix.
+    String testExceptionType = (String) mockExceptionDictionary.get("type");
+    testExceptionType =
+        testExceptionType.substring(0, AssetPackException.class.getCanonicalName().length());
+
+    assertThat(testExceptionType).isEqualTo(AssetPackException.class.getCanonicalName());
+    assertThat(mockExceptionDictionary.get("message")).isEqualTo(expectedMessage);
+    assertThat(mockExceptionDictionary.get("errorCode")).isEqualTo(expectedErrorCode);
+    assertThat(mockExceptionDictionary.entrySet().size()).isEqualTo(3);
   }
 
   /**
@@ -98,12 +115,17 @@ public class PlayAssetDeliveryTestHelper {
     return returnTaskMock;
   }
 
-  /** Returns a mock AssetPackException object used for unit testing. */
-  public static AssetPackException createMockAssetPackException() {
+  /**
+   * Returns a mock AssetPackException object used for unit testing.
+   *
+   * @param message String to be returned upon getMessage()
+   * @param errorCode int to be returned upon getErrorCode()
+   * @return instantiated mock AssetPackException object
+   */
+  public static AssetPackException createMockAssetPackException(String message, int errorCode) {
     AssetPackException testException = mock(AssetPackException.class);
-    when(testException.toString())
-        .thenReturn("java.lang.RuntimeException.AssetPackException: testException!");
-    when(testException.getErrorCode()).thenReturn(-7);
+    when(testException.getMessage()).thenReturn(message);
+    when(testException.getErrorCode()).thenReturn(errorCode);
     return testException;
   }
 }

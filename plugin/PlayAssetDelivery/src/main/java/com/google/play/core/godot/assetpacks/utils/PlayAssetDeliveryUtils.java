@@ -21,6 +21,7 @@ import com.google.android.play.core.assetpacks.AssetPackException;
 import com.google.android.play.core.assetpacks.AssetPackLocation;
 import com.google.android.play.core.assetpacks.AssetPackState;
 import com.google.android.play.core.assetpacks.AssetPackStates;
+import com.google.android.play.core.assetpacks.model.AssetPackErrorCode;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.godotengine.godot.Dictionary;
@@ -132,18 +133,23 @@ public class PlayAssetDeliveryUtils {
   }
 
   /**
-   * Serializes an Exception object into Godot Dictionary. If the Exception is an
-   * AssetPackException, the errorCode entry in returnDict will be populated.
+   * Serializes an Exception object into Godot Dictionary. If the Exception is not an
+   * AssetPackException, the errorCode entry in returnDict will be set to INTERNAL_ERROR.
    *
    * @param e Exception to be converted to Dictionary
    * @return serialized Dictionary
    */
   public static Dictionary convertExceptionToDictionary(Exception e) {
     Dictionary returnDict = new Dictionary();
-    returnDict.put("toString", e.toString());
+    returnDict.put("type", e.getClass().getCanonicalName());
+    returnDict.put("message", e.getMessage());
+
     if (e instanceof AssetPackException) {
       returnDict.put("errorCode", ((AssetPackException) e).getErrorCode());
+    } else {
+      returnDict.put("errorCode", AssetPackErrorCode.INTERNAL_ERROR);
     }
+
     return returnDict;
   }
 
