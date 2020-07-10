@@ -94,10 +94,7 @@ public class PlayAssetDeliveryUtils {
 
   public static Dictionary convertAssetPackStatesToDictionary(AssetPackStates assetPackStates) {
     Dictionary packStatesDictionary =
-        assetPackStates
-            .packStates()
-            .entrySet()
-            .stream()
+        assetPackStates.packStates().entrySet().stream()
             .collect(
                 Dictionary::new,
                 (d, e) -> d.put(e.getKey(), convertAssetPackStateToDictionary(e.getValue())),
@@ -122,9 +119,7 @@ public class PlayAssetDeliveryUtils {
 
   public static Dictionary convertAssetPackLocationsToDictionary(
       Map<String, AssetPackLocation> assetPackLocations) {
-    return assetPackLocations
-        .entrySet()
-        .stream()
+    return assetPackLocations.entrySet().stream()
         .collect(
             Dictionary::new,
             (d, e) -> d.put(e.getKey(), convertAssetPackLocationToDictionary(e.getValue())),
@@ -132,7 +127,7 @@ public class PlayAssetDeliveryUtils {
   }
 
   /**
-   * Serialize an Exception object into Godot Dictionary. If the Exception is an AssetPackException
+   * Serializes an Exception object into Godot Dictionary. If the Exception is an AssetPackException
    * the errorCode entry in returnDict will be populated.
    *
    * @param e Exception to be converted to Dictionary
@@ -170,8 +165,7 @@ public class PlayAssetDeliveryUtils {
   public static Map<String, AssetPackLocation> convertDictionaryToAssetPackLocations(
       Dictionary dict) throws IllegalArgumentException {
     try {
-      return dict.entrySet()
-          .stream()
+      return dict.entrySet().stream()
           .collect(
               Collectors.toMap(
                   e -> e.getKey(),
