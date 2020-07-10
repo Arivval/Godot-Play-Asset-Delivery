@@ -134,7 +134,8 @@ public class PlayAssetDeliveryUtils {
 
   /**
    * Serializes an Exception object into Godot Dictionary. If the Exception is not an
-   * AssetPackException, the errorCode entry in returnDict will be set to INTERNAL_ERROR.
+   * AssetPackException, the errorCode entry in returnDict will be set to
+   * AssetPackErrorCode.INTERNAL_ERROR.
    *
    * @param e Exception to be converted to Dictionary
    * @return serialized Dictionary
