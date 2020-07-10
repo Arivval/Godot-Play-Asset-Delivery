@@ -85,7 +85,7 @@ public class PlayAssetDeliveryTestHelper {
 
   public static void assertMockAssetPackExceptionDictionaryIsExpected(
       Dictionary mockExceptionDictionary, String expectedMessage, int expectedErrorCode) {
-    // when calling get class methods on mocked objects, the returned named will contain Mockito
+    // when calling getClass() method on mocked objects, the returned named will contain Mockito
     // specific suffix such as
     // com.google.android.play.core.assetpacks.AssetPackException$$EnhancerByMockitoWithCGLIB$$c5.
     // Hence we need to apply string operations to only take the prefix.
