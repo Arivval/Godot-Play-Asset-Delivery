@@ -61,7 +61,7 @@ public class PlayAssetDeliveryTestHelper {
    * When calling getClass() method on mocked objects, the returned named will contain Mockito
    * specific suffix such as
    * com.google.android.play.core.assetpacks.AssetPackException$$EnhancerByMockitoWithCGLIB$$c5.
-   * Hence we need to apply string operations to only take the prefix.
+   * Hence we need this helper function to apply string operations to only take the prefix.
    *
    * @param mockitoClassName raw string with Mockito given suffix
    * @return string representing the actual class name
