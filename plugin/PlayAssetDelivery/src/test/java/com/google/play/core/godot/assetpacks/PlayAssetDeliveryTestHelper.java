@@ -16,8 +16,12 @@
 
 package com.google.play.core.godot.assetpacks;
 
+import com.google.android.play.core.assetpacks.AssetPackState;
 import com.google.play.core.godot.assetpacks.utils.PlayAssetDeliveryUtils;
 import org.godotengine.godot.Dictionary;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PlayAssetDeliveryTestHelper {
   public static Dictionary createAssetPackStatesTestDictionary() {
@@ -45,5 +49,28 @@ public class PlayAssetDeliveryTestHelper {
     testDict.put("location1", innerDict1);
     testDict.put("location2", innerDict2);
     return testDict;
+  }
+
+  public static List<AssetPackState> createAssetPackStateSequence() {
+    List<AssetPackState> returnList = new ArrayList<>();
+
+    AssetPackState packState1 =
+        PlayAssetDeliveryUtils.convertDictionaryToAssetPackState(
+            PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
+                42, 0, "awesomePack", 2, 65536, 35));
+    AssetPackState packState2 =
+            PlayAssetDeliveryUtils.convertDictionaryToAssetPackState(
+                    PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
+                            256, 0, "awesomePack", 2, 65536, 35));
+    AssetPackState packState3 =
+            PlayAssetDeliveryUtils.convertDictionaryToAssetPackState(
+                    PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
+                            4096, 0, "awesomePack", 2, 65536, 35));
+
+    returnList.add(packState1);
+    returnList.add(packState2);
+    returnList.add(packState3);
+
+    return returnList;
   }
 }

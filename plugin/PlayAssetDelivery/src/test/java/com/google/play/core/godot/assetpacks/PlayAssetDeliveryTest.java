@@ -21,11 +21,14 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.app.Activity;
 import com.google.android.play.core.assetpacks.AssetPackManager;
+import com.google.android.play.core.assetpacks.AssetPackState;
+import com.google.android.play.core.assetpacks.AssetPackStateUpdateListener;
 import com.google.android.play.core.assetpacks.AssetPackStates;
 import com.google.android.play.core.tasks.OnFailureListener;
 import com.google.android.play.core.tasks.OnSuccessListener;
@@ -136,6 +139,33 @@ public class PlayAssetDeliveryTest {
   }
 
   @Test
+  public void assetPackStateUpdatedTest() {
+    doAnswer(
+            invocation -> {
+              AssetPackStateUpdateListener listener =
+                  (AssetPackStateUpdateListener) invocation.getArguments()[0];
+              List<AssetPackState> packStateSequence =
+                  PlayAssetDeliveryTestHelper.createAssetPackStateSequence();
+              for (AssetPackState packState : packStateSequence) {
+                listener.onStateUpdate(packState);
+              }
+              return null;
+            })
+        .when(assetPackManagerMock)
+        .registerListener(any(AssetPackStateUpdateListener.class));
+
+    ArgumentCaptor<String> signalNameCaptor = ArgumentCaptor.forClass(String.class);
+    ArgumentCaptor<Object> signalArgsCaptor = ArgumentCaptor.forClass(Object.class);
+
+    PlayAssetDelivery testSubject = spy(new PlayAssetDelivery(godotMock, assetPackManagerMock));
+
+    testSubject.registerAssetPackStateUpdatedListener();
+
+    verify(testSubject, times(3))
+        .emitSignalWrapper(signalNameCaptor.capture(), signalArgsCaptor.capture());
+  }
+
+  @Test
   public void fetch_success() {
     // Mock the side effects of Task<AssetPackStates> object, call onSuccessListener the instant
     // it is registered.
@@ -145,16 +175,16 @@ public class PlayAssetDeliveryTest {
     doAnswer(
             invocation -> {
               OnSuccessListener<AssetPackStates> listener =
-                      (OnSuccessListener<AssetPackStates>) invocation.getArguments()[0];
+                  (OnSuccessListener<AssetPackStates>) invocation.getArguments()[0];
               listener.onSuccess(testAssetPackStates);
               return null;
             })
-            .when(assetPackStatesSuccessTaskMock)
-            .addOnSuccessListener(any(OnSuccessListener.class));
+        .when(assetPackStatesSuccessTaskMock)
+        .addOnSuccessListener(any(OnSuccessListener.class));
 
     PlayAssetDelivery testSubject = spy(new PlayAssetDelivery(godotMock, assetPackManagerMock));
     when(assetPackManagerMock.fetch(anyListOf(String.class)))
-            .thenReturn(assetPackStatesSuccessTaskMock);
+        .thenReturn(assetPackStatesSuccessTaskMock);
 
     // Set up ArgumentCaptors to get the arguments received by emitSignalWrapper()
     ArgumentCaptor<String> signalNameCaptor = ArgumentCaptor.forClass(String.class);
@@ -182,12 +212,12 @@ public class PlayAssetDeliveryTest {
               listener.onFailure(new Exception("Test Exception!"));
               return null;
             })
-            .when(assetPackStatesFailureTaskMock)
-            .addOnFailureListener(any(OnFailureListener.class));
+        .when(assetPackStatesFailureTaskMock)
+        .addOnFailureListener(any(OnFailureListener.class));
 
     PlayAssetDelivery testSubject = spy(new PlayAssetDelivery(godotMock, assetPackManagerMock));
     when(assetPackManagerMock.fetch(anyListOf(String.class)))
-            .thenReturn(assetPackStatesFailureTaskMock);
+        .thenReturn(assetPackStatesFailureTaskMock);
 
     // Set up ArgumentCaptors to get the arguments received by emitSignalWrapper()
     ArgumentCaptor<String> signalNameCaptor = ArgumentCaptor.forClass(String.class);
