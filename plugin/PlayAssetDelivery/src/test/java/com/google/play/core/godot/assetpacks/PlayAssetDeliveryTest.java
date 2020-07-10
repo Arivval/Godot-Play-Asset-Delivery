@@ -19,7 +19,6 @@ package com.google.play.core.godot.assetpacks;
 import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -27,8 +26,6 @@ import static org.mockito.Mockito.when;
 import android.app.Activity;
 import com.google.android.play.core.assetpacks.AssetPackManager;
 import com.google.android.play.core.assetpacks.AssetPackStates;
-import com.google.android.play.core.tasks.OnFailureListener;
-import com.google.android.play.core.tasks.OnSuccessListener;
 import com.google.android.play.core.tasks.Task;
 import com.google.play.core.godot.assetpacks.utils.AssetLocationFromDictionary;
 import com.google.play.core.godot.assetpacks.utils.AssetPackLocationFromDictionary;
@@ -51,12 +48,6 @@ public class PlayAssetDeliveryTest {
 
   @Mock Godot godotMock;
   @Mock AssetPackManager assetPackManagerMock;
-  @Mock Task<Void> voidSuccessTaskMock;
-  @Mock Task<Void> voidFailureTaskMock;
-  @Mock Task<Integer> integerSuccessTaskMock;
-  @Mock Task<Integer> integerFailureTaskMock;
-  @Mock Task<AssetPackStates> assetPackStatesSuccessTaskMock;
-  @Mock Task<AssetPackStates> assetPackStatesFailureTaskMock;
 
   /** Creates a mock PlayAssetDelivery instance with mock objects. */
   private PlayAssetDelivery createPlayAssetDeliveryInstance() {
@@ -202,15 +193,8 @@ public class PlayAssetDeliveryTest {
     Dictionary testDict = PlayAssetDeliveryTestHelper.createAssetPackStatesTestDictionary();
     AssetPackStates testAssetPackStates = new AssetPackStatesFromDictionary(testDict);
 
-    doAnswer(
-            invocation -> {
-              OnSuccessListener<AssetPackStates> listener =
-                  (OnSuccessListener<AssetPackStates>) invocation.getArguments()[0];
-              listener.onSuccess(testAssetPackStates);
-              return null;
-            })
-        .when(assetPackStatesSuccessTaskMock)
-        .addOnSuccessListener(any(OnSuccessListener.class));
+    Task<AssetPackStates> assetPackStatesSuccessTaskMock =
+        PlayAssetDeliveryTestHelper.createMockOnSuccessTask(testAssetPackStates);
 
     PlayAssetDelivery testSubject = spy(new PlayAssetDelivery(godotMock, assetPackManagerMock));
     when(assetPackManagerMock.getPackStates(anyListOf(String.class)))
@@ -236,14 +220,8 @@ public class PlayAssetDeliveryTest {
   public void getPackStates_error() {
     // Mock the side effects of Task<AssetPackStates> object, call onFailureListener the instant
     // it is registered.
-    doAnswer(
-            invocation -> {
-              OnFailureListener listener = (OnFailureListener) invocation.getArguments()[0];
-              listener.onFailure(new Exception("Test Exception!"));
-              return null;
-            })
-        .when(assetPackStatesFailureTaskMock)
-        .addOnFailureListener(any(OnFailureListener.class));
+    Task<AssetPackStates> assetPackStatesFailureTaskMock =
+        PlayAssetDeliveryTestHelper.createMockOnFailureTask();
 
     PlayAssetDelivery testSubject = spy(new PlayAssetDelivery(godotMock, assetPackManagerMock));
     when(assetPackManagerMock.getPackStates(anyListOf(String.class)))
@@ -268,14 +246,7 @@ public class PlayAssetDeliveryTest {
   public void removePack_success() {
     // Mock the side effects of Task<Void> object, call onSuccessListener the instant
     // it is registered.
-    doAnswer(
-            invocation -> {
-              OnSuccessListener<?> listener = (OnSuccessListener<?>) invocation.getArguments()[0];
-              listener.onSuccess(null);
-              return null;
-            })
-        .when(voidSuccessTaskMock)
-        .addOnSuccessListener(any(OnSuccessListener.class));
+    Task<Void> voidSuccessTaskMock = PlayAssetDeliveryTestHelper.createMockOnSuccessTask(null);
 
     PlayAssetDelivery testSubject = spy(new PlayAssetDelivery(godotMock, assetPackManagerMock));
     when(assetPackManagerMock.removePack(any(String.class))).thenReturn(voidSuccessTaskMock);
@@ -298,14 +269,7 @@ public class PlayAssetDeliveryTest {
   public void removePack_error() {
     // Mock the side effects of Task<Void> object, call onFailureListener the instant
     // it is registered.
-    doAnswer(
-            invocation -> {
-              OnFailureListener listener = (OnFailureListener) invocation.getArguments()[0];
-              listener.onFailure(new Exception("Test Exception!"));
-              return null;
-            })
-        .when(voidFailureTaskMock)
-        .addOnFailureListener(any(OnFailureListener.class));
+    Task<Void> voidFailureTaskMock = PlayAssetDeliveryTestHelper.createMockOnFailureTask();
 
     PlayAssetDelivery testSubject = spy(new PlayAssetDelivery(godotMock, assetPackManagerMock));
     when(assetPackManagerMock.removePack(any(String.class))).thenReturn(voidFailureTaskMock);
@@ -329,15 +293,7 @@ public class PlayAssetDeliveryTest {
   public void showCellularDataConfirmation_success() {
     // Mock the side effects of Task<Integer> object, call onSuccessListener the instant
     // it is registered.
-    doAnswer(
-            invocation -> {
-              OnSuccessListener<Integer> listener =
-                  (OnSuccessListener<Integer>) invocation.getArguments()[0];
-              listener.onSuccess(1);
-              return null;
-            })
-        .when(integerSuccessTaskMock)
-        .addOnSuccessListener(any(OnSuccessListener.class));
+    Task<Integer> integerSuccessTaskMock = PlayAssetDeliveryTestHelper.createMockOnSuccessTask(1);
 
     PlayAssetDelivery testSubject = spy(new PlayAssetDelivery(godotMock, assetPackManagerMock));
     when(assetPackManagerMock.showCellularDataConfirmation(any(Activity.class)))
@@ -362,14 +318,7 @@ public class PlayAssetDeliveryTest {
   public void showCellularDataConfirmation_error() {
     // Mock the side effects of Task<Integer> object, call onFailureListener the instant
     // it is registered.
-    doAnswer(
-            invocation -> {
-              OnFailureListener listener = (OnFailureListener) invocation.getArguments()[0];
-              listener.onFailure(new Exception("Test Exception!"));
-              return null;
-            })
-        .when(integerFailureTaskMock)
-        .addOnFailureListener(any(OnFailureListener.class));
+    Task<Integer> integerFailureTaskMock = PlayAssetDeliveryTestHelper.createMockOnFailureTask();
 
     PlayAssetDelivery testSubject = spy(new PlayAssetDelivery(godotMock, assetPackManagerMock));
     when(assetPackManagerMock.showCellularDataConfirmation(any(Activity.class)))

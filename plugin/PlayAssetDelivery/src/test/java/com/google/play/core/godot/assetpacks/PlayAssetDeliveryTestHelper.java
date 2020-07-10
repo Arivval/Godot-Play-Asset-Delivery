@@ -16,6 +16,13 @@
 
 package com.google.play.core.godot.assetpacks;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+
+import com.google.android.play.core.tasks.OnFailureListener;
+import com.google.android.play.core.tasks.OnSuccessListener;
+import com.google.android.play.core.tasks.Task;
 import com.google.play.core.godot.assetpacks.utils.PlayAssetDeliveryUtils;
 import org.godotengine.godot.Dictionary;
 
@@ -45,5 +52,46 @@ public class PlayAssetDeliveryTestHelper {
     testDict.put("location1", innerDict1);
     testDict.put("location2", innerDict2);
     return testDict;
+  }
+
+  /**
+   * Mock object factory that returns a mock Task<T> object. Will invoke onSuccessListener with
+   * result if addOnSuccessListener() is called.
+   *
+   * @param result object to be passed to the onSuccessListener
+   * @param <T> parameterized type of the Task object
+   * @return instantiated mock Task
+   */
+  public static <T> Task<T> createMockOnSuccessTask(T result) {
+    Task<T> returnTaskMock = mock(Task.class);
+    doAnswer(
+            invocation -> {
+              OnSuccessListener<T> listener = (OnSuccessListener<T>) invocation.getArguments()[0];
+              listener.onSuccess(result);
+              return null;
+            })
+        .when(returnTaskMock)
+        .addOnSuccessListener(any(OnSuccessListener.class));
+    return returnTaskMock;
+  }
+
+  /**
+   * Mock object factory that returns a mock Task<T> object. Will invoke onFailureListener with
+   * Exception if addOnFailureListener() is called.
+   *
+   * @param <T> parameterized type of the Task object
+   * @return instantiated mock Task
+   */
+  public static <T> Task<T> createMockOnFailureTask() {
+    Task<T> returnTaskMock = mock(Task.class);
+    doAnswer(
+            invocation -> {
+              OnFailureListener listener = (OnFailureListener) invocation.getArguments()[0];
+              listener.onFailure(new Exception("Test Exception!"));
+              return null;
+            })
+        .when(returnTaskMock)
+        .addOnFailureListener(any(OnFailureListener.class));
+    return returnTaskMock;
   }
 }
