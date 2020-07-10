@@ -24,6 +24,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.app.Activity;
+import com.google.android.play.core.assetpacks.AssetPackException;
 import com.google.android.play.core.assetpacks.AssetPackManager;
 import com.google.android.play.core.assetpacks.AssetPackStates;
 import com.google.android.play.core.tasks.Task;
@@ -220,7 +221,7 @@ public class PlayAssetDeliveryTest {
   public void getPackStates_error() {
     // Mock the side effects of Task<AssetPackStates> object, call onFailureListener the instant
     // it is registered.
-    Exception testException = new Exception("Test Exception!");
+    AssetPackException testException = PlayAssetDeliveryTestHelper.createMockAssetPackException();
     Task<AssetPackStates> assetPackStatesFailureTaskMock =
         PlayAssetDeliveryTestHelper.createMockOnFailureTask(testException);
 
@@ -239,7 +240,8 @@ public class PlayAssetDeliveryTest {
     assertThat(signalNameCaptor.getValue()).isEqualTo("getPackStatesError");
     List<Object> receivedArgs = signalArgsCaptor.getAllValues();
     assertThat(receivedArgs).hasSize(2);
-    assertThat(receivedArgs.get(0)).isEqualTo("java.lang.Exception: Test Exception!");
+    assertThat(receivedArgs.get(0))
+        .isEqualTo(PlayAssetDeliveryUtils.convertExceptionToDictionary(testException));
     assertThat(receivedArgs.get(1)).isEqualTo(15);
   }
 
@@ -270,7 +272,7 @@ public class PlayAssetDeliveryTest {
   public void removePack_error() {
     // Mock the side effects of Task<Void> object, call onFailureListener the instant
     // it is registered.
-    Exception testException = new Exception("Test Exception!");
+    AssetPackException testException = PlayAssetDeliveryTestHelper.createMockAssetPackException();
     Task<Void> voidFailureTaskMock =
         PlayAssetDeliveryTestHelper.createMockOnFailureTask(testException);
 
@@ -288,7 +290,8 @@ public class PlayAssetDeliveryTest {
     assertThat(signalNameCaptor.getValue()).isEqualTo("removePackError");
     List<Object> receivedArgs = signalArgsCaptor.getAllValues();
     assertThat(receivedArgs).hasSize(2);
-    assertThat(receivedArgs.get(0)).isEqualTo("java.lang.Exception: Test Exception!");
+    assertThat(receivedArgs.get(0))
+        .isEqualTo(PlayAssetDeliveryUtils.convertExceptionToDictionary(testException));
     assertThat(receivedArgs.get(1)).isEqualTo(11);
   }
 
@@ -340,7 +343,8 @@ public class PlayAssetDeliveryTest {
     assertThat(signalNameCaptor.getValue()).isEqualTo("showCellularDataConfirmationError");
     List<Object> receivedArgs = signalArgsCaptor.getAllValues();
     assertThat(receivedArgs).hasSize(2);
-    assertThat(receivedArgs.get(0)).isEqualTo("java.lang.Exception: Test Exception!");
+    assertThat(receivedArgs.get(0))
+        .isEqualTo(PlayAssetDeliveryUtils.convertExceptionToDictionary(testException));
     assertThat(receivedArgs.get(1)).isEqualTo(13);
   }
 }

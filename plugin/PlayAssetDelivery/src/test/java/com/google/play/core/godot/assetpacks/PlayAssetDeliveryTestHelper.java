@@ -19,7 +19,9 @@ package com.google.play.core.godot.assetpacks;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+import com.google.android.play.core.assetpacks.AssetPackException;
 import com.google.android.play.core.tasks.OnFailureListener;
 import com.google.android.play.core.tasks.OnSuccessListener;
 import com.google.android.play.core.tasks.Task;
@@ -94,5 +96,14 @@ public class PlayAssetDeliveryTestHelper {
         .when(returnTaskMock)
         .addOnFailureListener(any(OnFailureListener.class));
     return returnTaskMock;
+  }
+
+  /** Returns a mock AssetPackException object used for unit testing. */
+  public static AssetPackException createMockAssetPackException() {
+    AssetPackException testException = mock(AssetPackException.class);
+    when(testException.toString())
+        .thenReturn("java.lang.RuntimeException.AssetPackException: testException!");
+    when(testException.getErrorCode()).thenReturn(-7);
+    return testException;
   }
 }

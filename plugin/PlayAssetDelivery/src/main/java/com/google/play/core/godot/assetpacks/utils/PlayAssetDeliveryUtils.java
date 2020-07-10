@@ -18,7 +18,6 @@ package com.google.play.core.godot.assetpacks.utils;
 
 import com.google.android.play.core.assetpacks.AssetLocation;
 import com.google.android.play.core.assetpacks.AssetPackException;
-import com.google.android.play.core.assetpacks.AssetPackExtractionService;
 import com.google.android.play.core.assetpacks.AssetPackLocation;
 import com.google.android.play.core.assetpacks.AssetPackState;
 import com.google.android.play.core.assetpacks.AssetPackStates;
@@ -95,7 +94,10 @@ public class PlayAssetDeliveryUtils {
 
   public static Dictionary convertAssetPackStatesToDictionary(AssetPackStates assetPackStates) {
     Dictionary packStatesDictionary =
-        assetPackStates.packStates().entrySet().stream()
+        assetPackStates
+            .packStates()
+            .entrySet()
+            .stream()
             .collect(
                 Dictionary::new,
                 (d, e) -> d.put(e.getKey(), convertAssetPackStateToDictionary(e.getValue())),
@@ -120,7 +122,9 @@ public class PlayAssetDeliveryUtils {
 
   public static Dictionary convertAssetPackLocationsToDictionary(
       Map<String, AssetPackLocation> assetPackLocations) {
-    return assetPackLocations.entrySet().stream()
+    return assetPackLocations
+        .entrySet()
+        .stream()
         .collect(
             Dictionary::new,
             (d, e) -> d.put(e.getKey(), convertAssetPackLocationToDictionary(e.getValue())),
@@ -166,7 +170,8 @@ public class PlayAssetDeliveryUtils {
   public static Map<String, AssetPackLocation> convertDictionaryToAssetPackLocations(
       Dictionary dict) throws IllegalArgumentException {
     try {
-      return dict.entrySet().stream()
+      return dict.entrySet()
+          .stream()
           .collect(
               Collectors.toMap(
                   e -> e.getKey(),

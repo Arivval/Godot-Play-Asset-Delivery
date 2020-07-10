@@ -17,9 +17,6 @@
 package com.google.play.core.godot.assetpacks.utils;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-;
 
 import com.google.android.play.core.assetpacks.AssetLocation;
 import com.google.android.play.core.assetpacks.AssetPackException;
@@ -30,7 +27,6 @@ import com.google.play.core.godot.assetpacks.PlayAssetDeliveryTestHelper;
 import java.util.Map;
 import org.godotengine.godot.Dictionary;
 import org.junit.Test;
-
 
 public class PlayAssetDeliveryUtilsTest {
 
@@ -306,10 +302,7 @@ public class PlayAssetDeliveryUtilsTest {
 
   @Test
   public void convertExceptionToDictionary_assetPackException() {
-    AssetPackException testException = mock(AssetPackException.class);
-    when(testException.toString()).thenReturn("java.lang.RuntimeException.AssetPackException: testException!");
-    when(testException.getErrorCode()).thenReturn(-7);
-
+    AssetPackException testException = PlayAssetDeliveryTestHelper.createMockAssetPackException();
     Dictionary testDict = PlayAssetDeliveryUtils.convertExceptionToDictionary(testException);
 
     Dictionary expectedDict = new Dictionary();

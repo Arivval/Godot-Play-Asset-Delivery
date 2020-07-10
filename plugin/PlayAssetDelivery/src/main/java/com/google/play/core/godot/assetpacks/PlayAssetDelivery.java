@@ -203,7 +203,11 @@ public class PlayAssetDelivery extends GodotPlugin {
                 PlayAssetDeliveryUtils.convertAssetPackStatesToDictionary(result),
                 signalID);
     OnFailureListener getPackStatesFailureListener =
-        e -> emitSignalWrapper(GET_PACK_STATES_ERROR, PlayAssetDeliveryUtils.convertExceptionToDictionary(e), signalID);
+        e ->
+            emitSignalWrapper(
+                GET_PACK_STATES_ERROR,
+                PlayAssetDeliveryUtils.convertExceptionToDictionary(e),
+                signalID);
 
     Task<AssetPackStates> getPackStatesTask = assetPackManager.getPackStates(packNames);
     getPackStatesTask.addOnSuccessListener(getPackStatesSuccessListener);
@@ -222,7 +226,11 @@ public class PlayAssetDelivery extends GodotPlugin {
     OnSuccessListener<Void> removePackOnSuccessListener =
         result -> emitSignalWrapper(REMOVE_PACK_SUCCESS, signalID);
     OnFailureListener removePackOnFailureListener =
-        e -> emitSignalWrapper(REMOVE_PACK_ERROR, PlayAssetDeliveryUtils.convertExceptionToDictionary(e), signalID);
+        e ->
+            emitSignalWrapper(
+                REMOVE_PACK_ERROR,
+                PlayAssetDeliveryUtils.convertExceptionToDictionary(e),
+                signalID);
 
     Task<Void> removePackTask = assetPackManager.removePack(packName);
     removePackTask.addOnSuccessListener(removePackOnSuccessListener);
@@ -242,7 +250,11 @@ public class PlayAssetDelivery extends GodotPlugin {
     OnSuccessListener<Integer> showCellularDataConfirmationSuccessListener =
         result -> emitSignalWrapper(SHOW_CELLULAR_DATA_CONFIRMATION_SUCCESS, result, signalID);
     OnFailureListener showCellularDataConfirmationFailureListener =
-        e -> emitSignalWrapper(SHOW_CELLULAR_DATA_CONFIRMATION_ERROR, PlayAssetDeliveryUtils.convertExceptionToDictionary(e), signalID);
+        e ->
+            emitSignalWrapper(
+                SHOW_CELLULAR_DATA_CONFIRMATION_ERROR,
+                PlayAssetDeliveryUtils.convertExceptionToDictionary(e),
+                signalID);
 
     Task<Integer> showCellularDataConfirmationTask =
         assetPackManager.showCellularDataConfirmation(getGodot());
