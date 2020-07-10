@@ -296,9 +296,13 @@ public class PlayAssetDeliveryUtilsTest {
     Dictionary testDict = PlayAssetDeliveryUtils.convertExceptionToDictionary(testException);
 
     Dictionary expectedDict = new Dictionary();
-    expectedDict.put(PlayAssetDeliveryUtils.ASSETPACK_DICTIONARY_TYPE_KEY, Exception.class.getCanonicalName());
-    expectedDict.put(PlayAssetDeliveryUtils.ASSETPACK_DICTIONARY_MESSAGE_KEY, testException.getMessage());
-    expectedDict.put(PlayAssetDeliveryUtils.ASSETPACK_DICTIONARY_ERROR_CODE_KEY, AssetPackErrorCode.INTERNAL_ERROR);
+    expectedDict.put(
+        PlayAssetDeliveryUtils.ASSETPACK_DICTIONARY_TYPE_KEY, Exception.class.getCanonicalName());
+    expectedDict.put(
+        PlayAssetDeliveryUtils.ASSETPACK_DICTIONARY_MESSAGE_KEY, testException.getMessage());
+    expectedDict.put(
+        PlayAssetDeliveryUtils.ASSETPACK_DICTIONARY_ERROR_CODE_KEY,
+        AssetPackErrorCode.INTERNAL_ERROR);
 
     assertThat(testDict).isEqualTo(expectedDict);
   }
@@ -306,7 +310,8 @@ public class PlayAssetDeliveryUtilsTest {
   @Test
   public void convertExceptionToDictionary_assetPackException() {
     AssetPackException testException =
-        PlayAssetDeliveryTestHelper.createMockAssetPackException("Test message.", AssetPackErrorCode.ACCESS_DENIED);
+        PlayAssetDeliveryTestHelper.createMockAssetPackException(
+            "Test message.", AssetPackErrorCode.ACCESS_DENIED);
     Dictionary testDict = PlayAssetDeliveryUtils.convertExceptionToDictionary(testException);
 
     PlayAssetDeliveryTestHelper.assertMockAssetPackExceptionDictionaryIsExpected(
