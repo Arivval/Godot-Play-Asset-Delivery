@@ -73,8 +73,8 @@ public class PlayAssetDelivery extends GodotPlugin {
   }
 
   /**
-   * Register a global listener that can emit assetPackStateUpdated whenever a assetPack's state is
-   * updated.
+   * Register a global listener that can emit assetPackStateUpdated signal whenever a assetPack's
+   * state is updated.
    */
   void registerAssetPackStateUpdatedListener() {
     assetPackManager.registerListener(
