@@ -83,19 +83,34 @@ public class PlayAssetDeliveryTestHelper {
     return returnList;
   }
 
+  /**
+   * When calling getClass() method on mocked objects, the returned named will contain Mockito
+   * specific suffix such as
+   * com.google.android.play.core.assetpacks.AssetPackException$$EnhancerByMockitoWithCGLIB$$c5.
+   * Hence we need this helper function to apply string operations to only take the prefix.
+   *
+   * @param mockitoClassName raw string with Mockito given suffix
+   * @return string representing the actual class name
+   */
+  private static String convertMockitoClassNameToActualClassName(String mockitoClassName) {
+    int dollarSignIndex = mockitoClassName.indexOf("$$");
+    assertThat(dollarSignIndex).isNotEqualTo(-1);
+    return mockitoClassName.substring(0, dollarSignIndex);
+  }
+
   public static void assertMockAssetPackExceptionDictionaryIsExpected(
       Dictionary mockExceptionDictionary, String expectedMessage, int expectedErrorCode) {
-    // when calling getClass() method on mocked objects, the returned named will contain Mockito
-    // specific suffix such as
-    // com.google.android.play.core.assetpacks.AssetPackException$$EnhancerByMockitoWithCGLIB$$c5.
-    // Hence we need to apply string operations to only take the prefix.
-    String testExceptionType = (String) mockExceptionDictionary.get("type");
-    testExceptionType =
-        testExceptionType.substring(0, AssetPackException.class.getCanonicalName().length());
+    String testExceptionType =
+        (String) mockExceptionDictionary.get(PlayAssetDeliveryUtils.ASSETPACK_DICTIONARY_TYPE_KEY);
+
+    testExceptionType = convertMockitoClassNameToActualClassName(testExceptionType);
 
     assertThat(testExceptionType).isEqualTo(AssetPackException.class.getCanonicalName());
-    assertThat(mockExceptionDictionary.get("message")).isEqualTo(expectedMessage);
-    assertThat(mockExceptionDictionary.get("errorCode")).isEqualTo(expectedErrorCode);
+    assertThat(mockExceptionDictionary.get(PlayAssetDeliveryUtils.ASSETPACK_DICTIONARY_MESSAGE_KEY))
+        .isEqualTo(expectedMessage);
+    assertThat(
+            mockExceptionDictionary.get(PlayAssetDeliveryUtils.ASSETPACK_DICTIONARY_ERROR_CODE_KEY))
+        .isEqualTo(expectedErrorCode);
     assertThat(mockExceptionDictionary.entrySet().size()).isEqualTo(3);
   }
 
