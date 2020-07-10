@@ -241,7 +241,7 @@ public class PlayAssetDeliveryTest {
     assertThat(signalNameCaptor.getValue()).isEqualTo("getPackStatesError");
     List<Object> receivedArgs = signalArgsCaptor.getAllValues();
     assertThat(receivedArgs).hasSize(2);
-    
+
     PlayAssetDeliveryTestHelper.assertMockAssetPackExceptionDictionaryIsExpected(
         (Dictionary) receivedArgs.get(0), "pack error test.", -7);
 
