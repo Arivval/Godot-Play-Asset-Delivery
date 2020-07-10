@@ -81,7 +81,7 @@ public class PlayAssetDelivery extends GodotPlugin {
   private void registerAssetPackStateUpdatedListener() {
     assetPackManager.registerListener(
         state -> {
-          emitSignal(
+          emitSignalWrapper(
               ASSET_PACK_STATE_UPDATED,
               PlayAssetDeliveryUtils.convertAssetPackStateToDictionary(state));
         });
@@ -174,7 +174,7 @@ public class PlayAssetDelivery extends GodotPlugin {
     AssetPackStateUpdateListener fetchStateListener =
         state -> {
           if (packNames.contains(state.name())) {
-            emitSignal(
+            emitSignalWrapper(
                 FETCH_STATE_UPDATED,
                 PlayAssetDeliveryUtils.convertAssetPackStateToDictionary(state),
                 signalID);
@@ -186,7 +186,7 @@ public class PlayAssetDelivery extends GodotPlugin {
     OnSuccessListener<AssetPackStates> fetchSuccessListener =
         result -> {
           assetPackManager.unregisterListener(fetchStateListener);
-          emitSignal(
+          emitSignalWrapper(
               FETCH_SUCCESS,
               PlayAssetDeliveryUtils.convertAssetPackStatesToDictionary(result),
               signalID);
@@ -195,7 +195,7 @@ public class PlayAssetDelivery extends GodotPlugin {
     OnFailureListener fetchFailureListener =
         e -> {
           assetPackManager.unregisterListener(fetchStateListener);
-          emitSignal(FETCH_ERROR, e.toString(), signalID);
+          emitSignalWrapper(FETCH_ERROR, e.toString(), signalID);
         };
 
     Task<AssetPackStates> fetchTask = assetPackManager.fetch(packNames);

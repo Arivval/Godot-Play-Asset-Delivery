@@ -136,6 +136,75 @@ public class PlayAssetDeliveryTest {
   }
 
   @Test
+  public void fetch_success() {
+    // Mock the side effects of Task<AssetPackStates> object, call onSuccessListener the instant
+    // it is registered.
+    Dictionary testDict = PlayAssetDeliveryTestHelper.createAssetPackStatesTestDictionary();
+    AssetPackStates testAssetPackStates = new AssetPackStatesFromDictionary(testDict);
+
+    doAnswer(
+            invocation -> {
+              OnSuccessListener<AssetPackStates> listener =
+                      (OnSuccessListener<AssetPackStates>) invocation.getArguments()[0];
+              listener.onSuccess(testAssetPackStates);
+              return null;
+            })
+            .when(assetPackStatesSuccessTaskMock)
+            .addOnSuccessListener(any(OnSuccessListener.class));
+
+    PlayAssetDelivery testSubject = spy(new PlayAssetDelivery(godotMock, assetPackManagerMock));
+    when(assetPackManagerMock.fetch(anyListOf(String.class)))
+            .thenReturn(assetPackStatesSuccessTaskMock);
+
+    // Set up ArgumentCaptors to get the arguments received by emitSignalWrapper()
+    ArgumentCaptor<String> signalNameCaptor = ArgumentCaptor.forClass(String.class);
+    ArgumentCaptor<Object> signalArgsCaptor = ArgumentCaptor.forClass(Object.class);
+
+    testSubject.fetch(Arrays.asList("pack1", "pack2"), 16);
+
+    verify(testSubject).emitSignalWrapper(signalNameCaptor.capture(), signalArgsCaptor.capture());
+
+    assertThat(signalNameCaptor.getValue()).isEqualTo("fetchSuccess");
+    List<Object> receivedArgs = signalArgsCaptor.getAllValues();
+    assertThat(receivedArgs).hasSize(2);
+
+    assertThat(receivedArgs.get(0)).isEqualTo(testDict);
+    assertThat(receivedArgs.get(1)).isEqualTo(16);
+  }
+
+  @Test
+  public void fetch_error() {
+    // Mock the side effects of Task<AssetPackStates> object, call onFailureListener the instant
+    // it is registered.
+    doAnswer(
+            invocation -> {
+              OnFailureListener listener = (OnFailureListener) invocation.getArguments()[0];
+              listener.onFailure(new Exception("Test Exception!"));
+              return null;
+            })
+            .when(assetPackStatesFailureTaskMock)
+            .addOnFailureListener(any(OnFailureListener.class));
+
+    PlayAssetDelivery testSubject = spy(new PlayAssetDelivery(godotMock, assetPackManagerMock));
+    when(assetPackManagerMock.fetch(anyListOf(String.class)))
+            .thenReturn(assetPackStatesFailureTaskMock);
+
+    // Set up ArgumentCaptors to get the arguments received by emitSignalWrapper()
+    ArgumentCaptor<String> signalNameCaptor = ArgumentCaptor.forClass(String.class);
+    ArgumentCaptor<Object> signalArgsCaptor = ArgumentCaptor.forClass(Object.class);
+
+    testSubject.fetch(Arrays.asList("pack1", "pack2"), 17);
+
+    verify(testSubject).emitSignalWrapper(signalNameCaptor.capture(), signalArgsCaptor.capture());
+
+    assertThat(signalNameCaptor.getValue()).isEqualTo("fetchError");
+    List<Object> receivedArgs = signalArgsCaptor.getAllValues();
+    assertThat(receivedArgs).hasSize(2);
+    assertThat(receivedArgs.get(0)).isEqualTo("java.lang.Exception: Test Exception!");
+    assertThat(receivedArgs.get(1)).isEqualTo(17);
+  }
+
+  @Test
   public void getAssetLocation_exist() {
     PlayAssetDelivery testSubject = createPlayAssetDeliveryInstance();
     Dictionary testDict =
