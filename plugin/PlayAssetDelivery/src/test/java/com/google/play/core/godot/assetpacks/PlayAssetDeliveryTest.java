@@ -39,6 +39,7 @@ import com.google.play.core.godot.assetpacks.utils.PlayAssetDeliveryUtils;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.godotengine.godot.Dictionary;
 import org.godotengine.godot.Godot;
 import org.godotengine.godot.plugin.SignalInfo;
@@ -152,6 +153,20 @@ public class PlayAssetDeliveryTest {
 
     verify(testSubject, times(3))
         .emitSignalWrapper(signalNameCaptor.capture(), signalArgsCaptor.capture());
+
+    assertThat(signalNameCaptor.getAllValues())
+        .isEqualTo(
+            Arrays.asList(
+                "assetPackStateUpdated", "assetPackStateUpdated", "assetPackStateUpdated"));
+
+    List<Dictionary> expectedList =
+        PlayAssetDeliveryTestHelper.createAssetPackStateList()
+            .stream()
+            .map(
+                (AssetPackState state) ->
+                    PlayAssetDeliveryUtils.convertAssetPackStateToDictionary(state))
+            .collect(Collectors.toList());
+    assertThat(signalArgsCaptor.getAllValues()).isEqualTo(expectedList);
   }
 
   @Test

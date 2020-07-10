@@ -66,15 +66,15 @@ public class PlayAssetDeliveryTestHelper {
     AssetPackState packState1 =
         PlayAssetDeliveryUtils.convertDictionaryToAssetPackState(
             PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
-                42, 0, "awesomePack", 2, 65536, 35));
+                1024, 0, "awesomePack", 2, 65536, 2));
     AssetPackState packState2 =
         PlayAssetDeliveryUtils.convertDictionaryToAssetPackState(
             PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
-                256, 0, "awesomePack", 2, 65536, 35));
+                1024, 0, "awesomePack", 2, 65536, 6));
     AssetPackState packState3 =
         PlayAssetDeliveryUtils.convertDictionaryToAssetPackState(
             PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
-                4096, 0, "awesomePack", 2, 65536, 35));
+                32768, 0, "awesomePack", 2, 65536, 50));
 
     returnList.add(packState1);
     returnList.add(packState2);
