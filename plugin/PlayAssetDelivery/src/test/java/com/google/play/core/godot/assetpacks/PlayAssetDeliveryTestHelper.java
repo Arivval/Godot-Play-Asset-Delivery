@@ -59,7 +59,7 @@ public class PlayAssetDeliveryTestHelper {
    * result if addOnSuccessListener() is called.
    *
    * @param result object to be passed to the onSuccessListener
-   * @param <T> parameterized type of the Task object
+   * @param <T> parameterized type of the result returned by this task if it succeeds
    * @return instantiated mock Task
    */
   public static <T> Task<T> createMockOnSuccessTask(T result) {
@@ -77,17 +77,18 @@ public class PlayAssetDeliveryTestHelper {
 
   /**
    * Mock object factory that returns a mock Task<T> object. Will invoke onFailureListener with
-   * Exception if addOnFailureListener() is called.
+   * onFailureException if addOnFailureListener() is called.
    *
-   * @param <T> parameterized type of the Task object
+   * @param onFailureException Exception to be passed to the onFailureListener
+   * @param <T> parameterized type of the result returned by this task if it succeeds
    * @return instantiated mock Task
    */
-  public static <T> Task<T> createMockOnFailureTask() {
+  public static <T> Task<T> createMockOnFailureTask(Exception onFailureException) {
     Task<T> returnTaskMock = mock(Task.class);
     doAnswer(
             invocation -> {
               OnFailureListener listener = (OnFailureListener) invocation.getArguments()[0];
-              listener.onFailure(new Exception("Test Exception!"));
+              listener.onFailure(onFailureException);
               return null;
             })
         .when(returnTaskMock)

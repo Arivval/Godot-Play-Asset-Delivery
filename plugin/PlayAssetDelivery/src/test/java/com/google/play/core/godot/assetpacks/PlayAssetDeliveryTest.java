@@ -220,8 +220,9 @@ public class PlayAssetDeliveryTest {
   public void getPackStates_error() {
     // Mock the side effects of Task<AssetPackStates> object, call onFailureListener the instant
     // it is registered.
+    Exception testException = new Exception("Test Exception!");
     Task<AssetPackStates> assetPackStatesFailureTaskMock =
-        PlayAssetDeliveryTestHelper.createMockOnFailureTask();
+        PlayAssetDeliveryTestHelper.createMockOnFailureTask(testException);
 
     PlayAssetDelivery testSubject = spy(new PlayAssetDelivery(godotMock, assetPackManagerMock));
     when(assetPackManagerMock.getPackStates(anyListOf(String.class)))
@@ -269,7 +270,9 @@ public class PlayAssetDeliveryTest {
   public void removePack_error() {
     // Mock the side effects of Task<Void> object, call onFailureListener the instant
     // it is registered.
-    Task<Void> voidFailureTaskMock = PlayAssetDeliveryTestHelper.createMockOnFailureTask();
+    Exception testException = new Exception("Test Exception!");
+    Task<Void> voidFailureTaskMock =
+        PlayAssetDeliveryTestHelper.createMockOnFailureTask(testException);
 
     PlayAssetDelivery testSubject = spy(new PlayAssetDelivery(godotMock, assetPackManagerMock));
     when(assetPackManagerMock.removePack(any(String.class))).thenReturn(voidFailureTaskMock);
@@ -318,7 +321,9 @@ public class PlayAssetDeliveryTest {
   public void showCellularDataConfirmation_error() {
     // Mock the side effects of Task<Integer> object, call onFailureListener the instant
     // it is registered.
-    Task<Integer> integerFailureTaskMock = PlayAssetDeliveryTestHelper.createMockOnFailureTask();
+    Exception testException = new Exception("Test Exception!");
+    Task<Integer> integerFailureTaskMock =
+        PlayAssetDeliveryTestHelper.createMockOnFailureTask(testException);
 
     PlayAssetDelivery testSubject = spy(new PlayAssetDelivery(godotMock, assetPackManagerMock));
     when(assetPackManagerMock.showCellularDataConfirmation(any(Activity.class)))
