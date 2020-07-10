@@ -20,10 +20,13 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 
+import com.google.android.play.core.assetpacks.AssetPackState;
 import com.google.android.play.core.tasks.OnFailureListener;
 import com.google.android.play.core.tasks.OnSuccessListener;
 import com.google.android.play.core.tasks.Task;
 import com.google.play.core.godot.assetpacks.utils.PlayAssetDeliveryUtils;
+import java.util.ArrayList;
+import java.util.List;
 import org.godotengine.godot.Dictionary;
 
 public class PlayAssetDeliveryTestHelper {
@@ -93,5 +96,28 @@ public class PlayAssetDeliveryTestHelper {
         .when(returnTaskMock)
         .addOnFailureListener(any(OnFailureListener.class));
     return returnTaskMock;
+  }
+
+  public static List<AssetPackState> createAssetPackStateSequence() {
+    List<AssetPackState> returnList = new ArrayList<>();
+
+    AssetPackState packState1 =
+        PlayAssetDeliveryUtils.convertDictionaryToAssetPackState(
+            PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
+                42, 0, "awesomePack", 2, 65536, 35));
+    AssetPackState packState2 =
+        PlayAssetDeliveryUtils.convertDictionaryToAssetPackState(
+            PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
+                256, 0, "awesomePack", 2, 65536, 35));
+    AssetPackState packState3 =
+        PlayAssetDeliveryUtils.convertDictionaryToAssetPackState(
+            PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
+                4096, 0, "awesomePack", 2, 65536, 35));
+
+    returnList.add(packState1);
+    returnList.add(packState2);
+    returnList.add(packState3);
+
+    return returnList;
   }
 }
