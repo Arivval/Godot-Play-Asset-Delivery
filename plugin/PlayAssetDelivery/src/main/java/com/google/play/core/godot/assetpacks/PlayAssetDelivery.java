@@ -22,6 +22,7 @@ import com.google.android.play.core.assetpacks.AssetLocation;
 import com.google.android.play.core.assetpacks.AssetPackLocation;
 import com.google.android.play.core.assetpacks.AssetPackManager;
 import com.google.android.play.core.assetpacks.AssetPackManagerFactory;
+import com.google.android.play.core.assetpacks.AssetPackStateUpdateListener;
 import com.google.android.play.core.assetpacks.AssetPackStates;
 import com.google.android.play.core.tasks.OnFailureListener;
 import com.google.android.play.core.tasks.OnSuccessListener;
@@ -63,12 +64,27 @@ public class PlayAssetDelivery extends GodotPlugin {
     super(godot);
     Context applicationContext = godot.getApplicationContext();
     assetPackManager = AssetPackManagerFactory.getInstance(applicationContext);
+    registerAssetPackStateUpdatedListener();
   }
 
   /** Package-private constructor used to instantiate PlayAssetDelivery class with mock objects. */
   PlayAssetDelivery(Godot godot, AssetPackManager assetPackManager) {
     super(godot);
     this.assetPackManager = assetPackManager;
+    registerAssetPackStateUpdatedListener();
+  }
+
+  /**
+   * Register a global listener that can emit assetPackStateUpdated whenever a assetPack's state is
+   * updated.
+   */
+  private void registerAssetPackStateUpdatedListener() {
+    assetPackManager.registerListener(
+        state -> {
+          emitSignal(
+              ASSET_PACK_STATE_UPDATED,
+              PlayAssetDeliveryUtils.convertAssetPackStateToDictionary(state));
+        });
   }
 
   /**
@@ -145,6 +161,46 @@ public class PlayAssetDelivery extends GodotPlugin {
   public Dictionary cancel(String[] packNames) {
     AssetPackStates updatedStates = assetPackManager.cancel(Arrays.asList(packNames));
     return PlayAssetDeliveryUtils.convertAssetPackStatesToDictionary(updatedStates);
+  }
+
+  /**
+   * Calls fetch(List<String> packNames) method in the Play Core Library. Requests to download the
+   * specified asset packs. Emits fetchStateUpdated, fetchSuccess and fetchError signals.
+   *
+   * @param packNames list of name for all the packs to be fetched
+   * @param signalID signalID used to track mapping of signals to Tasks
+   */
+  public void fetch(List<String> packNames, int signalID) {
+    AssetPackStateUpdateListener fetchStateListener =
+        state -> {
+          if (packNames.contains(state.name())) {
+            emitSignal(
+                FETCH_STATE_UPDATED,
+                PlayAssetDeliveryUtils.convertAssetPackStateToDictionary(state),
+                signalID);
+          }
+        };
+
+    assetPackManager.registerListener(fetchStateListener);
+
+    OnSuccessListener<AssetPackStates> fetchSuccessListener =
+        result -> {
+          assetPackManager.unregisterListener(fetchStateListener);
+          emitSignal(
+              FETCH_SUCCESS,
+              PlayAssetDeliveryUtils.convertAssetPackStatesToDictionary(result),
+              signalID);
+        };
+
+    OnFailureListener fetchFailureListener =
+        e -> {
+          assetPackManager.unregisterListener(fetchStateListener);
+          emitSignal(FETCH_ERROR, e.toString(), signalID);
+        };
+
+    Task<AssetPackStates> fetchTask = assetPackManager.fetch(packNames);
+    fetchTask.addOnSuccessListener(fetchSuccessListener);
+    fetchTask.addOnFailureListener(fetchFailureListener);
   }
 
   /**
