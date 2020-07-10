@@ -188,12 +188,35 @@ public class PlayAssetDelivery extends GodotPlugin {
   }
 
   /**
+   * Calls getPackStates(List<String> packNames) method in the Play Core Library. Requests download
+   * state or details for the specified asset packs. Emits getPackStatesSuccess and
+   * getPackStatesError signals when the underlying task succeeds/fails.
+   *
+   * @param packNames list of name for all the packs to request states
+   * @param signalID identifier used to track mapping of signals to Tasks
+   */
+  public void getPackStates(List<String> packNames, int signalID) {
+    OnSuccessListener<AssetPackStates> getPackStatesSuccessListener =
+        result ->
+            emitSignalWrapper(
+                GET_PACK_STATES_SUCCESS,
+                PlayAssetDeliveryUtils.convertAssetPackStatesToDictionary(result),
+                signalID);
+    OnFailureListener getPackStatesFailureListener =
+        e -> emitSignalWrapper(GET_PACK_STATES_ERROR, e.toString(), signalID);
+
+    Task<AssetPackStates> getPackStatesTask = assetPackManager.getPackStates(packNames);
+    getPackStatesTask.addOnSuccessListener(getPackStatesSuccessListener);
+    getPackStatesTask.addOnFailureListener(getPackStatesFailureListener);
+  }
+
+  /**
    * Calls removePack(String packName, int signalID) method in the Play Core Library. Deletes the
    * specified asset pack from the internal storage of the app. Emits removePackSuccess and
    * removePackError signals when the underlying task succeeds/fails.
    *
    * @param packName name of the asset pack to be removed
-   * @param signalID signalID used to track mapping of signals to Tasks
+   * @param signalID identifier used to track mapping of signals to Tasks
    */
   public void removePack(String packName, int signalID) {
     OnSuccessListener<Void> removePackOnSuccessListener =
@@ -204,5 +227,28 @@ public class PlayAssetDelivery extends GodotPlugin {
     Task<Void> removePackTask = assetPackManager.removePack(packName);
     removePackTask.addOnSuccessListener(removePackOnSuccessListener);
     removePackTask.addOnFailureListener(removePackOnFailureListener);
+  }
+
+  /**
+   * Directly calls showCellularDataConfirmation(Activity activity). The current activity can be
+   * accessed using (Context) getGodot().getApplicationContext(); Shows a confirmation dialog to
+   * resume all pack downloads that are currently in the WAITING_FOR_WIFI state. Emits
+   * showCellularDataConfirmationSuccess and showCellularDataConfirmationError signals when the
+   * underlying task succeeds/fails.
+   *
+   * @param signalID identifier used to track mapping of signals to Tasks
+   */
+  public void showCellularDataConfirmation(int signalID) {
+    OnSuccessListener<Integer> showCellularDataConfirmationSuccessListener =
+        result -> emitSignalWrapper(SHOW_CELLULAR_DATA_CONFIRMATION_SUCCESS, result, signalID);
+    OnFailureListener showCellularDataConfirmationFailureListener =
+        e -> emitSignalWrapper(SHOW_CELLULAR_DATA_CONFIRMATION_ERROR, e.toString(), signalID);
+
+    Task<Integer> showCellularDataConfirmationTask =
+        assetPackManager.showCellularDataConfirmation(getGodot());
+    showCellularDataConfirmationTask.addOnSuccessListener(
+        showCellularDataConfirmationSuccessListener);
+    showCellularDataConfirmationTask.addOnFailureListener(
+        showCellularDataConfirmationFailureListener);
   }
 }
