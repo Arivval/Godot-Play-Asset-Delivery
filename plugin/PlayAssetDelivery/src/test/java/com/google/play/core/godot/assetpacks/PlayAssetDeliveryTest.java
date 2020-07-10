@@ -88,8 +88,6 @@ public class PlayAssetDeliveryTest {
 
     SignalInfo assetPackStateUpdateSignal =
         new SignalInfo("assetPackStateUpdated", Dictionary.class);
-    SignalInfo fetchStateUpdated =
-        new SignalInfo("fetchStateUpdated", Dictionary.class, Integer.class);
     SignalInfo fetchSuccess = new SignalInfo("fetchSuccess", Dictionary.class, Integer.class);
     SignalInfo fetchError = new SignalInfo("fetchError", String.class, Integer.class);
     SignalInfo getPackStatesSuccess =
@@ -106,7 +104,6 @@ public class PlayAssetDeliveryTest {
     assertThat(testSet)
         .containsExactly(
             assetPackStateUpdateSignal,
-            fetchStateUpdated,
             fetchSuccess,
             fetchError,
             getPackStatesSuccess,
@@ -137,7 +134,7 @@ public class PlayAssetDeliveryTest {
               AssetPackStateUpdateListener listener =
                   (AssetPackStateUpdateListener) invocation.getArguments()[0];
               List<AssetPackState> packStateSequence =
-                  PlayAssetDeliveryTestHelper.createAssetPackStateSequence();
+                  PlayAssetDeliveryTestHelper.createAssetPackStateList();
               for (AssetPackState packState : packStateSequence) {
                 listener.onStateUpdate(packState);
               }

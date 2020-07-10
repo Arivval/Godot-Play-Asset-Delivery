@@ -57,6 +57,29 @@ public class PlayAssetDeliveryTestHelper {
     return testDict;
   }
 
+  public static List<AssetPackState> createAssetPackStateList() {
+    List<AssetPackState> returnList = new ArrayList<>();
+
+    AssetPackState packState1 =
+        PlayAssetDeliveryUtils.convertDictionaryToAssetPackState(
+            PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
+                42, 0, "awesomePack", 2, 65536, 35));
+    AssetPackState packState2 =
+        PlayAssetDeliveryUtils.convertDictionaryToAssetPackState(
+            PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
+                256, 0, "awesomePack", 2, 65536, 35));
+    AssetPackState packState3 =
+        PlayAssetDeliveryUtils.convertDictionaryToAssetPackState(
+            PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
+                4096, 0, "awesomePack", 2, 65536, 35));
+
+    returnList.add(packState1);
+    returnList.add(packState2);
+    returnList.add(packState3);
+
+    return returnList;
+  }
+
   /**
    * Mock object factory that returns a mock Task<T> object. Will invoke onSuccessListener with
    * result if addOnSuccessListener() is called.
@@ -96,28 +119,5 @@ public class PlayAssetDeliveryTestHelper {
         .when(returnTaskMock)
         .addOnFailureListener(any(OnFailureListener.class));
     return returnTaskMock;
-  }
-
-  public static List<AssetPackState> createAssetPackStateSequence() {
-    List<AssetPackState> returnList = new ArrayList<>();
-
-    AssetPackState packState1 =
-        PlayAssetDeliveryUtils.convertDictionaryToAssetPackState(
-            PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
-                42, 0, "awesomePack", 2, 65536, 35));
-    AssetPackState packState2 =
-        PlayAssetDeliveryUtils.convertDictionaryToAssetPackState(
-            PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
-                256, 0, "awesomePack", 2, 65536, 35));
-    AssetPackState packState3 =
-        PlayAssetDeliveryUtils.convertDictionaryToAssetPackState(
-            PlayAssetDeliveryUtils.constructAssetPackStateDictionary(
-                4096, 0, "awesomePack", 2, 65536, 35));
-
-    returnList.add(packState1);
-    returnList.add(packState2);
-    returnList.add(packState3);
-
-    return returnList;
   }
 }
