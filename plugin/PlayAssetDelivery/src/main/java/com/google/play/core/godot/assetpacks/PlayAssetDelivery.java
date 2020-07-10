@@ -22,7 +22,6 @@ import com.google.android.play.core.assetpacks.AssetLocation;
 import com.google.android.play.core.assetpacks.AssetPackLocation;
 import com.google.android.play.core.assetpacks.AssetPackManager;
 import com.google.android.play.core.assetpacks.AssetPackManagerFactory;
-import com.google.android.play.core.assetpacks.AssetPackStateUpdateListener;
 import com.google.android.play.core.assetpacks.AssetPackStates;
 import com.google.android.play.core.tasks.OnFailureListener;
 import com.google.android.play.core.tasks.OnSuccessListener;
@@ -49,6 +48,7 @@ public class PlayAssetDelivery extends GodotPlugin {
   private AssetPackManager assetPackManager;
 
   private final String ASSET_PACK_STATE_UPDATED = "assetPackStateUpdated";
+  private final String FETCH_STATE_UPDATED = "fetchStateUpdated";
   private final String FETCH_SUCCESS = "fetchSuccess";
   private final String FETCH_ERROR = "fetchError";
   private final String GET_PACK_STATES_SUCCESS = "getPackStatesSuccess";
@@ -63,27 +63,12 @@ public class PlayAssetDelivery extends GodotPlugin {
     super(godot);
     Context applicationContext = godot.getApplicationContext();
     assetPackManager = AssetPackManagerFactory.getInstance(applicationContext);
-    registerAssetPackStateUpdatedListener();
   }
 
   /** Package-private constructor used to instantiate PlayAssetDelivery class with mock objects. */
   PlayAssetDelivery(Godot godot, AssetPackManager assetPackManager) {
     super(godot);
     this.assetPackManager = assetPackManager;
-    registerAssetPackStateUpdatedListener();
-  }
-
-  /**
-   * Register a global listener that can emit assetPackStateUpdated whenever a assetPack's state is
-   * updated.
-   */
-  void registerAssetPackStateUpdatedListener() {
-    assetPackManager.registerListener(
-        state -> {
-          emitSignalWrapper(
-              ASSET_PACK_STATE_UPDATED,
-              PlayAssetDeliveryUtils.convertAssetPackStateToDictionary(state));
-        });
   }
 
   /**
@@ -137,6 +122,7 @@ public class PlayAssetDelivery extends GodotPlugin {
   public Set<SignalInfo> getPluginSignals() {
     Set<SignalInfo> availableSignals = new HashSet<>();
     availableSignals.add(new SignalInfo(ASSET_PACK_STATE_UPDATED, Dictionary.class));
+    availableSignals.add(new SignalInfo(FETCH_STATE_UPDATED, Dictionary.class, Integer.class));
     availableSignals.add(new SignalInfo(FETCH_SUCCESS, Dictionary.class, Integer.class));
     availableSignals.add(new SignalInfo(FETCH_ERROR, String.class, Integer.class));
     availableSignals.add(new SignalInfo(GET_PACK_STATES_SUCCESS, Dictionary.class, Integer.class));
@@ -159,30 +145,6 @@ public class PlayAssetDelivery extends GodotPlugin {
   public Dictionary cancel(String[] packNames) {
     AssetPackStates updatedStates = assetPackManager.cancel(Arrays.asList(packNames));
     return PlayAssetDeliveryUtils.convertAssetPackStatesToDictionary(updatedStates);
-  }
-
-  /**
-   * Calls fetch(List<String> packNames) method in the Play Core Library. Requests to download the
-   * specified asset packs. Emits fetchSuccess and fetchError signals when the underlying task
-   * succeeds/fails.
-   *
-   * @param packNames list of name for all the packs to be fetched
-   * @param signalID identifier used to track mapping of signals to Tasks
-   */
-  public void fetch(List<String> packNames, int signalID) {
-    OnSuccessListener<AssetPackStates> fetchSuccessListener =
-        result ->
-            emitSignalWrapper(
-                FETCH_SUCCESS,
-                PlayAssetDeliveryUtils.convertAssetPackStatesToDictionary(result),
-                signalID);
-
-    OnFailureListener fetchFailureListener =
-        e -> emitSignalWrapper(FETCH_ERROR, e.toString(), signalID);
-
-    Task<AssetPackStates> fetchTask = assetPackManager.fetch(packNames);
-    fetchTask.addOnSuccessListener(fetchSuccessListener);
-    fetchTask.addOnFailureListener(fetchFailureListener);
   }
 
   /**
