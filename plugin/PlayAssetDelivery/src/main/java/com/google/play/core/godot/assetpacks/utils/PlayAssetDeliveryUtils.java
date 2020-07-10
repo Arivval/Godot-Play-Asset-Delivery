@@ -17,6 +17,8 @@
 package com.google.play.core.godot.assetpacks.utils;
 
 import com.google.android.play.core.assetpacks.AssetLocation;
+import com.google.android.play.core.assetpacks.AssetPackException;
+import com.google.android.play.core.assetpacks.AssetPackExtractionService;
 import com.google.android.play.core.assetpacks.AssetPackLocation;
 import com.google.android.play.core.assetpacks.AssetPackState;
 import com.google.android.play.core.assetpacks.AssetPackStates;
@@ -93,10 +95,7 @@ public class PlayAssetDeliveryUtils {
 
   public static Dictionary convertAssetPackStatesToDictionary(AssetPackStates assetPackStates) {
     Dictionary packStatesDictionary =
-        assetPackStates
-            .packStates()
-            .entrySet()
-            .stream()
+        assetPackStates.packStates().entrySet().stream()
             .collect(
                 Dictionary::new,
                 (d, e) -> d.put(e.getKey(), convertAssetPackStateToDictionary(e.getValue())),
@@ -121,13 +120,27 @@ public class PlayAssetDeliveryUtils {
 
   public static Dictionary convertAssetPackLocationsToDictionary(
       Map<String, AssetPackLocation> assetPackLocations) {
-    return assetPackLocations
-        .entrySet()
-        .stream()
+    return assetPackLocations.entrySet().stream()
         .collect(
             Dictionary::new,
             (d, e) -> d.put(e.getKey(), convertAssetPackLocationToDictionary(e.getValue())),
             (d1, d2) -> d1.putAll(d2));
+  }
+
+  /**
+   * Serialize an Exception object into Godot Dictionary. If the Exception is an AssetPackException
+   * the errorCode entry in returnDict will be populated.
+   *
+   * @param e Exception to be converted to Dictionary
+   * @return serialized Dictionary
+   */
+  public static Dictionary convertExceptionToDictionary(Exception e) {
+    Dictionary returnDict = new Dictionary();
+    returnDict.put("toString", e.toString());
+    if (e instanceof AssetPackException) {
+      returnDict.put("errorCode", ((AssetPackException) e).getErrorCode());
+    }
+    return returnDict;
   }
 
   public static AssetPackState convertDictionaryToAssetPackState(Dictionary dict)
@@ -153,8 +166,7 @@ public class PlayAssetDeliveryUtils {
   public static Map<String, AssetPackLocation> convertDictionaryToAssetPackLocations(
       Dictionary dict) throws IllegalArgumentException {
     try {
-      return dict.entrySet()
-          .stream()
+      return dict.entrySet().stream()
           .collect(
               Collectors.toMap(
                   e -> e.getKey(),

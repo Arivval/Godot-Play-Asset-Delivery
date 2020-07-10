@@ -124,15 +124,15 @@ public class PlayAssetDelivery extends GodotPlugin {
     availableSignals.add(new SignalInfo(ASSET_PACK_STATE_UPDATED, Dictionary.class));
     availableSignals.add(new SignalInfo(FETCH_STATE_UPDATED, Dictionary.class, Integer.class));
     availableSignals.add(new SignalInfo(FETCH_SUCCESS, Dictionary.class, Integer.class));
-    availableSignals.add(new SignalInfo(FETCH_ERROR, String.class, Integer.class));
+    availableSignals.add(new SignalInfo(FETCH_ERROR, Dictionary.class, Integer.class));
     availableSignals.add(new SignalInfo(GET_PACK_STATES_SUCCESS, Dictionary.class, Integer.class));
-    availableSignals.add(new SignalInfo(GET_PACK_STATES_ERROR, String.class, Integer.class));
+    availableSignals.add(new SignalInfo(GET_PACK_STATES_ERROR, Dictionary.class, Integer.class));
     availableSignals.add(new SignalInfo(REMOVE_PACK_SUCCESS, Integer.class));
-    availableSignals.add(new SignalInfo(REMOVE_PACK_ERROR, String.class, Integer.class));
+    availableSignals.add(new SignalInfo(REMOVE_PACK_ERROR, Dictionary.class, Integer.class));
     availableSignals.add(
         new SignalInfo(SHOW_CELLULAR_DATA_CONFIRMATION_SUCCESS, Integer.class, Integer.class));
     availableSignals.add(
-        new SignalInfo(SHOW_CELLULAR_DATA_CONFIRMATION_ERROR, String.class, Integer.class));
+        new SignalInfo(SHOW_CELLULAR_DATA_CONFIRMATION_ERROR, Dictionary.class, Integer.class));
     return availableSignals;
   }
 
@@ -203,7 +203,7 @@ public class PlayAssetDelivery extends GodotPlugin {
                 PlayAssetDeliveryUtils.convertAssetPackStatesToDictionary(result),
                 signalID);
     OnFailureListener getPackStatesFailureListener =
-        e -> emitSignalWrapper(GET_PACK_STATES_ERROR, e.toString(), signalID);
+        e -> emitSignalWrapper(GET_PACK_STATES_ERROR, PlayAssetDeliveryUtils.convertExceptionToDictionary(e), signalID);
 
     Task<AssetPackStates> getPackStatesTask = assetPackManager.getPackStates(packNames);
     getPackStatesTask.addOnSuccessListener(getPackStatesSuccessListener);
@@ -222,7 +222,7 @@ public class PlayAssetDelivery extends GodotPlugin {
     OnSuccessListener<Void> removePackOnSuccessListener =
         result -> emitSignalWrapper(REMOVE_PACK_SUCCESS, signalID);
     OnFailureListener removePackOnFailureListener =
-        e -> emitSignalWrapper(REMOVE_PACK_ERROR, e.toString(), signalID);
+        e -> emitSignalWrapper(REMOVE_PACK_ERROR, PlayAssetDeliveryUtils.convertExceptionToDictionary(e), signalID);
 
     Task<Void> removePackTask = assetPackManager.removePack(packName);
     removePackTask.addOnSuccessListener(removePackOnSuccessListener);
@@ -242,7 +242,7 @@ public class PlayAssetDelivery extends GodotPlugin {
     OnSuccessListener<Integer> showCellularDataConfirmationSuccessListener =
         result -> emitSignalWrapper(SHOW_CELLULAR_DATA_CONFIRMATION_SUCCESS, result, signalID);
     OnFailureListener showCellularDataConfirmationFailureListener =
-        e -> emitSignalWrapper(SHOW_CELLULAR_DATA_CONFIRMATION_ERROR, e.toString(), signalID);
+        e -> emitSignalWrapper(SHOW_CELLULAR_DATA_CONFIRMATION_ERROR, PlayAssetDeliveryUtils.convertExceptionToDictionary(e), signalID);
 
     Task<Integer> showCellularDataConfirmationTask =
         assetPackManager.showCellularDataConfirmation(getGodot());

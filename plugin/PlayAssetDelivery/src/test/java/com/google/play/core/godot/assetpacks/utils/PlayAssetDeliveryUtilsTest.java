@@ -17,8 +17,12 @@
 package com.google.play.core.godot.assetpacks.utils;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+;
 
 import com.google.android.play.core.assetpacks.AssetLocation;
+import com.google.android.play.core.assetpacks.AssetPackException;
 import com.google.android.play.core.assetpacks.AssetPackLocation;
 import com.google.android.play.core.assetpacks.AssetPackState;
 import com.google.android.play.core.assetpacks.AssetPackStates;
@@ -26,6 +30,7 @@ import com.google.play.core.godot.assetpacks.PlayAssetDeliveryTestHelper;
 import java.util.Map;
 import org.godotengine.godot.Dictionary;
 import org.junit.Test;
+
 
 public class PlayAssetDeliveryUtilsTest {
 
@@ -286,5 +291,31 @@ public class PlayAssetDeliveryUtilsTest {
 
     Map<String, AssetPackLocation> testAssetPackLocations =
         PlayAssetDeliveryUtils.convertDictionaryToAssetPackLocations(testDictionary);
+  }
+
+  @Test
+  public void convertExceptionToDictionary_regularException() {
+    Exception testException = new Exception("Just testing, don't panic.");
+    Dictionary testDict = PlayAssetDeliveryUtils.convertExceptionToDictionary(testException);
+
+    Dictionary expectedDict = new Dictionary();
+    expectedDict.put("toString", "java.lang.Exception: Just testing, don't panic.");
+
+    assertThat(testDict).isEqualTo(expectedDict);
+  }
+
+  @Test
+  public void convertExceptionToDictionary_assetPackException() {
+    AssetPackException testException = mock(AssetPackException.class);
+    when(testException.toString()).thenReturn("java.lang.RuntimeException.AssetPackException: testException!");
+    when(testException.getErrorCode()).thenReturn(-7);
+
+    Dictionary testDict = PlayAssetDeliveryUtils.convertExceptionToDictionary(testException);
+
+    Dictionary expectedDict = new Dictionary();
+    expectedDict.put("toString", "java.lang.RuntimeException.AssetPackException: testException!");
+    expectedDict.put("errorCode", -7);
+
+    assertThat(testDict).isEqualTo(expectedDict);
   }
 }
