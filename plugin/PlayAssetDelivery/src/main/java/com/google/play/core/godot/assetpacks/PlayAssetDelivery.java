@@ -193,7 +193,7 @@ public class PlayAssetDelivery extends GodotPlugin {
    * getPackStatesError signals when the underlying task succeeds/fails.
    *
    * @param packNames list of name for all the packs to request states
-   * @param signalID signalID used to track mapping of signals to Tasks
+   * @param signalID identifier used to track mapping of signals to Tasks
    */
   public void getPackStates(List<String> packNames, int signalID) {
     OnSuccessListener<AssetPackStates> getPackStatesSuccessListener =
@@ -216,7 +216,7 @@ public class PlayAssetDelivery extends GodotPlugin {
    * removePackError signals when the underlying task succeeds/fails.
    *
    * @param packName name of the asset pack to be removed
-   * @param signalID signalID used to track mapping of signals to Tasks
+   * @param signalID identifier used to track mapping of signals to Tasks
    */
   public void removePack(String packName, int signalID) {
     OnSuccessListener<Void> removePackOnSuccessListener =
@@ -236,7 +236,7 @@ public class PlayAssetDelivery extends GodotPlugin {
    * showCellularDataConfirmationSuccess and showCellularDataConfirmationError signals when the
    * underlying task succeeds/fails.
    *
-   * @param signalID signalID used to track mapping of signals to Tasks
+   * @param signalID identifier used to track mapping of signals to Tasks
    */
   public void showCellularDataConfirmation(int signalID) {
     OnSuccessListener<Integer> showCellularDataConfirmationSuccessListener =
