@@ -96,8 +96,7 @@ public class PlayAssetDeliveryTest {
     SignalInfo getPackStatesError =
         new SignalInfo("getPackStatesError", Dictionary.class, Integer.class);
     SignalInfo removePackSuccess = new SignalInfo("removePackSuccess", String.class, Integer.class);
-    SignalInfo removePackError =
-        new SignalInfo("removePackError", Dictionary.class, String.class, Integer.class);
+    SignalInfo removePackError = new SignalInfo("removePackError", Dictionary.class, Integer.class);
     SignalInfo showCellularDataConfirmationSuccess =
         new SignalInfo("showCellularDataConfirmationSuccess", Integer.class, Integer.class);
     SignalInfo showCellularDataConfirmationError =
@@ -189,7 +188,8 @@ public class PlayAssetDeliveryTest {
   public void fetch_error() {
     // Mock the side effects of Task<AssetPackStates> object, call onFailureListener the instant
     // it is registered.
-    AssetPackException testException = PlayAssetDeliveryTestHelper.createMockAssetPackException();
+    AssetPackException testException =
+        PlayAssetDeliveryTestHelper.createMockAssetPackException("pack error test.", -7);
 
     Task<AssetPackStates> assetPackStatesFailureTaskMock =
         PlayAssetDeliveryTestHelper.createMockOnFailureTask(testException);
@@ -209,8 +209,10 @@ public class PlayAssetDeliveryTest {
     assertThat(signalNameCaptor.getValue()).isEqualTo("fetchError");
     List<Object> receivedArgs = signalArgsCaptor.getAllValues();
     assertThat(receivedArgs).hasSize(2);
-    assertThat(receivedArgs.get(0))
-        .isEqualTo(PlayAssetDeliveryUtils.convertExceptionToDictionary(testException));
+
+    PlayAssetDeliveryTestHelper.assertMockAssetPackExceptionDictionaryIsExpected(
+        (Dictionary) receivedArgs.get(0), "pack error test.", -7);
+
     assertThat(receivedArgs.get(1)).isEqualTo(17);
   }
 
@@ -308,7 +310,9 @@ public class PlayAssetDeliveryTest {
   public void getPackStates_error() {
     // Mock the side effects of Task<AssetPackStates> object, call onFailureListener the instant
     // it is registered.
-    AssetPackException testException = PlayAssetDeliveryTestHelper.createMockAssetPackException();
+    AssetPackException testException =
+        PlayAssetDeliveryTestHelper.createMockAssetPackException("pack error test.", -7);
+
     Task<AssetPackStates> assetPackStatesFailureTaskMock =
         PlayAssetDeliveryTestHelper.createMockOnFailureTask(testException);
 
@@ -327,8 +331,10 @@ public class PlayAssetDeliveryTest {
     assertThat(signalNameCaptor.getValue()).isEqualTo("getPackStatesError");
     List<Object> receivedArgs = signalArgsCaptor.getAllValues();
     assertThat(receivedArgs).hasSize(2);
-    assertThat(receivedArgs.get(0))
-        .isEqualTo(PlayAssetDeliveryUtils.convertExceptionToDictionary(testException));
+
+    PlayAssetDeliveryTestHelper.assertMockAssetPackExceptionDictionaryIsExpected(
+        (Dictionary) receivedArgs.get(0), "pack error test.", -7);
+
     assertThat(receivedArgs.get(1)).isEqualTo(15);
   }
 
@@ -359,7 +365,8 @@ public class PlayAssetDeliveryTest {
   public void removePack_error() {
     // Mock the side effects of Task<Void> object, call onFailureListener the instant
     // it is registered.
-    AssetPackException testException = PlayAssetDeliveryTestHelper.createMockAssetPackException();
+    AssetPackException testException =
+        PlayAssetDeliveryTestHelper.createMockAssetPackException("pack error test.", -7);
     Task<Void> voidFailureTaskMock =
         PlayAssetDeliveryTestHelper.createMockOnFailureTask(testException);
 
@@ -377,8 +384,10 @@ public class PlayAssetDeliveryTest {
     assertThat(signalNameCaptor.getValue()).isEqualTo("removePackError");
     List<Object> receivedArgs = signalArgsCaptor.getAllValues();
     assertThat(receivedArgs).hasSize(2);
-    assertThat(receivedArgs.get(0))
-        .isEqualTo(PlayAssetDeliveryUtils.convertExceptionToDictionary(testException));
+
+    PlayAssetDeliveryTestHelper.assertMockAssetPackExceptionDictionaryIsExpected(
+        (Dictionary) receivedArgs.get(0), "pack error test.", -7);
+
     assertThat(receivedArgs.get(1)).isEqualTo(11);
   }
 
