@@ -67,9 +67,7 @@ public class PlayAssetDeliveryTestHelper {
    * @return string representing the actual class name
    */
   private static String convertMockitoClassNameToActualClassName(String mockitoClassName) {
-    int dollarSignIndex = mockitoClassName.indexOf("$$");
-    assertThat(dollarSignIndex).isNotEqualTo(-1);
-    return mockitoClassName.substring(0, dollarSignIndex);
+    return mockitoClassName.split("\\$\\$")[0];
   }
 
   public static void assertMockAssetPackExceptionDictionaryIsExpected(
