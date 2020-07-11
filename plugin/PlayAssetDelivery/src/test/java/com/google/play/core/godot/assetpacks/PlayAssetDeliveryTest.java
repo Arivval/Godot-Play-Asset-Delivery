@@ -227,7 +227,7 @@ public class PlayAssetDeliveryTest {
     assertThat(receivedArgs).hasSize(2);
 
     PlayAssetDeliveryTestHelper.assertMockAssetPackExceptionDictionaryIsExpected(
-        (Dictionary) receivedArgs.get(0), "pack error test.", -7);
+        (Dictionary) receivedArgs.get(0), "pack error test.", AssetPackErrorCode.ACCESS_DENIED);
 
     assertThat(receivedArgs.get(1)).isEqualTo(17);
   }
