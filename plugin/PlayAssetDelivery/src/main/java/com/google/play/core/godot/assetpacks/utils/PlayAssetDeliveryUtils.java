@@ -33,9 +33,9 @@ import org.godotengine.godot.Dictionary;
  */
 public class PlayAssetDeliveryUtils {
 
-  public static final String ASSETPACK_DICTIONARY_TYPE_KEY = "type";
-  public static final String ASSETPACK_DICTIONARY_MESSAGE_KEY = "message";
-  public static final String ASSETPACK_DICTIONARY_ERROR_CODE_KEY = "errorCode";
+  public static final String ASSETPACK_EXCEPTION_DICTIONARY_TYPE_KEY = "type";
+  public static final String ASSETPACK_EXCEPTION_DICTIONARY_MESSAGE_KEY = "message";
+  public static final String ASSETPACK_EXCEPTION_DICTIONARY_ERROR_CODE_KEY = "errorCode";
 
   public static Dictionary constructAssetPackStateDictionary(
       long bytesDownloaded,
@@ -146,13 +146,15 @@ public class PlayAssetDeliveryUtils {
    */
   public static Dictionary convertExceptionToDictionary(final Exception e) {
     Dictionary returnDict = new Dictionary();
-    returnDict.put(ASSETPACK_DICTIONARY_TYPE_KEY, e.getClass().getCanonicalName());
-    returnDict.put(ASSETPACK_DICTIONARY_MESSAGE_KEY, e.getMessage());
+    returnDict.put(ASSETPACK_EXCEPTION_DICTIONARY_TYPE_KEY, e.getClass().getCanonicalName());
+    returnDict.put(ASSETPACK_EXCEPTION_DICTIONARY_MESSAGE_KEY, e.getMessage());
 
     if (e instanceof AssetPackException) {
-      returnDict.put(ASSETPACK_DICTIONARY_ERROR_CODE_KEY, ((AssetPackException) e).getErrorCode());
+      returnDict.put(
+          ASSETPACK_EXCEPTION_DICTIONARY_ERROR_CODE_KEY, ((AssetPackException) e).getErrorCode());
     } else {
-      returnDict.put(ASSETPACK_DICTIONARY_ERROR_CODE_KEY, AssetPackErrorCode.INTERNAL_ERROR);
+      returnDict.put(
+          ASSETPACK_EXCEPTION_DICTIONARY_ERROR_CODE_KEY, AssetPackErrorCode.INTERNAL_ERROR);
     }
 
     return returnDict;
