@@ -23,9 +23,9 @@ script:
   # front-facing api unit tests
   - cd api
   # download Gut (Godot unit testing) library
-  wget -O Gut.zip $GUT_URL
-  unzip Gut.zip
-  cp -a Gut-${GUT_VERSION}/addons/ addons/
+  - wget -O Gut.zip $GUT_URL
+  - unzip Gut.zip
+  - cp -a Gut-${GUT_VERSION}/addons/ addons/
 
   # download Godot headless
   - wget -O ${GODOT_HEADLESS}.zip $GODOT_HEADLESS_URL
@@ -33,7 +33,7 @@ script:
   - chmod +x ${GODOT_HEADLESS}
   
   # run test cases
-  ./${GODOT_HEADLESS} --path $PWD --script addons/gut/gut_cmdln.gd -d -gexit -ginclude_subdirs -gdir=res://test
+  - ./${GODOT_HEADLESS} --path $PWD --script addons/gut/gut_cmdln.gd -d -gexit -ginclude_subdirs -gdir=res://test
 
 
   # plugin unit tests
