@@ -253,7 +253,7 @@ public class PlayAssetDelivery extends GodotPlugin {
    * @param packNamesArray String Array for all the packs to request states
    * @param signalID identifier used to track mapping of signals to Tasks
    */
-  public void getPackStates(final String[] packNamesArray, int signalID) {
+  public void getPackStates(String[] packNamesArray, int signalID) {
     List<String> packNames = Arrays.asList(packNamesArray);
 
     OnSuccessListener<AssetPackStates> getPackStatesSuccessListener =
