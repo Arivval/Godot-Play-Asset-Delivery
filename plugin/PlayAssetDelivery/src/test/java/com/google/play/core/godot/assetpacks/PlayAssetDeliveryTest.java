@@ -188,7 +188,7 @@ public class PlayAssetDeliveryTest {
     ArgumentCaptor<String> signalNameCaptor = ArgumentCaptor.forClass(String.class);
     ArgumentCaptor<Object> signalArgsCaptor = ArgumentCaptor.forClass(Object.class);
 
-    testSubject.fetch(Arrays.asList("pack1", "pack2"), 16);
+    testSubject.fetch(new String[] {"pack1", "pack2"}, 16);
 
     verify(testSubject).emitSignalWrapper(signalNameCaptor.capture(), signalArgsCaptor.capture());
 
@@ -218,7 +218,7 @@ public class PlayAssetDeliveryTest {
     ArgumentCaptor<String> signalNameCaptor = ArgumentCaptor.forClass(String.class);
     ArgumentCaptor<Object> signalArgsCaptor = ArgumentCaptor.forClass(Object.class);
 
-    testSubject.fetch(Arrays.asList("pack1", "pack2"), 17);
+    testSubject.fetch(new String[] {"pack1", "pack2"}, 17);
 
     verify(testSubject).emitSignalWrapper(signalNameCaptor.capture(), signalArgsCaptor.capture());
 
@@ -310,7 +310,7 @@ public class PlayAssetDeliveryTest {
     ArgumentCaptor<String> signalNameCaptor = ArgumentCaptor.forClass(String.class);
     ArgumentCaptor<Object> signalArgsCaptor = ArgumentCaptor.forClass(Object.class);
 
-    testSubject.getPackStates(Arrays.asList("pack1", "pack2"), 14);
+    testSubject.getPackStates(new String[] {"pack1", "pack2"}, 14);
 
     verify(testSubject).emitSignalWrapper(signalNameCaptor.capture(), signalArgsCaptor.capture());
 
@@ -341,7 +341,7 @@ public class PlayAssetDeliveryTest {
     ArgumentCaptor<String> signalNameCaptor = ArgumentCaptor.forClass(String.class);
     ArgumentCaptor<Object> signalArgsCaptor = ArgumentCaptor.forClass(Object.class);
 
-    testSubject.getPackStates(Arrays.asList("pack1", "pack2"), 15);
+    testSubject.getPackStates(new String[] {"pack1", "pack2"}, 15);
 
     verify(testSubject).emitSignalWrapper(signalNameCaptor.capture(), signalArgsCaptor.capture());
 

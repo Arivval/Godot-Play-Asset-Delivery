@@ -198,10 +198,12 @@ public class PlayAssetDelivery extends GodotPlugin {
    * specified asset packs. Emits fetchSuccess and fetchError signals when the underlying task
    * succeeds/fails.
    *
-   * @param packNames list of name for all the packs to be fetched
+   * @param packNamesArray String array for all the packs to be fetched
    * @param signalID identifier used to track mapping of signals to Tasks
    */
-  public void fetch(List<String> packNames, int signalID) {
+  public void fetch(final String[] packNamesArray, int signalID) {
+    List<String> packNames = Arrays.asList(packNamesArray);
+
     OnSuccessListener<AssetPackStates> fetchSuccessListener =
         result ->
             emitSignalWrapper(
@@ -249,10 +251,12 @@ public class PlayAssetDelivery extends GodotPlugin {
    * state or details for the specified asset packs. Emits getPackStatesSuccess and
    * getPackStatesError signals when the underlying task succeeds/fails.
    *
-   * @param packNames list of name for all the packs to request states
+   * @param packNamesArray String array for all the packs to request states
    * @param signalID identifier used to track mapping of signals to Tasks
    */
-  public void getPackStates(List<String> packNames, int signalID) {
+  public void getPackStates(final String[] packNamesArray, int signalID) {
+    List<String> packNames = Arrays.asList(packNamesArray);
+
     OnSuccessListener<AssetPackStates> getPackStatesSuccessListener =
         result ->
             emitSignalWrapper(
