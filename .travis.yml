@@ -10,6 +10,7 @@ env:
     - GODOT_HEADLESS_URL=https://downloads.tuxfamily.org/godotengine/${GODOT_HEADLESS_VERSION}/${GODOT_HEADLESS}.zip
     - GUT_VERSION=080c5f0a6eb54ed382ce840fe847b457c28e9dbb
     - GUT_URL=https://github.com/bitwes/Gut/archive/${GUT_VERSION}.zip
+
 android:
   components:
     - build-tools-30.0.0
