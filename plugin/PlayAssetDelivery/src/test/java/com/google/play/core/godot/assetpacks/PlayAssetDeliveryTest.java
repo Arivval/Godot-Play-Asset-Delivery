@@ -131,12 +131,14 @@ public class PlayAssetDeliveryTest {
 
   @Test
   public void assetPackStateUpdatedTest() {
+    List<AssetPackState> testAssetPackStateList =
+        PlayAssetDeliveryTestHelper.createAssetPackStateList();
+
     doAnswer(
             invocation -> {
               AssetPackStateUpdateListener listener =
                   (AssetPackStateUpdateListener) invocation.getArguments()[0];
-              List<AssetPackState> packStateSequence =
-                  PlayAssetDeliveryTestHelper.createAssetPackStateList();
+              List<AssetPackState> packStateSequence = testAssetPackStateList;
               for (AssetPackState packState : packStateSequence) {
                 listener.onStateUpdate(packState);
               }
@@ -152,13 +154,15 @@ public class PlayAssetDeliveryTest {
 
     testSubject.registerAssetPackStateUpdatedListener();
 
-    verify(testSubject, times(3))
+    verify(testSubject, times(testAssetPackStateList.size()))
         .emitSignalWrapper(signalNameCaptor.capture(), signalArgsCaptor.capture());
 
     assertThat(signalNameCaptor.getAllValues())
         .isEqualTo(
             Arrays.asList(
-                "assetPackStateUpdated", "assetPackStateUpdated", "assetPackStateUpdated"));
+                PlayAssetDelivery.ASSET_PACK_STATE_UPDATED,
+                PlayAssetDelivery.ASSET_PACK_STATE_UPDATED,
+                PlayAssetDelivery.ASSET_PACK_STATE_UPDATED));
 
     List<Dictionary> expectedList =
         PlayAssetDeliveryTestHelper.createAssetPackStateList()
@@ -192,7 +196,7 @@ public class PlayAssetDeliveryTest {
 
     verify(testSubject).emitSignalWrapper(signalNameCaptor.capture(), signalArgsCaptor.capture());
 
-    assertThat(signalNameCaptor.getValue()).isEqualTo("fetchSuccess");
+    assertThat(signalNameCaptor.getValue()).isEqualTo(PlayAssetDelivery.FETCH_SUCCESS);
     List<Object> receivedArgs = signalArgsCaptor.getAllValues();
     assertThat(receivedArgs).hasSize(2);
 
@@ -223,7 +227,7 @@ public class PlayAssetDeliveryTest {
 
     verify(testSubject).emitSignalWrapper(signalNameCaptor.capture(), signalArgsCaptor.capture());
 
-    assertThat(signalNameCaptor.getValue()).isEqualTo("fetchError");
+    assertThat(signalNameCaptor.getValue()).isEqualTo(PlayAssetDelivery.FETCH_ERROR);
     List<Object> receivedArgs = signalArgsCaptor.getAllValues();
     assertThat(receivedArgs).hasSize(2);
 
@@ -315,7 +319,7 @@ public class PlayAssetDeliveryTest {
 
     verify(testSubject).emitSignalWrapper(signalNameCaptor.capture(), signalArgsCaptor.capture());
 
-    assertThat(signalNameCaptor.getValue()).isEqualTo("getPackStatesSuccess");
+    assertThat(signalNameCaptor.getValue()).isEqualTo(PlayAssetDelivery.GET_PACK_STATES_SUCCESS);
     List<Object> receivedArgs = signalArgsCaptor.getAllValues();
     assertThat(receivedArgs).hasSize(2);
 
@@ -346,7 +350,7 @@ public class PlayAssetDeliveryTest {
 
     verify(testSubject).emitSignalWrapper(signalNameCaptor.capture(), signalArgsCaptor.capture());
 
-    assertThat(signalNameCaptor.getValue()).isEqualTo("getPackStatesError");
+    assertThat(signalNameCaptor.getValue()).isEqualTo(PlayAssetDelivery.GET_PACK_STATES_ERROR);
     List<Object> receivedArgs = signalArgsCaptor.getAllValues();
     assertThat(receivedArgs).hasSize(2);
 
@@ -373,7 +377,7 @@ public class PlayAssetDeliveryTest {
 
     verify(testSubject).emitSignalWrapper(signalNameCaptor.capture(), signalArgsCaptor.capture());
 
-    assertThat(signalNameCaptor.getValue()).isEqualTo("removePackSuccess");
+    assertThat(signalNameCaptor.getValue()).isEqualTo(PlayAssetDelivery.REMOVE_PACK_SUCCESS);
     List<Object> receivedArgs = signalArgsCaptor.getAllValues();
     assertThat(receivedArgs).hasSize(1);
     assertThat(receivedArgs.get(0)).isEqualTo(10);
@@ -400,7 +404,7 @@ public class PlayAssetDeliveryTest {
 
     verify(testSubject).emitSignalWrapper(signalNameCaptor.capture(), signalArgsCaptor.capture());
 
-    assertThat(signalNameCaptor.getValue()).isEqualTo("removePackError");
+    assertThat(signalNameCaptor.getValue()).isEqualTo(PlayAssetDelivery.REMOVE_PACK_ERROR);
     List<Object> receivedArgs = signalArgsCaptor.getAllValues();
     assertThat(receivedArgs).hasSize(2);
 
@@ -428,7 +432,8 @@ public class PlayAssetDeliveryTest {
 
     verify(testSubject).emitSignalWrapper(signalNameCaptor.capture(), signalArgsCaptor.capture());
 
-    assertThat(signalNameCaptor.getValue()).isEqualTo("showCellularDataConfirmationSuccess");
+    assertThat(signalNameCaptor.getValue())
+        .isEqualTo(PlayAssetDelivery.SHOW_CELLULAR_DATA_CONFIRMATION_SUCCESS);
     List<Object> receivedArgs = signalArgsCaptor.getAllValues();
     assertThat(receivedArgs).hasSize(2);
     assertThat(receivedArgs.get(0)).isEqualTo(1);
@@ -455,7 +460,8 @@ public class PlayAssetDeliveryTest {
 
     verify(testSubject).emitSignalWrapper(signalNameCaptor.capture(), signalArgsCaptor.capture());
 
-    assertThat(signalNameCaptor.getValue()).isEqualTo("showCellularDataConfirmationError");
+    assertThat(signalNameCaptor.getValue())
+        .isEqualTo(PlayAssetDelivery.SHOW_CELLULAR_DATA_CONFIRMATION_ERROR);
     List<Object> receivedArgs = signalArgsCaptor.getAllValues();
     assertThat(receivedArgs).hasSize(2);
     assertThat(receivedArgs.get(0))

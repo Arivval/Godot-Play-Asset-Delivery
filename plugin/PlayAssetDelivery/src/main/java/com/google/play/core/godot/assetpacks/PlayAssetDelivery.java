@@ -47,16 +47,16 @@ public class PlayAssetDelivery extends GodotPlugin {
 
   private AssetPackManager assetPackManager;
 
-  private final String ASSET_PACK_STATE_UPDATED = "assetPackStateUpdated";
-  private final String FETCH_SUCCESS = "fetchSuccess";
-  private final String FETCH_ERROR = "fetchError";
-  private final String GET_PACK_STATES_SUCCESS = "getPackStatesSuccess";
-  private final String GET_PACK_STATES_ERROR = "getPackStatesError";
-  private final String REMOVE_PACK_SUCCESS = "removePackSuccess";
-  private final String REMOVE_PACK_ERROR = "removePackError";
-  private final String SHOW_CELLULAR_DATA_CONFIRMATION_SUCCESS =
+  static final String ASSET_PACK_STATE_UPDATED = "assetPackStateUpdated";
+  static final String FETCH_SUCCESS = "fetchSuccess";
+  static final String FETCH_ERROR = "fetchError";
+  static final String GET_PACK_STATES_SUCCESS = "getPackStatesSuccess";
+  static final String GET_PACK_STATES_ERROR = "getPackStatesError";
+  static final String REMOVE_PACK_SUCCESS = "removePackSuccess";
+  static final String REMOVE_PACK_ERROR = "removePackError";
+  static final String SHOW_CELLULAR_DATA_CONFIRMATION_SUCCESS =
       "showCellularDataConfirmationSuccess";
-  private final String SHOW_CELLULAR_DATA_CONFIRMATION_ERROR = "showCellularDataConfirmationError";
+  static final String SHOW_CELLULAR_DATA_CONFIRMATION_ERROR = "showCellularDataConfirmationError";
 
   public PlayAssetDelivery(Godot godot) {
     super(godot);
