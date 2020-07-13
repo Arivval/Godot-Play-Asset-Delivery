@@ -157,6 +157,10 @@ public class PlayAssetDeliveryTest {
     verify(testSubject, times(testAssetPackStateList.size()))
         .emitSignalWrapper(signalNameCaptor.capture(), signalArgsCaptor.capture());
 
+    // AssetPackStateUpdatedListener is a global listener that monitors the updates for all
+    // assetPacks' states. In this test assetPackStateUpdatedListener will be called three times.
+    // Hence we need to assert that the output from argument captor equals to the merged list of all
+    // the listeners' calls.
     assertThat(signalNameCaptor.getAllValues())
         .isEqualTo(
             Arrays.asList(
