@@ -38,11 +38,15 @@ script:
 
   # plugin unit tests
   - cd ../plugin
+  
   # download dependency
   - wget -O ${GODOT_LIB_VERSION}/${GODOT_LIB_VERSION}.aar $GODOT_LIB_URL
+  
   # Execute task 'verifyGoogleJavaFormat' to verify all *.java files are correctly formatted
   - ./gradlew verGJF
+  
   # execute test cases
   - ./gradlew test
+  
   # build aar library
   - ./gradlew build
