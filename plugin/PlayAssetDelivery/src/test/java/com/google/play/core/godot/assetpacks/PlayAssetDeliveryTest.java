@@ -205,7 +205,8 @@ public class PlayAssetDeliveryTest {
     // Mock the side effects of Task<AssetPackStates> object, call onFailureListener the instant
     // it is registered.
     AssetPackException testException =
-        PlayAssetDeliveryTestHelper.createMockAssetPackException("pack error test.", -7);
+        PlayAssetDeliveryTestHelper.createMockAssetPackException(
+            "pack error test.", AssetPackErrorCode.ACCESS_DENIED);
 
     Task<AssetPackStates> assetPackStatesFailureTaskMock =
         PlayAssetDeliveryTestHelper.createMockOnFailureTask(testException);
