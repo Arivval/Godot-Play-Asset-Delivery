@@ -19,9 +19,11 @@ package com.google.play.core.godot.assetpacks.utils;
 import static com.google.common.truth.Truth.assertThat;
 
 import com.google.android.play.core.assetpacks.AssetLocation;
+import com.google.android.play.core.assetpacks.AssetPackException;
 import com.google.android.play.core.assetpacks.AssetPackLocation;
 import com.google.android.play.core.assetpacks.AssetPackState;
 import com.google.android.play.core.assetpacks.AssetPackStates;
+import com.google.android.play.core.assetpacks.model.AssetPackErrorCode;
 import com.google.play.core.godot.assetpacks.PlayAssetDeliveryTestHelper;
 import java.util.Map;
 import org.godotengine.godot.Dictionary;
@@ -286,5 +288,35 @@ public class PlayAssetDeliveryUtilsTest {
 
     Map<String, AssetPackLocation> testAssetPackLocations =
         PlayAssetDeliveryUtils.convertDictionaryToAssetPackLocations(testDictionary);
+  }
+
+  @Test
+  public void convertExceptionToDictionary_regularException() {
+    Exception testException = new Exception("Just testing, don't panic.");
+    Dictionary testDict = PlayAssetDeliveryUtils.convertExceptionToDictionary(testException);
+
+    Dictionary expectedDict = new Dictionary();
+    expectedDict.put(
+        PlayAssetDeliveryUtils.ASSETPACK_EXCEPTION_DICTIONARY_TYPE_KEY,
+        Exception.class.getCanonicalName());
+    expectedDict.put(
+        PlayAssetDeliveryUtils.ASSETPACK_EXCEPTION_DICTIONARY_MESSAGE_KEY,
+        testException.getMessage());
+    expectedDict.put(
+        PlayAssetDeliveryUtils.ASSETPACK_EXCEPTION_DICTIONARY_ERROR_CODE_KEY,
+        AssetPackErrorCode.INTERNAL_ERROR);
+
+    assertThat(testDict).isEqualTo(expectedDict);
+  }
+
+  @Test
+  public void convertExceptionToDictionary_assetPackException() {
+    AssetPackException testException =
+        PlayAssetDeliveryTestHelper.createMockAssetPackException(
+            "Test message.", AssetPackErrorCode.ACCESS_DENIED);
+    Dictionary testDict = PlayAssetDeliveryUtils.convertExceptionToDictionary(testException);
+
+    PlayAssetDeliveryTestHelper.assertMockAssetPackExceptionDictionaryIsExpected(
+        testDict, "Test message.", AssetPackErrorCode.ACCESS_DENIED);
   }
 }

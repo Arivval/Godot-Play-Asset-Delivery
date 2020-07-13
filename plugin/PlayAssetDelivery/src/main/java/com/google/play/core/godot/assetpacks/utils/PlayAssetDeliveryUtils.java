@@ -17,9 +17,11 @@
 package com.google.play.core.godot.assetpacks.utils;
 
 import com.google.android.play.core.assetpacks.AssetLocation;
+import com.google.android.play.core.assetpacks.AssetPackException;
 import com.google.android.play.core.assetpacks.AssetPackLocation;
 import com.google.android.play.core.assetpacks.AssetPackState;
 import com.google.android.play.core.assetpacks.AssetPackStates;
+import com.google.android.play.core.assetpacks.model.AssetPackErrorCode;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.godotengine.godot.Dictionary;
@@ -30,6 +32,10 @@ import org.godotengine.godot.Dictionary;
  * org.godotengine.godot.Dictionary, which the Godot runtime can receive.
  */
 public class PlayAssetDeliveryUtils {
+
+  public static final String ASSETPACK_EXCEPTION_DICTIONARY_TYPE_KEY = "type";
+  public static final String ASSETPACK_EXCEPTION_DICTIONARY_MESSAGE_KEY = "message";
+  public static final String ASSETPACK_EXCEPTION_DICTIONARY_ERROR_CODE_KEY = "errorCode";
 
   public static Dictionary constructAssetPackStateDictionary(
       long bytesDownloaded,
@@ -128,6 +134,30 @@ public class PlayAssetDeliveryUtils {
             Dictionary::new,
             (d, e) -> d.put(e.getKey(), convertAssetPackLocationToDictionary(e.getValue())),
             (d1, d2) -> d1.putAll(d2));
+  }
+
+  /**
+   * Serializes an Exception object into Godot Dictionary. If the Exception is not an
+   * AssetPackException, the errorCode entry in returnDict will be set to
+   * AssetPackErrorCode.INTERNAL_ERROR.
+   *
+   * @param e Exception to be converted to Dictionary
+   * @return serialized Dictionary
+   */
+  public static Dictionary convertExceptionToDictionary(final Exception e) {
+    Dictionary returnDict = new Dictionary();
+    returnDict.put(ASSETPACK_EXCEPTION_DICTIONARY_TYPE_KEY, e.getClass().getCanonicalName());
+    returnDict.put(ASSETPACK_EXCEPTION_DICTIONARY_MESSAGE_KEY, e.getMessage());
+
+    if (e instanceof AssetPackException) {
+      returnDict.put(
+          ASSETPACK_EXCEPTION_DICTIONARY_ERROR_CODE_KEY, ((AssetPackException) e).getErrorCode());
+    } else {
+      returnDict.put(
+          ASSETPACK_EXCEPTION_DICTIONARY_ERROR_CODE_KEY, AssetPackErrorCode.INTERNAL_ERROR);
+    }
+
+    return returnDict;
   }
 
   public static AssetPackState convertDictionaryToAssetPackState(Dictionary dict)

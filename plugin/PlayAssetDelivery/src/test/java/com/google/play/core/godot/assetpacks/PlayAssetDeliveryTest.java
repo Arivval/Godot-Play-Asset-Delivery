@@ -24,8 +24,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.app.Activity;
+import com.google.android.play.core.assetpacks.AssetPackException;
 import com.google.android.play.core.assetpacks.AssetPackManager;
 import com.google.android.play.core.assetpacks.AssetPackStates;
+import com.google.android.play.core.assetpacks.model.AssetPackErrorCode;
 import com.google.android.play.core.tasks.Task;
 import com.google.play.core.godot.assetpacks.utils.AssetLocationFromDictionary;
 import com.google.play.core.godot.assetpacks.utils.AssetPackLocationFromDictionary;
@@ -87,18 +89,17 @@ public class PlayAssetDeliveryTest {
     SignalInfo fetchStateUpdated =
         new SignalInfo("fetchStateUpdated", Dictionary.class, Integer.class);
     SignalInfo fetchSuccess = new SignalInfo("fetchSuccess", Dictionary.class, Integer.class);
-    SignalInfo fetchError = new SignalInfo("fetchError", String.class, Integer.class);
+    SignalInfo fetchError = new SignalInfo("fetchError", Dictionary.class, Integer.class);
     SignalInfo getPackStatesSuccess =
         new SignalInfo("getPackStatesSuccess", Dictionary.class, Integer.class);
     SignalInfo getPackStatesError =
-        new SignalInfo("getPackStatesError", String.class, Integer.class);
+        new SignalInfo("getPackStatesError", Dictionary.class, Integer.class);
     SignalInfo removePackSuccess = new SignalInfo("removePackSuccess", String.class, Integer.class);
-    SignalInfo removePackError =
-        new SignalInfo("removePackError", String.class, String.class, Integer.class);
+    SignalInfo removePackError = new SignalInfo("removePackError", Dictionary.class, Integer.class);
     SignalInfo showCellularDataConfirmationSuccess =
         new SignalInfo("showCellularDataConfirmationSuccess", Integer.class, Integer.class);
     SignalInfo showCellularDataConfirmationError =
-        new SignalInfo("showCellularDataConfirmationError", String.class, Integer.class);
+        new SignalInfo("showCellularDataConfirmationError", Dictionary.class, Integer.class);
     assertThat(testSet)
         .containsExactly(
             assetPackStateUpdateSignal,
@@ -220,7 +221,10 @@ public class PlayAssetDeliveryTest {
   public void getPackStates_error() {
     // Mock the side effects of Task<AssetPackStates> object, call onFailureListener the instant
     // it is registered.
-    Exception testException = new Exception("Test Exception!");
+    AssetPackException testException =
+        PlayAssetDeliveryTestHelper.createMockAssetPackException(
+            "pack error test.", AssetPackErrorCode.ACCESS_DENIED);
+
     Task<AssetPackStates> assetPackStatesFailureTaskMock =
         PlayAssetDeliveryTestHelper.createMockOnFailureTask(testException);
 
@@ -239,7 +243,10 @@ public class PlayAssetDeliveryTest {
     assertThat(signalNameCaptor.getValue()).isEqualTo("getPackStatesError");
     List<Object> receivedArgs = signalArgsCaptor.getAllValues();
     assertThat(receivedArgs).hasSize(2);
-    assertThat(receivedArgs.get(0)).isEqualTo("java.lang.Exception: Test Exception!");
+
+    PlayAssetDeliveryTestHelper.assertMockAssetPackExceptionDictionaryIsExpected(
+        (Dictionary) receivedArgs.get(0), "pack error test.", AssetPackErrorCode.ACCESS_DENIED);
+
     assertThat(receivedArgs.get(1)).isEqualTo(15);
   }
 
@@ -270,7 +277,9 @@ public class PlayAssetDeliveryTest {
   public void removePack_error() {
     // Mock the side effects of Task<Void> object, call onFailureListener the instant
     // it is registered.
-    Exception testException = new Exception("Test Exception!");
+    AssetPackException testException =
+        PlayAssetDeliveryTestHelper.createMockAssetPackException(
+            "pack error test.", AssetPackErrorCode.ACCESS_DENIED);
     Task<Void> voidFailureTaskMock =
         PlayAssetDeliveryTestHelper.createMockOnFailureTask(testException);
 
@@ -288,7 +297,10 @@ public class PlayAssetDeliveryTest {
     assertThat(signalNameCaptor.getValue()).isEqualTo("removePackError");
     List<Object> receivedArgs = signalArgsCaptor.getAllValues();
     assertThat(receivedArgs).hasSize(2);
-    assertThat(receivedArgs.get(0)).isEqualTo("java.lang.Exception: Test Exception!");
+
+    PlayAssetDeliveryTestHelper.assertMockAssetPackExceptionDictionaryIsExpected(
+        (Dictionary) receivedArgs.get(0), "pack error test.", AssetPackErrorCode.ACCESS_DENIED);
+
     assertThat(receivedArgs.get(1)).isEqualTo(11);
   }
 
@@ -340,7 +352,8 @@ public class PlayAssetDeliveryTest {
     assertThat(signalNameCaptor.getValue()).isEqualTo("showCellularDataConfirmationError");
     List<Object> receivedArgs = signalArgsCaptor.getAllValues();
     assertThat(receivedArgs).hasSize(2);
-    assertThat(receivedArgs.get(0)).isEqualTo("java.lang.Exception: Test Exception!");
+    assertThat(receivedArgs.get(0))
+        .isEqualTo(PlayAssetDeliveryUtils.convertExceptionToDictionary(testException));
     assertThat(receivedArgs.get(1)).isEqualTo(13);
   }
 }
