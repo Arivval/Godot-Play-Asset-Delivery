@@ -68,7 +68,6 @@ public class PlayAssetDelivery extends GodotPlugin {
   PlayAssetDelivery(Godot godot, AssetPackManager assetPackManager) {
     super(godot);
     this.assetPackManager = assetPackManager;
-    registerAssetPackStateUpdatedListener();
   }
 
   @Override
