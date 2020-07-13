@@ -23,7 +23,7 @@ script:
   # front-facing api unit tests
   - cd api
   # download Gut (Godot unit testing) library
-  - wget -O Gut.zip $GUT_URL
+  - wget --max-redirect 0 -O Gut.zip $GUT_URL
   - unzip Gut.zip
   - cp -a Gut-${GUT_VERSION}/addons/ addons/
 
