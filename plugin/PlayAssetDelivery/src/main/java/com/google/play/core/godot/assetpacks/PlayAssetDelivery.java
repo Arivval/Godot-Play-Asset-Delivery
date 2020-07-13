@@ -200,7 +200,7 @@ public class PlayAssetDelivery extends GodotPlugin {
    * @param packNamesArray String Array for all the packs to be fetched
    * @param signalID identifier used to track mapping of signals to Tasks
    */
-  public void fetch(final String[] packNamesArray, int signalID) {
+  public void fetch(String[] packNamesArray, int signalID) {
     List<String> packNames = Arrays.asList(packNamesArray);
 
     OnSuccessListener<AssetPackStates> fetchSuccessListener =
