@@ -118,40 +118,6 @@ public class PlayAssetDeliveryTestHelper {
   }
 
   /**
-   * When calling getClass() method on mocked objects, the returned named will contain Mockito
-   * specific suffix such as
-   * com.google.android.play.core.assetpacks.AssetPackException$$EnhancerByMockitoWithCGLIB$$c5.
-   * Hence we need this helper function to apply string operations to only take the prefix.
-   *
-   * @param mockitoClassName raw string with Mockito given suffix
-   * @return string representing the actual class name
-   */
-  private static String convertMockitoClassNameToActualClassName(String mockitoClassName) {
-    return mockitoClassName.split("\\$\\$")[0];
-  }
-
-  public static void assertMockAssetPackExceptionDictionaryIsExpected(
-      Dictionary mockExceptionDictionary, String expectedMessage, int expectedErrorCode) {
-    String testExceptionType =
-        (String)
-            mockExceptionDictionary.get(
-                PlayAssetDeliveryUtils.ASSETPACK_EXCEPTION_DICTIONARY_TYPE_KEY);
-
-    testExceptionType = convertMockitoClassNameToActualClassName(testExceptionType);
-
-    assertThat(testExceptionType).isEqualTo(AssetPackException.class.getCanonicalName());
-    assertThat(
-            mockExceptionDictionary.get(
-                PlayAssetDeliveryUtils.ASSETPACK_EXCEPTION_DICTIONARY_MESSAGE_KEY))
-        .isEqualTo(expectedMessage);
-    assertThat(
-            mockExceptionDictionary.get(
-                PlayAssetDeliveryUtils.ASSETPACK_EXCEPTION_DICTIONARY_ERROR_CODE_KEY))
-        .isEqualTo(expectedErrorCode);
-    assertThat(mockExceptionDictionary.entrySet().size()).isEqualTo(3);
-  }
-
-  /**
    * Mock object factory that returns a mock Task<T> object. Will invoke onSuccessListener with
    * result if addOnSuccessListener() is called.
    *
