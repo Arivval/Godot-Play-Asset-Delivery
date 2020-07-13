@@ -17,4 +17,4 @@
 extends 'res://addons/gut/test.gd'
 
 func test_gut_assert_eq():
-	assert_eq(1 + 1, 3)
+	assert_eq(1 + 1, 2)
