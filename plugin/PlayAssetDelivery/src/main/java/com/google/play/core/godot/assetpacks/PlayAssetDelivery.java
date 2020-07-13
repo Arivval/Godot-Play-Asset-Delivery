@@ -62,7 +62,6 @@ public class PlayAssetDelivery extends GodotPlugin {
     super(godot);
     Context applicationContext = godot.getApplicationContext();
     assetPackManager = AssetPackManagerFactory.getInstance(applicationContext);
-    registerAssetPackStateUpdatedListener();
   }
 
   /** Package-private constructor used to instantiate PlayAssetDelivery class with mock objects. */
