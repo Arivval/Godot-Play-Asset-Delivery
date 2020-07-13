@@ -297,11 +297,13 @@ public class PlayAssetDeliveryUtilsTest {
 
     Dictionary expectedDict = new Dictionary();
     expectedDict.put(
-        PlayAssetDeliveryUtils.ASSETPACK_DICTIONARY_TYPE_KEY, Exception.class.getCanonicalName());
+        PlayAssetDeliveryUtils.ASSETPACK_EXCEPTION_DICTIONARY_TYPE_KEY,
+        Exception.class.getCanonicalName());
     expectedDict.put(
-        PlayAssetDeliveryUtils.ASSETPACK_DICTIONARY_MESSAGE_KEY, testException.getMessage());
+        PlayAssetDeliveryUtils.ASSETPACK_EXCEPTION_DICTIONARY_MESSAGE_KEY,
+        testException.getMessage());
     expectedDict.put(
-        PlayAssetDeliveryUtils.ASSETPACK_DICTIONARY_ERROR_CODE_KEY,
+        PlayAssetDeliveryUtils.ASSETPACK_EXCEPTION_DICTIONARY_ERROR_CODE_KEY,
         AssetPackErrorCode.INTERNAL_ERROR);
 
     assertThat(testDict).isEqualTo(expectedDict);

@@ -99,15 +99,20 @@ public class PlayAssetDeliveryTestHelper {
   public static void assertMockAssetPackExceptionDictionaryIsExpected(
       Dictionary mockExceptionDictionary, String expectedMessage, int expectedErrorCode) {
     String testExceptionType =
-        (String) mockExceptionDictionary.get(PlayAssetDeliveryUtils.ASSETPACK_DICTIONARY_TYPE_KEY);
+        (String)
+            mockExceptionDictionary.get(
+                PlayAssetDeliveryUtils.ASSETPACK_EXCEPTION_DICTIONARY_TYPE_KEY);
 
     testExceptionType = convertMockitoClassNameToActualClassName(testExceptionType);
 
     assertThat(testExceptionType).isEqualTo(AssetPackException.class.getCanonicalName());
-    assertThat(mockExceptionDictionary.get(PlayAssetDeliveryUtils.ASSETPACK_DICTIONARY_MESSAGE_KEY))
+    assertThat(
+            mockExceptionDictionary.get(
+                PlayAssetDeliveryUtils.ASSETPACK_EXCEPTION_DICTIONARY_MESSAGE_KEY))
         .isEqualTo(expectedMessage);
     assertThat(
-            mockExceptionDictionary.get(PlayAssetDeliveryUtils.ASSETPACK_DICTIONARY_ERROR_CODE_KEY))
+            mockExceptionDictionary.get(
+                PlayAssetDeliveryUtils.ASSETPACK_EXCEPTION_DICTIONARY_ERROR_CODE_KEY))
         .isEqualTo(expectedErrorCode);
     assertThat(mockExceptionDictionary.entrySet().size()).isEqualTo(3);
   }
