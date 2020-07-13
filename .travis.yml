@@ -9,7 +9,7 @@ env:
     - GODOT_HEADLESS=Godot_v3.2.2-stable_linux_headless.64
     - GODOT_HEADLESS_URL=https://downloads.tuxfamily.org/godotengine/3.2.2/Godot_v3.2.2-stable_linux_headless.64.zip
     - GUT_VERSION=080c5f0a6eb54ed382ce840fe847b457c28e9dbb
-    - GUT_URL=https://github.com/bitwes/Gut/archive/080c5f0a6eb54ed382ce840fe847b457c28e9dbb.zip
+    - GUT_URL=https://github.com/bitwes/Gut/archive/${GUT_VERSION}.zip
 android:
   components:
     - build-tools-30.0.0
