@@ -16,12 +16,8 @@ _global_script_class_icons={
 [application]
 
 config/name="api"
-run/main_scene="res://main.tscn"
+run/main_scene="res://test/gut_gui.tscn"
 
 [editor_plugins]
 
 enabled=PoolStringArray( "gut" )
-
-[rendering]
-
-environment/default_environment="res://default_env.tres"
