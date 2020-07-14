@@ -39,7 +39,7 @@ script:
 
 
   # plugin unit tests
-  - cd ../plugin
+  - cd $TRAVIS_BUILD_DIR/plugin
   
   # download dependency
   - wget -O ${GODOT_LIB_VERSION}/${GODOT_LIB_VERSION}.aar $GODOT_LIB_URL
