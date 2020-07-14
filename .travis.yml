@@ -23,6 +23,7 @@ before_install:
 script:
   # front-facing api unit tests
   - cd api
+
   # download Gut (Godot unit testing) library
   - wget -O Gut.zip $GUT_URL
   - unzip Gut.zip
