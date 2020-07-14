@@ -13,7 +13,6 @@
 #	See the License for the specific language governing permissions and
 #	limitations under the License.
 #
-
 extends "res://addons/gut/test.gd"
 
 func create_play_asset_pack_manager(mock_plugin):
