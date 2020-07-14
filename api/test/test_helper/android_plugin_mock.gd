@@ -18,5 +18,5 @@
 class_name AndroidPluginMock
 extends Object
 
-func getPackLocation(pack_name : String):
+func getPackLocation(_pack_name : String):
 	return null

@@ -16,8 +16,8 @@
 #
 # ##############################################################################
 #
-# This class provides a constructor that is able create new PlayAssetLocation 
-# objects based on input Dictionary. Provides relevant get methods.
+# This class provides a constructor to create new PlayAssetLocation objects 
+# based on input Dictionary. Provides relevant get methods.
 #
 # ##############################################################################
 class_name PlayAssetLocation
