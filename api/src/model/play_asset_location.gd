@@ -14,7 +14,20 @@
 	limitations under the License.
 """
 
-extends "res://addons/gut/test.gd"
+class_name PlayAssetLocation
+extends Object
 
-func test_gut_assert_eq():
-	assert_eq(1 + 1, 2)
+var _asset_location_dict : Dictionary
+
+func _init(init_dictionary : Dictionary):
+	_asset_location_dict = init_dictionary.duplicate()
+
+func get_offset() -> int:
+	return _asset_location_dict["offset"]
+
+func get_path() -> String:
+	print(_asset_location_dict)
+	return _asset_location_dict["path"]
+
+func get_size() -> int:
+	return _asset_location_dict["size"]

@@ -14,7 +14,8 @@
 	limitations under the License.
 """
 
-extends "res://addons/gut/test.gd"
+class_name AndroidPluginMock
+extends Object
 
-func test_gut_assert_eq():
-	assert_eq(1 + 1, 2)
+func getPackLocation(pack_name : String):
+	return null
