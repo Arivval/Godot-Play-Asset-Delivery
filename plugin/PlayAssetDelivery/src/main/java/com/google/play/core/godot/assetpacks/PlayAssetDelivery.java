@@ -47,17 +47,16 @@ public class PlayAssetDelivery extends GodotPlugin {
 
   private AssetPackManager assetPackManager;
 
-  private final String ASSET_PACK_STATE_UPDATED = "assetPackStateUpdated";
-  private final String FETCH_STATE_UPDATED = "fetchStateUpdated";
-  private final String FETCH_SUCCESS = "fetchSuccess";
-  private final String FETCH_ERROR = "fetchError";
-  private final String GET_PACK_STATES_SUCCESS = "getPackStatesSuccess";
-  private final String GET_PACK_STATES_ERROR = "getPackStatesError";
-  private final String REMOVE_PACK_SUCCESS = "removePackSuccess";
-  private final String REMOVE_PACK_ERROR = "removePackError";
-  private final String SHOW_CELLULAR_DATA_CONFIRMATION_SUCCESS =
+  static final String ASSET_PACK_STATE_UPDATED = "assetPackStateUpdated";
+  static final String FETCH_SUCCESS = "fetchSuccess";
+  static final String FETCH_ERROR = "fetchError";
+  static final String GET_PACK_STATES_SUCCESS = "getPackStatesSuccess";
+  static final String GET_PACK_STATES_ERROR = "getPackStatesError";
+  static final String REMOVE_PACK_SUCCESS = "removePackSuccess";
+  static final String REMOVE_PACK_ERROR = "removePackError";
+  static final String SHOW_CELLULAR_DATA_CONFIRMATION_SUCCESS =
       "showCellularDataConfirmationSuccess";
-  private final String SHOW_CELLULAR_DATA_CONFIRMATION_ERROR = "showCellularDataConfirmationError";
+  static final String SHOW_CELLULAR_DATA_CONFIRMATION_ERROR = "showCellularDataConfirmationError";
 
   public PlayAssetDelivery(Godot godot) {
     super(godot);
@@ -69,6 +68,37 @@ public class PlayAssetDelivery extends GodotPlugin {
   PlayAssetDelivery(Godot godot, AssetPackManager assetPackManager) {
     super(godot);
     this.assetPackManager = assetPackManager;
+  }
+
+  @Override
+  public void onMainPause() {
+    assetPackManager.clearListeners();
+    super.onMainPause();
+  }
+
+  @Override
+  public void onMainResume() {
+    registerAssetPackStateUpdatedListener();
+    super.onMainResume();
+  }
+
+  @Override
+  public void onMainDestroy() {
+    assetPackManager.clearListeners();
+    super.onMainDestroy();
+  }
+
+  /**
+   * Register a global listener that can emit assetPackStateUpdated signal whenever an AssetPack's
+   * state is updated.
+   */
+  void registerAssetPackStateUpdatedListener() {
+    assetPackManager.registerListener(
+        state -> {
+          emitSignalWrapper(
+              ASSET_PACK_STATE_UPDATED,
+              PlayAssetDeliveryUtils.convertAssetPackStateToDictionary(state));
+        });
   }
 
   /**
@@ -122,7 +152,6 @@ public class PlayAssetDelivery extends GodotPlugin {
   public Set<SignalInfo> getPluginSignals() {
     Set<SignalInfo> availableSignals = new HashSet<>();
     availableSignals.add(new SignalInfo(ASSET_PACK_STATE_UPDATED, Dictionary.class));
-    availableSignals.add(new SignalInfo(FETCH_STATE_UPDATED, Dictionary.class, Integer.class));
     availableSignals.add(new SignalInfo(FETCH_SUCCESS, Dictionary.class, Integer.class));
     availableSignals.add(new SignalInfo(FETCH_ERROR, Dictionary.class, Integer.class));
     availableSignals.add(new SignalInfo(GET_PACK_STATES_SUCCESS, Dictionary.class, Integer.class));
@@ -163,6 +192,34 @@ public class PlayAssetDelivery extends GodotPlugin {
   }
 
   /**
+   * Calls fetch(List<String> packNames) method in the Play Core Library. Requests to download the
+   * specified asset packs. Emits fetchSuccess and fetchError signals when the underlying task
+   * succeeds/fails.
+   *
+   * @param packNamesArray String Array for all the packs to be fetched
+   * @param signalID identifier used to track mapping of signals to Tasks
+   */
+  public void fetch(String[] packNamesArray, int signalID) {
+    List<String> packNames = Arrays.asList(packNamesArray);
+
+    OnSuccessListener<AssetPackStates> fetchSuccessListener =
+        result ->
+            emitSignalWrapper(
+                FETCH_SUCCESS,
+                PlayAssetDeliveryUtils.convertAssetPackStatesToDictionary(result),
+                signalID);
+
+    OnFailureListener fetchFailureListener =
+        e ->
+            emitSignalWrapper(
+                FETCH_ERROR, PlayAssetDeliveryUtils.convertExceptionToDictionary(e), signalID);
+
+    Task<AssetPackStates> fetchTask = assetPackManager.fetch(packNames);
+    fetchTask.addOnSuccessListener(fetchSuccessListener);
+    fetchTask.addOnFailureListener(fetchFailureListener);
+  }
+
+  /**
    * Calls getPackLocation(String packName) method in the Play Core Library. Returns the location of
    * the specified asset pack on the device or null if this pack is not downloaded or is outdated.
    *
@@ -192,10 +249,12 @@ public class PlayAssetDelivery extends GodotPlugin {
    * state or details for the specified asset packs. Emits getPackStatesSuccess and
    * getPackStatesError signals when the underlying task succeeds/fails.
    *
-   * @param packNames list of name for all the packs to request states
+   * @param packNamesArray String Array for all the packs to request states
    * @param signalID identifier used to track mapping of signals to Tasks
    */
-  public void getPackStates(List<String> packNames, int signalID) {
+  public void getPackStates(String[] packNamesArray, int signalID) {
+    List<String> packNames = Arrays.asList(packNamesArray);
+
     OnSuccessListener<AssetPackStates> getPackStatesSuccessListener =
         result ->
             emitSignalWrapper(
