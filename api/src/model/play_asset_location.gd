@@ -1,3 +1,4 @@
+# ##############################################################################
 #
 #	Copyright 2020 Google LLC
 #
@@ -13,6 +14,12 @@
 #	See the License for the specific language governing permissions and
 #	limitations under the License.
 #
+# ##############################################################################
+#
+# This class provides a constructor that is able create new PlayAssetLocation 
+# objects based on input Dictionary. Provides relevant get methods.
+#
+# ##############################################################################
 class_name PlayAssetLocation
 extends Object
 

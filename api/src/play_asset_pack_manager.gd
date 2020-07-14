@@ -1,3 +1,4 @@
+# ##############################################################################
 #
 #	Copyright 2020 Google LLC
 #
@@ -13,18 +14,27 @@
 #	See the License for the specific language governing permissions and
 #	limitations under the License.
 #
+# ##############################################################################
+#
+# Singleton class that initializes the PlayAssetDelivery Android plugin and 
+# manages downloads of asset packs. Required to autoload this script by
+# modifying the configuration in Project -> Project Settings -> AutoLoad
+#
+# ##############################################################################
 extends Node
 
 var _plugin_singleton : Object
-
-var play_asset_location : Resource
 
 func _ready():
 	_initialize()
 
 func _initialize():
 	_plugin_singleton = _initialize_plugin()
-	
+
+# -----------------------------------------------------------------------------
+# Returns the PlayAssetDelivery Android Plugin singleton, null if this plugin
+# is unavailable
+# -----------------------------------------------------------------------------
 func _initialize_plugin() -> Object:
 	if Engine.has_singleton("PlayAssetDelivery"):
 		return Engine.get_singleton("PlayAssetDelivery")
@@ -32,7 +42,12 @@ func _initialize_plugin() -> Object:
 		push_error("Android plugin singleton not found!")
 		return null
 
-func get_pack_location(pack_name : String):
+# -----------------------------------------------------------------------------
+# Returns the location of the specified asset pack on the device, null if this 
+# pack is not downloaded or is outdated. The files found at this path should 
+# not be modified.
+# -----------------------------------------------------------------------------
+func get_pack_location(pack_name : String) -> PlayAssetLocation:
 	var query_dict = _plugin_singleton.getPackLocation(pack_name)
 	if query_dict == null:
 		return null
