@@ -26,7 +26,7 @@ extends Object
 var _asset_pack_state_dict : Dictionary
 
 func _init(init_dictionary : Dictionary):
-	_asset_pack_state_dict = _asset_pack_state_dict.duplicate()
+	_asset_pack_state_dict = init_dictionary.duplicate()
 
 # -----------------------------------------------------------------------------
 # Returns the name of the pack.

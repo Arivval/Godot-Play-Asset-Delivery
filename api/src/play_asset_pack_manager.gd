@@ -43,7 +43,22 @@ enum AssetPackStatus {
 	CANCELED = 6,
 	WAITING_FOR_WIFI = 7,
 	NOT_INSTALLED = 8
-}	
+}
+
+enum AssetPackErrorCode {
+	NO_ERROR = 0,
+	APP_UNAVAILABLE = -1,
+	PACK_UNAVAILABLE = -2,
+	INVALID_REQUEST = -3,
+	DOWNLOAD_NOT_FOUND = -4,
+	API_NOT_AVAILABLE = -5, 	
+	NETWORK_ERROR = -6,
+	ACCESS_DENIED = -7,
+	INSUFFICIENT_STORAGE = -10,
+	PLAY_STORE_NOT_FOUND = -11,
+	NETWORK_UNRESTRICTED = -12,
+	INTERNAL_ERROR = -100
+}
 
 # -----------------------------------------------------------------------------
 # Setup
