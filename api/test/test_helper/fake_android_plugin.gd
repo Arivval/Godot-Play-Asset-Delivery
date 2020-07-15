@@ -31,9 +31,9 @@ func _init():
 	_asset_location_store = Dictionary()
 	_asset_pack_location_store = Dictionary()
 
-# ##############################################################################
+# -----------------------------------------------------------------------------
 # Utility Functions
-# ##############################################################################
+# -----------------------------------------------------------------------------
 func add_asset_location(_pack_name : String, _asset_path : String, _asset_location_dict : Dictionary):
 	_asset_location_store[[_pack_name , _asset_path]] = _asset_location_dict
 
@@ -52,9 +52,9 @@ func remove_asset_pack_location(_pack_name : String):
 func clear_asset_pack_location_store():
 	_asset_pack_location_store.clear()
 
-# ##############################################################################
+# -----------------------------------------------------------------------------
 # Mock Functions
-# ##############################################################################
+# -----------------------------------------------------------------------------
 func getAssetLocation(_pack_name : String, _asset_path : String):
 	var dict_key = [_pack_name , _asset_path]
 	if dict_key in _asset_location_store:

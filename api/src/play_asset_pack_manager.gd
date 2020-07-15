@@ -25,6 +25,29 @@ extends Node
 
 var _plugin_singleton : Object
 
+# -----------------------------------------------------------------------------
+# Enums
+# -----------------------------------------------------------------------------
+enum AssetPackStorageMethod {
+	STORAGE_FILES = 0,
+	APK_ASSETS = 1
+}
+
+enum AssetPackStatus {	
+	UNKNOWN = 0,
+	PENDING = 1,
+	DOWNLOADING = 2, 	
+	TRANSFERRING = 3,
+	COMPLETED = 4,
+	FAILED = 5,
+	CANCELED = 6,
+	WAITING_FOR_WIFI = 7,
+	NOT_INSTALLED = 8
+}	
+
+# -----------------------------------------------------------------------------
+# Setup
+# -----------------------------------------------------------------------------
 func _ready():
 	_initialize()
 
