@@ -17,7 +17,7 @@
 # ##############################################################################
 #
 # Singleton class that initializes the PlayAssetDelivery Android plugin and 
-# manages downloads of asset packs. Required to autoload this script by
+# manages downloads of asset packs. Recommended to autoload this script by
 # modifying the configurations in Project -> Project Settings -> AutoLoad
 #
 # ##############################################################################
