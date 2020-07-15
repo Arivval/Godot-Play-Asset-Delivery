@@ -15,24 +15,21 @@
 #	limitations under the License.
 #
 # ##############################################################################
-extends "res://addons/gut/test.gd"
+extends "res://test/test_helper/base_test_class.gd"
 
 func test_play_asset_location_valid():
 	var test_dict = {"offset": 42, "path": "path/", "size": 100}
 	var test_object = PlayAssetLocation.new(test_dict)
-	
-	assert_eq(test_object.get_offset(), 42)
-	assert_eq(test_object.get_path(), "path/")
-	assert_eq(test_object.get_size(), 100)
+	assert_asset_location_eq_dict(test_object, test_dict)
+
 
 func test_play_asset_location_deepcopy():
 	var test_dict = {"offset": 42, "path": "path/", "size": 100}
+	var expected_dict = test_dict.duplicate()
 	var test_object = PlayAssetLocation.new(test_dict)
 	
 	# alter the dictionary value passed to the constructor
 	# object created should not be changed since we are doing deepcopy
 	test_dict["offset"] = 0
 	
-	assert_eq(test_object.get_offset(), 42)
-	assert_eq(test_object.get_path(), "path/")
-	assert_eq(test_object.get_size(), 100)
+	assert_asset_location_eq_dict(test_object, expected_dict)

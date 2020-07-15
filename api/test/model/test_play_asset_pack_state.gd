@@ -15,7 +15,7 @@
 #	limitations under the License.
 #
 # ##############################################################################
-extends "res://addons/gut/test.gd"
+extends "res://test/test_helper/base_test_class.gd"
 
 func test_play_asset_pack_state_valid():
 	var test_dict = {
@@ -28,12 +28,7 @@ func test_play_asset_pack_state_valid():
 	}
 	var test_object = PlayAssetPackState.new(test_dict)
 	
-	assert_eq(test_object.get_name(), "assetPack")
-	assert_eq(test_object.get_status(), PlayAssetPackManager.AssetPackStatus.DOWNLOADING)
-	assert_eq(test_object.get_error_code(), PlayAssetPackManager.AssetPackErrorCode.NO_ERROR)
-	assert_eq(test_object.get_bytes_downloaded(), 562)
-	assert_eq(test_object.get_total_bytes_to_download(), 1337)
-	assert_eq(test_object.get_transfer_progress_percentage(), 42)
+	assert_asset_pack_state_eq_dict(test_object, test_dict)
 
 func test_play_asset_pack_state_deepcopy():
 	var test_dict = {
@@ -44,15 +39,9 @@ func test_play_asset_pack_state_deepcopy():
 		"totalBytesToDownload": 1337,
 		"transferProgressPercentage": 42
 	}
+	var expected_dict = test_dict.duplicate()
 	var test_object = PlayAssetPackState.new(test_dict)
 	
 	# alter the dictionary value passed to the constructor
 	# object created should not be changed since we are doing deepcopy
-	test_dict["name"] = "anotherPack"
-	test_dict["erro_code"] = PlayAssetPackManager.AssetPackErrorCode.NETWORK_ERROR
-	assert_eq(test_object.get_name(), "assetPack")
-	assert_eq(test_object.get_status(), PlayAssetPackManager.AssetPackStatus.DOWNLOADING)
-	assert_eq(test_object.get_error_code(), PlayAssetPackManager.AssetPackErrorCode.NO_ERROR)
-	assert_eq(test_object.get_bytes_downloaded(), 562)
-	assert_eq(test_object.get_total_bytes_to_download(), 1337)
-	assert_eq(test_object.get_transfer_progress_percentage(), 42)
+	assert_asset_pack_state_eq_dict(test_object, expected_dict)

@@ -15,7 +15,7 @@
 #	limitations under the License.
 #
 # ##############################################################################
-extends "res://addons/gut/test.gd"
+extends "res://test/test_helper/base_test_class.gd"
 
 func create_play_asset_pack_manager(mock_plugin):
 	var test_object = partial_double("res://src/play_asset_pack_manager.gd").new()

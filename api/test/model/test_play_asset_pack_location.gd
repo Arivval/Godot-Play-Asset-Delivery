@@ -15,7 +15,7 @@
 #	limitations under the License.
 #
 # ##############################################################################
-extends "res://addons/gut/test.gd"
+extends "res://test/test_helper/base_test_class.gd"
 
 func test_play_asset_pack_location_valid():
 	var test_dict = {
@@ -25,21 +25,18 @@ func test_play_asset_pack_location_valid():
 	}
 	var test_object = PlayAssetPackLocation.new(test_dict)
 	
-	assert_eq(test_object.get_assets_path(), "/assetsPath/")
-	assert_eq(test_object.get_storage_method(), PlayAssetPackManager.AssetPackStorageMethod.STORAGE_FILES)
-	assert_eq(test_object.get_path(), "/path/")
+	assert_asset_pack_location_eq_dict(test_object, test_dict)
 
 func test_play_asset_pack_location_deepcopy():
 	var test_dict = {
 		"assetsPath": "/assetsPath/", 
 		"packStorageMethod": PlayAssetPackManager.AssetPackStorageMethod.STORAGE_FILES, 
-		"path": "/path/"}
+		"path": "/path/"
+	}
+	var expected_dict = test_dict.duplicate()
 	var test_object = PlayAssetPackLocation.new(test_dict)
 	
 	# alter the dictionary value passed to the constructor
 	# object created should not be changed since we are doing deepcopy
 	test_dict["packStorageMethod"] = 0
-	
-	assert_eq(test_object.get_assets_path(), "/assetsPath/")
-	assert_eq(test_object.get_storage_method(), PlayAssetPackManager.AssetPackStorageMethod.STORAGE_FILES)
-	assert_eq(test_object.get_path(), "/path/")
+	assert_asset_pack_location_eq_dict(test_object, expected_dict)
