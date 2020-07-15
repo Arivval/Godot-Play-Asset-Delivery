@@ -15,7 +15,11 @@
 #	limitations under the License.
 #
 # ##############################################################################
+<<<<<<< HEAD
 extends "res://test/test_helper/base_test_class.gd"
+=======
+extends "res://addons/gut/test.gd"
+>>>>>>> master
 
 func create_play_asset_pack_manager(mock_plugin):
 	var test_object = partial_double("res://src/play_asset_pack_manager.gd").new()
@@ -51,6 +55,7 @@ func test_get_asset_location_not_exist():
 	
 	assert_eq(test_result, null)
 
+<<<<<<< HEAD
 func test_get_asset_pack_location_valid():
 	var test_pack = "testPack"
 	var return_dict = {
@@ -84,3 +89,5 @@ func test_get_asset_pack_location_not_exist():
 	var test_result : PlayAssetPackLocation = test_object.get_pack_location("notExistPack")
 	
 	assert_eq(test_result, null)
+=======
+>>>>>>> master
