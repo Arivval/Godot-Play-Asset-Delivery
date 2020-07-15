@@ -35,7 +35,7 @@ func add_asset_location(_pack_name : String, _asset_path : String, _asset_locati
 func remove_asset_location(_pack_name : String, _asset_path : String):
 	_asset_location_store.erase(_pack_name + ", " + _asset_path)
 
-func clear_asset_pack_location_store():
+func clear_asset_location_store():
 	_asset_location_store.clear()
 
 func getAssetLocation(_pack_name : String, _asset_path : String):
