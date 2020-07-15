@@ -20,19 +20,19 @@ extends "res://addons/gut/test.gd"
 func test_play_asset_pack_location_valid():
 	var test_dict = {
 		"assetsPath": "/assetsPath/", 
-		"packStorageMethod": 1, 
+		"packStorageMethod": PlayAssetPackManager.AssetPackStorageMethod.STORAGE_FILES, 
 		"path": "/path/"
 	}
 	var test_object = PlayAssetPackLocation.new(test_dict)
 	
 	assert_eq(test_object.get_assets_path(), "/assetsPath/")
-	assert_eq(test_object.get_storage_method(), 1)
+	assert_eq(test_object.get_storage_method(), PlayAssetPackManager.AssetPackStorageMethod.STORAGE_FILES)
 	assert_eq(test_object.get_path(), "/path/")
 
 func test_play_asset_pack_location_deepcopy():
 	var test_dict = {
 		"assetsPath": "/assetsPath/", 
-		"packStorageMethod": 1, 
+		"packStorageMethod": PlayAssetPackManager.AssetPackStorageMethod.STORAGE_FILES, 
 		"path": "/path/"}
 	var test_object = PlayAssetPackLocation.new(test_dict)
 	
@@ -41,5 +41,5 @@ func test_play_asset_pack_location_deepcopy():
 	test_dict["packStorageMethod"] = 0
 	
 	assert_eq(test_object.get_assets_path(), "/assetsPath/")
-	assert_eq(test_object.get_storage_method(), 1)
+	assert_eq(test_object.get_storage_method(), PlayAssetPackManager.AssetPackStorageMethod.STORAGE_FILES)
 	assert_eq(test_object.get_path(), "/path/")

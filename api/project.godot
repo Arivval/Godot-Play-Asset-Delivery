@@ -37,7 +37,7 @@ run/main_scene="res://test/gut_gui.tscn"
 
 [autoload]
 
-PlayAssetPackManager="res://src/play_asset_pack_manager.gd"
+PlayAssetPackManager="*res://src/play_asset_pack_manager.gd"
 
 [editor_plugins]
 

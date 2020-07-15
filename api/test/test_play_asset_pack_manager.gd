@@ -55,7 +55,7 @@ func test_get_asset_pack_location_valid():
 	var test_pack = "testPack"
 	var return_dict = {
 		"assetsPath": "/assetsPath/", 
-		"packStorageMethod": 1, 
+		"packStorageMethod": PlayAssetPackManager.AssetPackStorageMethod.STORAGE_FILES, 
 		"path": "/path/"
 	}
 	
@@ -66,14 +66,14 @@ func test_get_asset_pack_location_valid():
 	var test_result : PlayAssetPackLocation = test_object.get_pack_location(test_pack)
 	
 	assert_eq(test_result.get_assets_path(), "/assetsPath/")
-	assert_eq(test_result.get_storage_method(), 1)
+	assert_eq(test_result.get_storage_method(), PlayAssetPackManager.AssetPackStorageMethod.STORAGE_FILES)
 	assert_eq(test_result.get_path(), "/path/")
 
 func test_get_asset_pack_location_not_exist():
 	var test_pack = "testPack"
 	var return_dict = {
 		"assetsPath": "/assetsPath/", 
-		"packStorageMethod": 1, 
+		"packStorageMethod": PlayAssetPackManager.AssetPackStorageMethod.STORAGE_FILES, 
 		"path": "/path/"
 	}
 	
