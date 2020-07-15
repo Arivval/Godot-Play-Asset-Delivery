@@ -23,30 +23,31 @@ func create_play_asset_pack_manager(mock_plugin):
 	test_object._initialize()
 	return test_object
 
-func test_get_pack_location_valid():
-	var test_query = "testPack"
+func test_get_asset_location_valid():
+	var test_pack = "testPack"
+	var test_path = "/path/"
 	var return_dict = {"offset": 42, "path": "path/", "size": 100}
 	
 	var mock_plugin = FakeAndroidPlugin.new()
-	mock_plugin.add_asset_pack_location(test_query, return_dict)
+	mock_plugin.add_asset_location(test_pack, test_path, return_dict)
 	var test_object = create_play_asset_pack_manager(mock_plugin)
 	
-	var test_result : PlayAssetLocation = test_object.get_pack_location(test_query)
+	var test_result : PlayAssetLocation = test_object.get_asset_location(test_pack, test_path)
 	
 	assert_eq(test_result.get_offset(), 42)
 	assert_eq(test_result.get_path(), "path/")
 	assert_eq(test_result.get_size(), 100)
 
-func test_get_pack_location_not_exist():
-	var test_query = "notHerePack"
-	var pack_name = "testPack"	
+func test_get_asset_location_not_exist():
+	var test_pack = "testPack"
+	var test_path = "/path/"
 	var pack_dict = {"offset": 42, "path": "path/", "size": 100}
 	
 	var mock_plugin = FakeAndroidPlugin.new()
-	mock_plugin.add_asset_pack_location(pack_name, pack_dict)
+	mock_plugin.add_asset_location(test_pack, test_path, pack_dict)
 	var test_object = create_play_asset_pack_manager(mock_plugin)
 	
-	var test_result : PlayAssetLocation = test_object.get_pack_location(test_query)
+	var test_result : PlayAssetLocation = test_object.get_asset_location(test_pack, "/otherPath/")
 	
 	assert_eq(test_result, null)
 

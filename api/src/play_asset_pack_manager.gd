@@ -43,12 +43,11 @@ func _initialize_plugin() -> Object:
 		return null
 
 # -----------------------------------------------------------------------------
-# Returns the location of the specified asset pack on the device, null if this 
-# pack is not downloaded or is outdated. The files found at this path should 
-# not be modified.
+# Returns the location of the specified asset in pack on the device, null if 
+# the asset is not present in the given pack.
 # -----------------------------------------------------------------------------
-func get_pack_location(pack_name : String) -> PlayAssetLocation:
-	var query_dict = _plugin_singleton.getPackLocation(pack_name)
+func get_asset_location(pack_name : String, asset_path : String) -> PlayAssetLocation:
+	var query_dict = _plugin_singleton.getAssetLocation(pack_name, asset_path)
 	if query_dict == null:
 		return null
 	return PlayAssetLocation.new(query_dict)
