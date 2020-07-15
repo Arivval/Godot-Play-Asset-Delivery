@@ -16,8 +16,8 @@
 #
 # ##############################################################################
 #
-# This class provides a constructor to create new PlayAssetLocation objects 
-# based on input Dictionary. Provides relevant get methods.
+# Wraps Play Core's AssetLocation which represents the location of an Asset 
+# within an asset pack on disk.
 #
 # ##############################################################################
 class_name PlayAssetLocation
@@ -28,11 +28,23 @@ var _asset_location_dict : Dictionary
 func _init(init_dictionary : Dictionary):
 	_asset_location_dict = init_dictionary.duplicate()
 
+# -----------------------------------------------------------------------------
+# Returns the file offset where the asset starts, in bytes. If the 
+# AssetPackStorageMethod for the pack is STORAGE_FILES, the offset will be 0.
+# -----------------------------------------------------------------------------
 func get_offset() -> int:
 	return _asset_location_dict["offset"]
 
+# -----------------------------------------------------------------------------
+# If the AssetPackStorageMethod for the pack is STORAGE_FILES, return the path 
+# to the specific asset. Otherwise return the path to the APK containing the
+# asset.
+# -----------------------------------------------------------------------------
 func get_path() -> String:
 	return _asset_location_dict["path"]
 
+# -----------------------------------------------------------------------------
+# Returns the size of the asset, in bytes.
+# -----------------------------------------------------------------------------
 func get_size() -> int:
 	return _asset_location_dict["size"]
