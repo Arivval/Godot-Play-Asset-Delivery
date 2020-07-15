@@ -51,3 +51,13 @@ func get_asset_location(pack_name : String, asset_path : String) -> PlayAssetLoc
 	if query_dict == null:
 		return null
 	return PlayAssetLocation.new(query_dict)
+
+# -----------------------------------------------------------------------------
+# Returns the location of the specified asset pack on the device or null if 
+# this pack is not downloaded or is outdated.
+# -----------------------------------------------------------------------------
+func get_pack_location(pack_name : String) -> PlayAssetPackLocation:
+	var query_dict = _plugin_singleton.getPackLocation(pack_name)
+	if query_dict == null:
+		return null
+	return PlayAssetPackLocation.new(query_dict)

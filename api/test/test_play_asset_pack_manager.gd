@@ -51,3 +51,36 @@ func test_get_asset_location_not_exist():
 	
 	assert_eq(test_result, null)
 
+func test_get_asset_pack_location_valid():
+	var test_pack = "testPack"
+	var return_dict = {
+		"assetsPath": "/assetsPath/", 
+		"packStorageMethod": 1, 
+		"path": "/path/"
+	}
+	
+	var mock_plugin = FakeAndroidPlugin.new()
+	mock_plugin.add_asset_pack_location(test_pack, return_dict)
+	var test_object = create_play_asset_pack_manager(mock_plugin)
+	
+	var test_result : PlayAssetPackLocation = test_object.get_pack_location(test_pack)
+	
+	assert_eq(test_result.get_assets_path(), "/assetsPath/")
+	assert_eq(test_result.get_storage_method(), 1)
+	assert_eq(test_result.get_path(), "/path/")
+
+func test_get_asset_pack_location_not_exist():
+	var test_pack = "testPack"
+	var return_dict = {
+		"assetsPath": "/assetsPath/", 
+		"packStorageMethod": 1, 
+		"path": "/path/"
+	}
+	
+	var mock_plugin = FakeAndroidPlugin.new()
+	mock_plugin.add_asset_pack_location(test_pack, return_dict)
+	var test_object = create_play_asset_pack_manager(mock_plugin)
+	
+	var test_result : PlayAssetPackLocation = test_object.get_pack_location("notExistPack")
+	
+	assert_eq(test_result, null)

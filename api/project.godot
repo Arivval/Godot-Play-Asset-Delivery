@@ -18,10 +18,16 @@ _global_script_classes=[ {
 "class": "PlayAssetLocation",
 "language": "GDScript",
 "path": "res://src/model/play_asset_location.gd"
+}, {
+"base": "Object",
+"class": "PlayAssetPackLocation",
+"language": "GDScript",
+"path": "res://src/model/play_asset_pack_location.gd"
 } ]
 _global_script_class_icons={
 "FakeAndroidPlugin": "",
-"PlayAssetLocation": ""
+"PlayAssetLocation": "",
+"PlayAssetPackLocation": ""
 }
 
 [application]
