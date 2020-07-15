@@ -30,16 +30,16 @@ func _init():
 	_asset_location_store = Dictionary()
 
 func add_asset_location(_pack_name : String, _asset_path : String, _asset_location_dict : Dictionary):
-	_asset_location_store[_pack_name + ", " + _asset_path] = _asset_location_dict
+	_asset_location_store[[_pack_name , _asset_path]] = _asset_location_dict
 
 func remove_asset_location(_pack_name : String, _asset_path : String):
-	_asset_location_store.erase(_pack_name + ", " + _asset_path)
+	_asset_location_store.erase([_pack_name , _asset_path])
 
 func clear_asset_location_store():
 	_asset_location_store.clear()
 
 func getAssetLocation(_pack_name : String, _asset_path : String):
-	var dict_key = _pack_name + ", " + _asset_path
+	var dict_key = [_pack_name , _asset_path]
 	if dict_key in _asset_location_store:
 		return _asset_location_store[dict_key]
 	return null
