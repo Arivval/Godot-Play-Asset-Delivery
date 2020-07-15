@@ -32,7 +32,6 @@ func get_offset() -> int:
 	return _asset_location_dict["offset"]
 
 func get_path() -> String:
-	print(_asset_location_dict)
 	return _asset_location_dict["path"]
 
 func get_size() -> int:
