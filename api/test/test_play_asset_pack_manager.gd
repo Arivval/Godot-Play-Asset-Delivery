@@ -101,7 +101,7 @@ func test_get_asset_pack_location_non_empty():
 	
 	assert_asset_pack_locations_eq_dict(test_result, test_dict)
 
-func test_get_asset_pack_locationempty():
+func test_get_asset_pack_location_empty():
 	var test_dict = Dictionary()
 	
 	var mock_plugin = FakeAndroidPlugin.new()
@@ -111,3 +111,34 @@ func test_get_asset_pack_locationempty():
 	var test_result : Dictionary = test_object.get_pack_locations()
 	
 	assert_eq(test_result.size(), 0)
+
+func test_cancel_asset_pack_request_success():
+	var updated_state_dict = create_mock_asset_pack_state_with_status_dict(PlayAssetPackManager.AssetPackStatus.CANCELED)
+	
+	var mock_plugin = FakeAndroidPlugin.new()
+	mock_plugin.set_asset_pack_state_on_cancel(updated_state_dict)
+	var test_object = create_play_asset_pack_manager(mock_plugin)
+	
+	var test_result : bool = test_object.cancel_asset_pack_request("pack_name")
+	
+	assert_eq(test_result, true)
+
+func test_cancel_asset_pack_request_downloading():
+	var updated_state_dict = create_mock_asset_pack_state_with_status_dict(PlayAssetPackManager.AssetPackStatus.DOWNLOADING)
+	
+	var mock_plugin = FakeAndroidPlugin.new()
+	mock_plugin.set_asset_pack_state_on_cancel(updated_state_dict)
+	var test_object = create_play_asset_pack_manager(mock_plugin)
+	
+	var test_result : bool = test_object.cancel_asset_pack_request("pack_name")
+	
+	assert_eq(test_result, false)
+
+func test_cancel_asset_pack_request_nonexisting_pack_name():
+	var mock_plugin = FakeAndroidPlugin.new()
+	mock_plugin.on_cancel_return_not_found = true
+	var test_object = create_play_asset_pack_manager(mock_plugin)
+	
+	var test_result : bool = test_object.cancel_asset_pack_request("pack_name")
+	
+	assert_eq(test_result, false)

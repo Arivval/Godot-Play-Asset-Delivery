@@ -49,7 +49,7 @@ func assert_asset_pack_state_eq_dict(asset_pack_state: PlayAssetPackState, dict:
 	assert_eq(asset_pack_state.get_error_code(), dict[PlayAssetPackState._ERROR_CODE_KEY])
 	assert_eq(asset_pack_state.get_bytes_downloaded(), dict[PlayAssetPackState._BYTES_DOWNLOADED_KEY])
 	assert_eq(asset_pack_state.get_total_bytes_to_download(),\
-		 dict[PlayAssetPackState._TOTAL_BYTES_TO_DOWNLOAD])
+		 dict[PlayAssetPackState._TOTAL_BYTES_TO_DOWNLOAD_KEY])
 	assert_eq(asset_pack_state.get_transfer_progress_percentage(),\
 		 dict[PlayAssetPackState._TRANSFER_PROGRESS_PERCENTAGE_KEY])
 
@@ -69,7 +69,7 @@ func create_mock_asset_pack_states_dict() -> Dictionary:
 		PlayAssetPackState._STATUS_KEY: PlayAssetPackManager.AssetPackStatus.DOWNLOADING, 
 		PlayAssetPackState._ERROR_CODE_KEY: PlayAssetPackManager.AssetPackErrorCode.NO_ERROR,
 		PlayAssetPackState._BYTES_DOWNLOADED_KEY: 562,
-		PlayAssetPackState._TOTAL_BYTES_TO_DOWNLOAD: 1337,
+		PlayAssetPackState._TOTAL_BYTES_TO_DOWNLOAD_KEY: 1337,
 		PlayAssetPackState._TRANSFER_PROGRESS_PERCENTAGE_KEY: 42
 	}
 	
@@ -78,7 +78,7 @@ func create_mock_asset_pack_states_dict() -> Dictionary:
 		PlayAssetPackState._STATUS_KEY: PlayAssetPackManager.AssetPackStatus.DOWNLOADING, 
 		PlayAssetPackState._ERROR_CODE_KEY: PlayAssetPackManager.AssetPackErrorCode.NO_ERROR,
 		PlayAssetPackState._BYTES_DOWNLOADED_KEY: 0,
-		PlayAssetPackState._TOTAL_BYTES_TO_DOWNLOAD: 4096,
+		PlayAssetPackState._TOTAL_BYTES_TO_DOWNLOAD_KEY: 4096,
 		PlayAssetPackState._TRANSFER_PROGRESS_PERCENTAGE_KEY: 0
 	}
 	
@@ -111,3 +111,14 @@ func create_mock_asset_locations_dict() -> Dictionary:
 	}
 	
 	return test_dict
+
+func create_mock_asset_pack_state_with_status_dict(status : int):
+	return {
+		PlayAssetPackState._NAME_KEY: "assetPack2", 
+		PlayAssetPackState._STATUS_KEY: status, 
+		PlayAssetPackState._ERROR_CODE_KEY: PlayAssetPackManager.AssetPackErrorCode.NO_ERROR,
+		PlayAssetPackState._BYTES_DOWNLOADED_KEY: 0,
+		PlayAssetPackState._TOTAL_BYTES_TO_DOWNLOAD_KEY: 4096,
+		PlayAssetPackState._TRANSFER_PROGRESS_PERCENTAGE_KEY: 0
+	}
+
