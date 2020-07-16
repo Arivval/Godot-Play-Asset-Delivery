@@ -25,24 +25,24 @@ extends "res://addons/gut/test.gd"
 # -----------------------------------------------------------------------------
 # Const variables
 # -----------------------------------------------------------------------------
-const ASSET_LOCATION_OFFSET_KEY : String = PlayAssetLocation.OFFSET_KEY
-const ASSET_LOCATION_PATH_KEY : String = PlayAssetLocation.PATH_KEY
-const ASSET_LOCATION_SIZE_KEY : String = PlayAssetLocation.SIZE_KEY
+const ASSET_LOCATION_OFFSET_KEY : String = PlayAssetLocation._OFFSET_KEY
+const ASSET_LOCATION_PATH_KEY : String = PlayAssetLocation._PATH_KEY
+const ASSET_LOCATION_SIZE_KEY : String = PlayAssetLocation._SIZE_KEY
 
-const ASSET_PACK_LOCATION_ASSETS_PATH_KEY : String = PlayAssetPackLocation.ASSETS_PATH_KEY
-const ASSET_PACK_LOCATION_STORAGE_METHOD_KEY : String = PlayAssetPackLocation.PACK_STORAGE_METHOD_KEY
-const ASSET_PACK_LOCATION_PATH_KEY : String = PlayAssetLocation.PATH_KEY
+const ASSET_PACK_LOCATION_ASSETS_PATH_KEY : String = PlayAssetPackLocation._ASSETS_PATH_KEY
+const ASSET_PACK_LOCATION_STORAGE_METHOD_KEY : String = PlayAssetPackLocation._PACK_STORAGE_METHOD_KEY
+const ASSET_PACK_LOCATION_PATH_KEY : String = PlayAssetLocation._PATH_KEY
 
-const ASSET_PACK_STATE_NAME_KEY : String = PlayAssetPackState.NAME_KEY
-const ASSET_PACK_STATE_STATUS_KEY : String = PlayAssetPackState.STATUS_KEY
-const ASSET_PACK_STATE_ERROR_CODE_KEY : String = PlayAssetPackState.ERROR_CODE_KEY
-const ASSET_PACK_STATE_BYTES_DOWNLOADED_KEY : String = PlayAssetPackState.BYTES_DOWNLOADED_KEY
-const ASSET_PACK_STATE_TOTAL_BYTES_TO_DOWNLOAD_KEY : String = PlayAssetPackState.TOTAL_BYTES_TO_DOWNLOAD
+const ASSET_PACK_STATE_NAME_KEY : String = PlayAssetPackState._NAME_KEY
+const ASSET_PACK_STATE_STATUS_KEY : String = PlayAssetPackState._STATUS_KEY
+const ASSET_PACK_STATE_ERROR_CODE_KEY : String = PlayAssetPackState._ERROR_CODE_KEY
+const ASSET_PACK_STATE_BYTES_DOWNLOADED_KEY : String = PlayAssetPackState._BYTES_DOWNLOADED_KEY
+const ASSET_PACK_STATE_TOTAL_BYTES_TO_DOWNLOAD_KEY : String = PlayAssetPackState._TOTAL_BYTES_TO_DOWNLOAD
 const ASSET_PACK_STATE_TRANSFER_PROGRESS_PERCENTAGE_KEY : String = \
-	PlayAssetPackState.TRANSFER_PROGRESS_PERCENTAGE_KEY
+	PlayAssetPackState._TRANSFER_PROGRESS_PERCENTAGE_KEY
 
-const ASSET_PACK_STATES_TOTAL_BYTES_KEY : String = PlayAssetPackStates.TOTAL_BYTES_KEY
-const ASSET_PACK_STATES_PACK_STATES_KEY : String = PlayAssetPackStates.PACK_STATES_KEY
+const ASSET_PACK_STATES_TOTAL_BYTES_KEY : String = PlayAssetPackStates._TOTAL_BYTES_KEY
+const ASSET_PACK_STATES_PACK_STATES_KEY : String = PlayAssetPackStates._PACK_STATES_KEY
 
 # -----------------------------------------------------------------------------
 # Helper functions

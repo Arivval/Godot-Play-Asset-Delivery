@@ -23,18 +23,18 @@
 class_name PlayAssetPackLocation
 extends Object
 
-const ASSETS_PATH_KEY : String = "assetsPath"
-const PACK_STORAGE_METHOD_KEY : String = "packStorageMethod"
-const PATH_KEY : String = "path"
+const _ASSETS_PATH_KEY : String = "assetsPath"
+const _PACK_STORAGE_METHOD_KEY : String = "packStorageMethod"
+const _PATH_KEY : String = "path"
 
 var _assets_path : String
 var _storage_method : int
 var _path : String
 
 func _init(init_dictionary : Dictionary):
-	_assets_path = init_dictionary[ASSETS_PATH_KEY]
-	_storage_method = init_dictionary[PACK_STORAGE_METHOD_KEY]
-	_path = init_dictionary[PATH_KEY]
+	_assets_path = init_dictionary[_ASSETS_PATH_KEY]
+	_storage_method = init_dictionary[_PACK_STORAGE_METHOD_KEY]
+	_path = init_dictionary[_PATH_KEY]
 
 # -----------------------------------------------------------------------------
 # Returns the file path to the folder containing the pack's assets, if the 

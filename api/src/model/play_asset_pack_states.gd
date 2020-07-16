@@ -23,16 +23,16 @@
 class_name PlayAssetPackStates
 extends Object
 
-const TOTAL_BYTES_KEY : String = "totalBytes"
-const PACK_STATES_KEY : String = "packStates"
+const _TOTAL_BYTES_KEY : String = "totalBytes"
+const _PACK_STATES_KEY : String = "packStates"
 
 var _total_bytes : int
 var _pack_states : Dictionary
 
 func _init(init_dictionary : Dictionary):
-	_total_bytes = init_dictionary[TOTAL_BYTES_KEY]
+	_total_bytes = init_dictionary[_TOTAL_BYTES_KEY]
 	
-	var init_pack_states_dict : Dictionary = init_dictionary[PACK_STATES_KEY]
+	var init_pack_states_dict : Dictionary = init_dictionary[_PACK_STATES_KEY]
 	var pack_states_object_dict : Dictionary = Dictionary()
 	for key in init_pack_states_dict.keys():
 		pack_states_object_dict[key] = PlayAssetPackState.new(init_pack_states_dict[key])
