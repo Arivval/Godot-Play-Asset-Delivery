@@ -99,3 +99,18 @@ func get_pack_location(pack_name : String) -> PlayAssetPackLocation:
 	if query_dict == null:
 		return null
 	return PlayAssetPackLocation.new(query_dict)
+
+# -----------------------------------------------------------------------------
+# Returns the location of all installed asset packs. More specifically, a 
+# Dictionary, where for each entry, the key is the asset pack anme and value is 
+# the corresponding PlayAssetLocation object.
+# -----------------------------------------------------------------------------
+func get_pack_locations() -> Dictionary:
+	var return_dict = Dictionary()
+	var raw_dict = _plugin_singleton.getPackLocations()
+	
+	# convert inner dictionaries in raw_dict to PlayAssetLocation objects
+	for key in raw_dict.keys():
+		return_dict[key] = PlayAssetLocation.new(raw_dict[key])
+	
+	return return_dict
