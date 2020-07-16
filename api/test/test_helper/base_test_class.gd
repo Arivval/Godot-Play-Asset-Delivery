@@ -52,8 +52,6 @@ func assert_asset_pack_states_eq_dict(asset_pack_states: PlayAssetPackStates, di
 	for key in dict["packStates"].keys():
 		assert_true(key in pack_states)
 		assert_asset_pack_state_eq_dict(pack_states[key], dict["packStates"][key])
-		# tests get_pack_state()
-		assert_asset_pack_state_eq_dict(asset_pack_states.get_pack_state(key), dict["packStates"][key])
 
 func create_mock_asset_pack_states_dict() -> Dictionary:
 	var pack_1_dict = {

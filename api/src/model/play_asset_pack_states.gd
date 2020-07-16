@@ -23,33 +23,27 @@
 class_name PlayAssetPackStates
 extends Object
 
-var _asset_pack_states_dict : Dictionary
+var _total_bytes : int
+var _pack_states : Dictionary
 
 func _init(init_dictionary : Dictionary):
-	_asset_pack_states_dict = Dictionary()
-	_asset_pack_states_dict["totalBytes"] = init_dictionary["totalBytes"]
+	_pack_states = Dictionary()
+	_total_bytes = init_dictionary["totalBytes"]
 	
 	var init_pack_states_dict : Dictionary = init_dictionary["packStates"]
 	var pack_states_object_dict : Dictionary = Dictionary()
 	for key in init_pack_states_dict.keys():
 		pack_states_object_dict[key] = PlayAssetPackState.new(init_pack_states_dict[key])
-	_asset_pack_states_dict["packStates"] = pack_states_object_dict
+	_pack_states = pack_states_object_dict
 
 # -----------------------------------------------------------------------------
 # Returns total size of all requested packs in bytes.
 # -----------------------------------------------------------------------------
 func get_total_bytes() -> int:
-	return _asset_pack_states_dict["totalBytes"]
+	return _total_bytes
 
 # -----------------------------------------------------------------------------
 # Returns a map from a pack's name to its state.
 # -----------------------------------------------------------------------------
 func get_pack_states() -> Dictionary:
-	return _asset_pack_states_dict["packStates"].duplicate()
-
-# -----------------------------------------------------------------------------
-# Returns a PlayAssetPackState object with matching pack name, null if not 
-# found.
-# -----------------------------------------------------------------------------
-func get_pack_state(_pack_name : String) -> PlayAssetPackState:
-	return _asset_pack_states_dict["packStates"][_pack_name]
+	return _pack_states.duplicate()
