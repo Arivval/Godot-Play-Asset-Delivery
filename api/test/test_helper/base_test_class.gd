@@ -22,59 +22,85 @@
 # ##############################################################################
 extends "res://addons/gut/test.gd"
 
+# -----------------------------------------------------------------------------
+# Const variables
+# -----------------------------------------------------------------------------
+const ASSET_LOCATION_OFFSET_KEY : String = "offset"
+const ASSET_LOCATION_PATH_KEY : String = "path"
+const ASSET_LOCATION_SIZE_KEY : String = "size"
+
+const ASSET_PACK_LOCATION_ASSETS_PATH_KEY : String = "assetsPath"
+const ASSET_PACK_LOCATION_STORAGE_METHOD_KEY : String = "packStorageMethod"
+const ASSET_PACK_LOCATION_PATH_KEY : String = "path"
+
+const ASSET_PACK_STATE_NAME_KEY : String = "name"
+const ASSET_PACK_STATE_STATUS_KEY : String = "status"
+const ASSET_PACK_STATE_ERROR_CODE_KEY : String = "errorCode"
+const ASSET_PACK_STATE_BYTES_DOWNLOADED_KEY : String = "bytesDownloaded"
+const ASSET_PACK_STATE_TOTAL_BYTES_TO_DOWNLOAD_KEY : String = "totalBytesToDownload"
+const ASSET_PACK_STATE_TRANSFER_PROGRESS_PERCENTAGE_KEY : String = "transferProgressPercentage"
+
+const ASSET_PACK_STATES_TOTAL_BYTES_KEY : String = "totalBytes"
+const ASSET_PACK_STATES_PACK_STATES_KEY : String = "packStates"
+
+# -----------------------------------------------------------------------------
+# Helper functions
+# -----------------------------------------------------------------------------
 func assert_asset_location_eq_dict(asset_location: PlayAssetLocation, dict: Dictionary):
 	assert_eq(dict.size(), 3)
-	assert_eq(asset_location.get_offset(), dict["offset"])
-	assert_eq(asset_location.get_path(), dict["path"])
-	assert_eq(asset_location.get_size(), dict["size"])
+	assert_eq(asset_location.get_offset(), dict[ASSET_LOCATION_OFFSET_KEY])
+	assert_eq(asset_location.get_path(), dict[ASSET_LOCATION_PATH_KEY])
+	assert_eq(asset_location.get_size(), dict[ASSET_LOCATION_SIZE_KEY])
 
 func assert_asset_pack_location_eq_dict(asset_pack_location: PlayAssetPackLocation, dict: Dictionary):
 	assert_eq(dict.size(), 3)
-	assert_eq(asset_pack_location.get_assets_path(), dict["assetsPath"])
-	assert_eq(asset_pack_location.get_storage_method(), dict["packStorageMethod"])
-	assert_eq(asset_pack_location.get_path(), dict["path"])
+	assert_eq(asset_pack_location.get_assets_path(), dict[ASSET_PACK_LOCATION_ASSETS_PATH_KEY])
+	assert_eq(asset_pack_location.get_storage_method(), dict[ASSET_PACK_LOCATION_STORAGE_METHOD_KEY])
+	assert_eq(asset_pack_location.get_path(), dict[ASSET_PACK_LOCATION_PATH_KEY])
 
 func assert_asset_pack_state_eq_dict(asset_pack_state: PlayAssetPackState, dict: Dictionary):
 	assert_eq(dict.size(), 6)
-	assert_eq(asset_pack_state.get_name(), dict["name"])
-	assert_eq(asset_pack_state.get_status(), dict["status"])
-	assert_eq(asset_pack_state.get_error_code(), dict["errorCode"])
-	assert_eq(asset_pack_state.get_bytes_downloaded(), dict["bytesDownloaded"])
-	assert_eq(asset_pack_state.get_total_bytes_to_download(), dict["totalBytesToDownload"])
-	assert_eq(asset_pack_state.get_transfer_progress_percentage(), dict["transferProgressPercentage"])
+	assert_eq(asset_pack_state.get_name(), dict[ASSET_PACK_STATE_NAME_KEY])
+	assert_eq(asset_pack_state.get_status(), dict[ASSET_PACK_STATE_STATUS_KEY])
+	assert_eq(asset_pack_state.get_error_code(), dict[ASSET_PACK_STATE_ERROR_CODE_KEY])
+	assert_eq(asset_pack_state.get_bytes_downloaded(), dict[ASSET_PACK_STATE_BYTES_DOWNLOADED_KEY])
+	assert_eq(asset_pack_state.get_total_bytes_to_download(),\
+		 dict[ASSET_PACK_STATE_TOTAL_BYTES_TO_DOWNLOAD_KEY])
+	assert_eq(asset_pack_state.get_transfer_progress_percentage(),\
+		 dict[ASSET_PACK_STATE_TRANSFER_PROGRESS_PERCENTAGE_KEY])
 
 func assert_asset_pack_states_eq_dict(asset_pack_states: PlayAssetPackStates, dict: Dictionary):
 	assert_eq(dict.size(), 2)
-	assert_eq(asset_pack_states.get_total_bytes(), dict["totalBytes"])
+	assert_eq(asset_pack_states.get_total_bytes(), dict[ASSET_PACK_STATES_TOTAL_BYTES_KEY])
 	# tests get_pack_states()
 	var pack_states: Dictionary = asset_pack_states.get_pack_states()
-	assert_eq(pack_states.size(), dict["packStates"].size())
-	for key in dict["packStates"].keys():
+	assert_eq(pack_states.size(), dict[ASSET_PACK_STATES_PACK_STATES_KEY].size())
+	for key in dict[ASSET_PACK_STATES_PACK_STATES_KEY].keys():
 		assert_true(key in pack_states)
-		assert_asset_pack_state_eq_dict(pack_states[key], dict["packStates"][key])
+		assert_asset_pack_state_eq_dict(pack_states[key], dict[ASSET_PACK_STATES_PACK_STATES_KEY][key])
 
 func create_mock_asset_pack_states_dict() -> Dictionary:
 	var pack_1_dict = {
-		"name": "assetPack1", 
-		"status": PlayAssetPackManager.AssetPackStatus.DOWNLOADING, 
-		"errorCode": PlayAssetPackManager.AssetPackErrorCode.NO_ERROR,
-		"bytesDownloaded": 562,
-		"totalBytesToDownload": 1337,
-		"transferProgressPercentage": 42
+		ASSET_PACK_STATE_NAME_KEY: "assetPack1", 
+		ASSET_PACK_STATE_STATUS_KEY: PlayAssetPackManager.AssetPackStatus.DOWNLOADING, 
+		ASSET_PACK_STATE_ERROR_CODE_KEY: PlayAssetPackManager.AssetPackErrorCode.NO_ERROR,
+		ASSET_PACK_STATE_BYTES_DOWNLOADED_KEY: 562,
+		ASSET_PACK_STATE_TOTAL_BYTES_TO_DOWNLOAD_KEY: 1337,
+		ASSET_PACK_STATE_TRANSFER_PROGRESS_PERCENTAGE_KEY: 42
 	}
 	
 	var pack_2_dict = {
-		"name": "assetPack2", 
-		"status": PlayAssetPackManager.AssetPackStatus.DOWNLOADING, 
-		"errorCode": PlayAssetPackManager.AssetPackErrorCode.NO_ERROR,
-		"bytesDownloaded": 0,
-		"totalBytesToDownload": 4096,
-		"transferProgressPercentage": 0
+		ASSET_PACK_STATE_NAME_KEY: "assetPack2", 
+		ASSET_PACK_STATE_STATUS_KEY: PlayAssetPackManager.AssetPackStatus.DOWNLOADING, 
+		ASSET_PACK_STATE_ERROR_CODE_KEY: PlayAssetPackManager.AssetPackErrorCode.NO_ERROR,
+		ASSET_PACK_STATE_BYTES_DOWNLOADED_KEY: 0,
+		ASSET_PACK_STATE_TOTAL_BYTES_TO_DOWNLOAD_KEY: 4096,
+		ASSET_PACK_STATE_TRANSFER_PROGRESS_PERCENTAGE_KEY: 0
 	}
 	
 	var test_dict = {
-		"totalBytes": 5433,
-		"packStates": {
+		ASSET_PACK_STATES_TOTAL_BYTES_KEY: 5433,
+		ASSET_PACK_STATES_PACK_STATES_KEY: {
 			"assetPack1": pack_1_dict,
 			"assetPack2": pack_2_dict
 		}

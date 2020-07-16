@@ -19,9 +19,9 @@ extends "res://test/test_helper/base_test_class.gd"
 
 func test_play_asset_pack_location_valid():
 	var test_dict = {
-		"assetsPath": "/assetsPath/", 
-		"packStorageMethod": PlayAssetPackManager.AssetPackStorageMethod.STORAGE_FILES, 
-		"path": "/path/"
+		ASSET_PACK_LOCATION_ASSETS_PATH_KEY: "/assetsPath/", 
+		ASSET_PACK_LOCATION_STORAGE_METHOD_KEY: PlayAssetPackManager.AssetPackStorageMethod.STORAGE_FILES, 
+		ASSET_PACK_LOCATION_PATH_KEY: "/path/"
 	}
 	var test_object = PlayAssetPackLocation.new(test_dict)
 	
@@ -29,14 +29,14 @@ func test_play_asset_pack_location_valid():
 
 func test_play_asset_pack_location_deepcopy():
 	var test_dict = {
-		"assetsPath": "/assetsPath/", 
-		"packStorageMethod": PlayAssetPackManager.AssetPackStorageMethod.STORAGE_FILES, 
-		"path": "/path/"
+		ASSET_PACK_LOCATION_ASSETS_PATH_KEY: "/assetsPath/", 
+		ASSET_PACK_LOCATION_STORAGE_METHOD_KEY: PlayAssetPackManager.AssetPackStorageMethod.STORAGE_FILES, 
+		ASSET_PACK_LOCATION_PATH_KEY: "/path/"
 	}
 	var expected_dict = test_dict.duplicate()
 	var test_object = PlayAssetPackLocation.new(test_dict)
 	
 	# alter the dictionary value passed to the constructor
 	# object created should not be changed since we are doing deepcopy
-	test_dict["packStorageMethod"] = 0
+	test_dict[ASSET_PACK_LOCATION_STORAGE_METHOD_KEY] = 0
 	assert_asset_pack_location_eq_dict(test_object, expected_dict)

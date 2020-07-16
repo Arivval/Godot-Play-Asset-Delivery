@@ -18,17 +18,25 @@
 extends "res://test/test_helper/base_test_class.gd"
 
 func test_play_asset_location_valid():
-	var test_dict = {"offset": 42, "path": "path/", "size": 100}
+	var test_dict = {
+		ASSET_LOCATION_OFFSET_KEY: 42, 
+		ASSET_LOCATION_PATH_KEY: "path/", 
+		ASSET_LOCATION_SIZE_KEY: 100
+	}
 	var test_object = PlayAssetLocation.new(test_dict)
 	assert_asset_location_eq_dict(test_object, test_dict)
 
 func test_play_asset_location_deepcopy():
-	var test_dict = {"offset": 42, "path": "path/", "size": 100}
+	var test_dict = {
+		ASSET_LOCATION_OFFSET_KEY: 42, 
+		ASSET_LOCATION_PATH_KEY: "path/", 
+		ASSET_LOCATION_SIZE_KEY: 100
+	}
 	var expected_dict = test_dict.duplicate()
 	var test_object = PlayAssetLocation.new(test_dict)
 	
 	# alter the dictionary value passed to the constructor
 	# object created should not be changed since we are doing deepcopy
-	test_dict["offset"] = 0
+	test_dict[ASSET_LOCATION_OFFSET_KEY] = 0
 	
 	assert_asset_location_eq_dict(test_object, expected_dict)

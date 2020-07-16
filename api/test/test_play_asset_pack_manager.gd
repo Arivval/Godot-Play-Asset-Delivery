@@ -27,7 +27,11 @@ func create_play_asset_pack_manager(mock_plugin):
 func test_get_asset_location_valid():
 	var test_pack = "testPack"
 	var test_path = "/path/"
-	var return_dict = {"offset": 42, "path": "path/", "size": 100}
+	var return_dict = {
+		ASSET_LOCATION_OFFSET_KEY: 42, 
+		ASSET_LOCATION_PATH_KEY: "path/", 
+		ASSET_LOCATION_SIZE_KEY: 100
+	}
 	
 	var mock_plugin = FakeAndroidPlugin.new()
 	mock_plugin.add_asset_location(test_pack, test_path, return_dict)
@@ -40,7 +44,11 @@ func test_get_asset_location_valid():
 func test_get_asset_location_not_exist():
 	var test_pack = "testPack"
 	var test_path = "/path/"
-	var pack_dict = {"offset": 42, "path": "path/", "size": 100}
+	var pack_dict = {
+		ASSET_LOCATION_OFFSET_KEY: 42, 
+		ASSET_LOCATION_PATH_KEY: "path/", 
+		ASSET_LOCATION_SIZE_KEY: 100
+	}
 	
 	var mock_plugin = FakeAndroidPlugin.new()
 	mock_plugin.add_asset_location(test_pack, test_path, pack_dict)
@@ -53,9 +61,9 @@ func test_get_asset_location_not_exist():
 func test_get_asset_pack_location_valid():
 	var test_pack = "testPack"
 	var return_dict = {
-		"assetsPath": "/assetsPath/", 
-		"packStorageMethod": PlayAssetPackManager.AssetPackStorageMethod.STORAGE_FILES, 
-		"path": "/path/"
+		ASSET_PACK_LOCATION_ASSETS_PATH_KEY: "/assetsPath/", 
+		ASSET_PACK_LOCATION_STORAGE_METHOD_KEY: PlayAssetPackManager.AssetPackStorageMethod.STORAGE_FILES, 
+		ASSET_PACK_LOCATION_PATH_KEY: "/path/"
 	}
 	
 	var mock_plugin = FakeAndroidPlugin.new()
@@ -69,9 +77,9 @@ func test_get_asset_pack_location_valid():
 func test_get_asset_pack_location_not_exist():
 	var test_pack = "testPack"
 	var return_dict = {
-		"assetsPath": "/assetsPath/", 
-		"packStorageMethod": PlayAssetPackManager.AssetPackStorageMethod.STORAGE_FILES, 
-		"path": "/path/"
+		ASSET_PACK_LOCATION_ASSETS_PATH_KEY: "/assetsPath/", 
+		ASSET_PACK_LOCATION_STORAGE_METHOD_KEY: PlayAssetPackManager.AssetPackStorageMethod.STORAGE_FILES, 
+		ASSET_PACK_LOCATION_PATH_KEY: "/path/"
 	}
 	
 	var mock_plugin = FakeAndroidPlugin.new()
