@@ -101,9 +101,9 @@ func get_pack_location(pack_name : String) -> PlayAssetPackLocation:
 	return PlayAssetPackLocation.new(query_dict)
 
 # -----------------------------------------------------------------------------
-# Returns the location of all installed asset packs. More specifically, a 
-# Dictionary, where for each entry, the key is the asset pack anme and value is 
-# the corresponding PlayAssetLocation object.
+# Returns the location of all installed asset packs. More specifically, returns 
+# a Dictionary, where for each entry, the key is the asset pack name and value 
+# is the corresponding PlayAssetLocation object.
 # -----------------------------------------------------------------------------
 func get_pack_locations() -> Dictionary:
 	var return_dict = Dictionary()
