@@ -23,6 +23,9 @@
 class_name PlayAssetPackLocation
 extends Object
 
+# -----------------------------------------------------------------------------
+# Constant declaration for Dictionary key Strings
+# -----------------------------------------------------------------------------
 const _ASSETS_PATH_KEY : String = "assetsPath"
 const _PACK_STORAGE_METHOD_KEY : String = "packStorageMethod"
 const _PATH_KEY : String = "path"

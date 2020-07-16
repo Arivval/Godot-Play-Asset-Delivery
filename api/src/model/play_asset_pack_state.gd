@@ -23,6 +23,9 @@
 class_name PlayAssetPackState
 extends Object
 
+# -----------------------------------------------------------------------------
+# Constant declaration for Dictionary key Strings
+# -----------------------------------------------------------------------------
 const _NAME_KEY : String = "name"
 const _STATUS_KEY : String = "status"
 const _ERROR_CODE_KEY : String = "errorCode"

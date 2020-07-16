@@ -23,6 +23,9 @@
 class_name PlayAssetPackStates
 extends Object
 
+# -----------------------------------------------------------------------------
+# Constant declaration for Dictionary key Strings
+# -----------------------------------------------------------------------------
 const _TOTAL_BYTES_KEY : String = "totalBytes"
 const _PACK_STATES_KEY : String = "packStates"
 

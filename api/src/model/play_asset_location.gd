@@ -23,6 +23,9 @@
 class_name PlayAssetLocation
 extends Object
 
+# -----------------------------------------------------------------------------
+# Constant declaration for Dictionary key Strings
+# -----------------------------------------------------------------------------
 const _OFFSET_KEY : String = "offset"
 const _PATH_KEY : String = "path"
 const _SIZE_KEY : String = "size"
