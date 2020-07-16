@@ -17,26 +17,26 @@
 # ##############################################################################
 extends "res://test/test_helper/base_test_class.gd"
 
-func test_play_asset_location_valid():
+func test_play_asset_pack_location_valid():
 	var test_dict = {
-		PlayAssetLocation._OFFSET_KEY: 42, 
-		PlayAssetLocation._PATH_KEY: "path/", 
-		PlayAssetLocation._SIZE_KEY: 100
+		PlayAssetPackLocation._ASSETS_PATH_KEY: "/assetsPath/", 
+		PlayAssetPackLocation._PACK_STORAGE_METHOD_KEY: PlayAssetPackManager.AssetPackStorageMethod.STORAGE_FILES, 
+		PlayAssetLocation._PATH_KEY: "/path/"
 	}
-	var test_object = PlayAssetLocation.new(test_dict)
-	assert_asset_location_eq_dict(test_object, test_dict)
+	var test_object = PlayAssetPackLocation.new(test_dict)
+	
+	assert_asset_pack_location_eq_dict(test_object, test_dict)
 
-func test_play_asset_location_deepcopy():
+func test_play_asset_pack_location_deepcopy():
 	var test_dict = {
-		PlayAssetLocation._OFFSET_KEY: 42, 
-		PlayAssetLocation._PATH_KEY: "path/", 
-		PlayAssetLocation._SIZE_KEY: 100
+		PlayAssetPackLocation._ASSETS_PATH_KEY: "/assetsPath/", 
+		PlayAssetPackLocation._PACK_STORAGE_METHOD_KEY: PlayAssetPackManager.AssetPackStorageMethod.STORAGE_FILES, 
+		PlayAssetLocation._PATH_KEY: "/path/"
 	}
 	var expected_dict = test_dict.duplicate()
-	var test_object = PlayAssetLocation.new(test_dict)
+	var test_object = PlayAssetPackLocation.new(test_dict)
 	
 	# alter the dictionary value passed to the constructor
 	# object created should not be changed since we are doing deepcopy
-	test_dict[PlayAssetLocation._OFFSET_KEY] = 0
-	
-	assert_asset_location_eq_dict(test_object, expected_dict)
+	test_dict[PlayAssetPackLocation._PACK_STORAGE_METHOD_KEY] = 0
+	assert_asset_pack_location_eq_dict(test_object, expected_dict)

@@ -16,46 +16,40 @@
 #
 # ##############################################################################
 #
-# Wraps Play Core's AssetLocation which represents the location of an Asset 
-# within an asset pack on disk.
+# Wraps Play Core's AssetPackStates which represents the states for a 
+# collections of pack.
 #
 # ##############################################################################
-class_name PlayAssetLocation
+class_name PlayAssetPackStates
 extends Object
 
 # -----------------------------------------------------------------------------
 # Constant declaration for Dictionary key Strings
 # -----------------------------------------------------------------------------
-const _OFFSET_KEY : String = "offset"
-const _PATH_KEY : String = "path"
-const _SIZE_KEY : String = "size"
+const _TOTAL_BYTES_KEY : String = "totalBytes"
+const _PACK_STATES_KEY : String = "packStates"
 
-var _offset : int
-var _path : String
-var _size : int
+var _total_bytes : int
+var _pack_states : Dictionary
 
 func _init(init_dictionary : Dictionary):
-	_offset = init_dictionary[_OFFSET_KEY]
-	_path = init_dictionary[_PATH_KEY]
-	_size = init_dictionary[_SIZE_KEY]
+	_total_bytes = init_dictionary[_TOTAL_BYTES_KEY]
 	
-# -----------------------------------------------------------------------------
-# Returns the file offset where the asset starts, in bytes. If the 
-# AssetPackStorageMethod for the pack is STORAGE_FILES, the offset will be 0.
-# -----------------------------------------------------------------------------
-func get_offset() -> int:
-	return _offset
+	var init_pack_states_dict : Dictionary = init_dictionary[_PACK_STATES_KEY]
+	var pack_states_object_dict : Dictionary = Dictionary()
+	for key in init_pack_states_dict.keys():
+		pack_states_object_dict[key] = PlayAssetPackState.new(init_pack_states_dict[key])
+	_pack_states = pack_states_object_dict
 
 # -----------------------------------------------------------------------------
-# If the AssetPackStorageMethod for the pack is STORAGE_FILES, return the path 
-# to the specific asset. Otherwise return the path to the APK containing the
-# asset.
+# Returns total size of all requested packs in bytes.
 # -----------------------------------------------------------------------------
-func get_path() -> String:
-	return _path
+func get_total_bytes() -> int:
+	return _total_bytes
 
 # -----------------------------------------------------------------------------
-# Returns the size of the asset, in bytes.
+# Returns a map where for each entry, the key is the pack_name and value is the 
+# corresponding PlayAssetPackState object.
 # -----------------------------------------------------------------------------
-func get_size() -> int:
-	return _size
+func get_pack_states() -> Dictionary:
+	return _pack_states.duplicate()

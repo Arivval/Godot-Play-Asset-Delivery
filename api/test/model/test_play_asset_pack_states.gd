@@ -17,26 +17,7 @@
 # ##############################################################################
 extends "res://test/test_helper/base_test_class.gd"
 
-func test_play_asset_location_valid():
-	var test_dict = {
-		PlayAssetLocation._OFFSET_KEY: 42, 
-		PlayAssetLocation._PATH_KEY: "path/", 
-		PlayAssetLocation._SIZE_KEY: 100
-	}
-	var test_object = PlayAssetLocation.new(test_dict)
-	assert_asset_location_eq_dict(test_object, test_dict)
-
-func test_play_asset_location_deepcopy():
-	var test_dict = {
-		PlayAssetLocation._OFFSET_KEY: 42, 
-		PlayAssetLocation._PATH_KEY: "path/", 
-		PlayAssetLocation._SIZE_KEY: 100
-	}
-	var expected_dict = test_dict.duplicate()
-	var test_object = PlayAssetLocation.new(test_dict)
-	
-	# alter the dictionary value passed to the constructor
-	# object created should not be changed since we are doing deepcopy
-	test_dict[PlayAssetLocation._OFFSET_KEY] = 0
-	
-	assert_asset_location_eq_dict(test_object, expected_dict)
+func test_play_asset_pack_states_valid():
+	var test_dict = create_mock_asset_pack_states_dict()
+	var test_object = PlayAssetPackStates.new(test_dict)
+	assert_asset_pack_states_eq_dict(test_object, test_dict)

@@ -25,6 +25,44 @@ extends Node
 
 var _plugin_singleton : Object
 
+# -----------------------------------------------------------------------------
+# Enums
+# -----------------------------------------------------------------------------
+enum AssetPackStorageMethod {
+	STORAGE_FILES = 0,
+	APK_ASSETS = 1
+}
+
+enum AssetPackStatus {	
+	UNKNOWN = 0,
+	PENDING = 1,
+	DOWNLOADING = 2, 	
+	TRANSFERRING = 3,
+	COMPLETED = 4,
+	FAILED = 5,
+	CANCELED = 6,
+	WAITING_FOR_WIFI = 7,
+	NOT_INSTALLED = 8
+}
+
+enum AssetPackErrorCode {
+	NO_ERROR = 0,
+	APP_UNAVAILABLE = -1,
+	PACK_UNAVAILABLE = -2,
+	INVALID_REQUEST = -3,
+	DOWNLOAD_NOT_FOUND = -4,
+	API_NOT_AVAILABLE = -5, 	
+	NETWORK_ERROR = -6,
+	ACCESS_DENIED = -7,
+	INSUFFICIENT_STORAGE = -10,
+	PLAY_STORE_NOT_FOUND = -11,
+	NETWORK_UNRESTRICTED = -12,
+	INTERNAL_ERROR = -100
+}
+
+# -----------------------------------------------------------------------------
+# Setup
+# -----------------------------------------------------------------------------
 func _ready():
 	_initialize()
 
@@ -51,3 +89,13 @@ func get_asset_location(pack_name : String, asset_path : String) -> PlayAssetLoc
 	if query_dict == null:
 		return null
 	return PlayAssetLocation.new(query_dict)
+
+# -----------------------------------------------------------------------------
+# Returns the location of the specified asset pack on the device, null if 
+# this pack is not downloaded or is outdated.
+# -----------------------------------------------------------------------------
+func get_pack_location(pack_name : String) -> PlayAssetPackLocation:
+	var query_dict = _plugin_singleton.getPackLocation(pack_name)
+	if query_dict == null:
+		return null
+	return PlayAssetPackLocation.new(query_dict)

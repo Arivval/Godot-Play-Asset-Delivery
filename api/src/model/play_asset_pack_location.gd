@@ -16,46 +16,47 @@
 #
 # ##############################################################################
 #
-# Wraps Play Core's AssetLocation which represents the location of an Asset 
-# within an asset pack on disk.
+# Wraps Play Core's AssetPackLocation which represents the location of an asset 
+# pack on disk.
 #
 # ##############################################################################
-class_name PlayAssetLocation
+class_name PlayAssetPackLocation
 extends Object
 
 # -----------------------------------------------------------------------------
 # Constant declaration for Dictionary key Strings
 # -----------------------------------------------------------------------------
-const _OFFSET_KEY : String = "offset"
+const _ASSETS_PATH_KEY : String = "assetsPath"
+const _PACK_STORAGE_METHOD_KEY : String = "packStorageMethod"
 const _PATH_KEY : String = "path"
-const _SIZE_KEY : String = "size"
 
-var _offset : int
+var _assets_path : String
+var _storage_method : int
 var _path : String
-var _size : int
 
 func _init(init_dictionary : Dictionary):
-	_offset = init_dictionary[_OFFSET_KEY]
+	_assets_path = init_dictionary[_ASSETS_PATH_KEY]
+	_storage_method = init_dictionary[_PACK_STORAGE_METHOD_KEY]
 	_path = init_dictionary[_PATH_KEY]
-	_size = init_dictionary[_SIZE_KEY]
-	
-# -----------------------------------------------------------------------------
-# Returns the file offset where the asset starts, in bytes. If the 
-# AssetPackStorageMethod for the pack is STORAGE_FILES, the offset will be 0.
-# -----------------------------------------------------------------------------
-func get_offset() -> int:
-	return _offset
 
 # -----------------------------------------------------------------------------
-# If the AssetPackStorageMethod for the pack is STORAGE_FILES, return the path 
-# to the specific asset. Otherwise return the path to the APK containing the
-# asset.
+# Returns the file path to the folder containing the pack's assets, if the 
+# storage method is STORAGE_FILES.
+# -----------------------------------------------------------------------------
+func get_assets_path() -> String:
+	return _assets_path
+
+# -----------------------------------------------------------------------------
+# Returns PlayAssetPackManager.AssetPackStorageMethod enum, which represents 
+# whether the pack is installed as an APK or extracted into a folder on the 
+# filesystem.
+# -----------------------------------------------------------------------------
+func get_storage_method() -> int:
+	return _storage_method
+
+# -----------------------------------------------------------------------------
+# Returns the file path to the folder containing the extracted asset pack, if 
+# the storage method is STORAGE_FILES.
 # -----------------------------------------------------------------------------
 func get_path() -> String:
 	return _path
-
-# -----------------------------------------------------------------------------
-# Returns the size of the asset, in bytes.
-# -----------------------------------------------------------------------------
-func get_size() -> int:
-	return _size

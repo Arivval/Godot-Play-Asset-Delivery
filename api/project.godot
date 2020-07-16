@@ -18,10 +18,28 @@ _global_script_classes=[ {
 "class": "PlayAssetLocation",
 "language": "GDScript",
 "path": "res://src/model/play_asset_location.gd"
+}, {
+"base": "Object",
+"class": "PlayAssetPackLocation",
+"language": "GDScript",
+"path": "res://src/model/play_asset_pack_location.gd"
+}, {
+"base": "Object",
+"class": "PlayAssetPackState",
+"language": "GDScript",
+"path": "res://src/model/play_asset_pack_state.gd"
+}, {
+"base": "Object",
+"class": "PlayAssetPackStates",
+"language": "GDScript",
+"path": "res://src/model/play_asset_pack_states.gd"
 } ]
 _global_script_class_icons={
 "FakeAndroidPlugin": "",
-"PlayAssetLocation": ""
+"PlayAssetLocation": "",
+"PlayAssetPackLocation": "",
+"PlayAssetPackState": "",
+"PlayAssetPackStates": ""
 }
 
 [application]
@@ -31,7 +49,7 @@ run/main_scene="res://test/gut_gui.tscn"
 
 [autoload]
 
-PlayAssetPackManager="res://src/play_asset_pack_manager.gd"
+PlayAssetPackManager="*res://src/play_asset_pack_manager.gd"
 
 [editor_plugins]
 
