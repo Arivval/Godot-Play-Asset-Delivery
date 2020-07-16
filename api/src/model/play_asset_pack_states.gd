@@ -43,7 +43,8 @@ func get_total_bytes() -> int:
 	return _total_bytes
 
 # -----------------------------------------------------------------------------
-# Returns a map from a pack's name to its state.
+# Returns a map where for each entry, the key is the pack_name and value is the 
+# corresponding PlayAssetPackState object.
 # -----------------------------------------------------------------------------
 func get_pack_states() -> Dictionary:
 	return _pack_states.duplicate()
