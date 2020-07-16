@@ -16,8 +16,8 @@
 #
 # ##############################################################################
 #
-# Wraps Play Core's AssetPackLocation which represents the location of an an 
-# asset pack on disk.
+# Wraps Play Core's AssetPackLocation which represents the location of an asset 
+# pack on disk.
 #
 # ##############################################################################
 class_name PlayAssetPackLocation
