@@ -34,20 +34,20 @@ func _init():
 # -----------------------------------------------------------------------------
 # Utility Functions
 # -----------------------------------------------------------------------------
-func add_asset_location(_pack_name : String, _asset_path : String, _asset_location_dict : Dictionary):
-	_asset_location_store[[_pack_name , _asset_path]] = _asset_location_dict
+func add_asset_location(pack_name : String, asset_path : String, asset_location_dict : Dictionary):
+	_asset_location_store[[pack_name , asset_path]] = asset_location_dict
 
-func remove_asset_location(_pack_name : String, _asset_path : String):
-	_asset_location_store.erase([_pack_name , _asset_path])
+func remove_asset_location(pack_name : String, asset_path : String):
+	_asset_location_store.erase([pack_name , asset_path])
 
 func clear_asset_location_store():
 	_asset_location_store.clear()
 
-func add_asset_pack_location(_pack_name : String, _asset_pack_location_dict : Dictionary):
-	_asset_pack_location_store[_pack_name] = _asset_pack_location_dict
+func add_asset_pack_location(pack_name : String, asset_pack_location_dict : Dictionary):
+	_asset_pack_location_store[pack_name] = asset_pack_location_dict
 
-func remove_asset_pack_location(_pack_name : String):
-	_asset_pack_location_store.erase(_pack_name)
+func remove_asset_pack_location(pack_name : String):
+	_asset_pack_location_store.erase(pack_name)
 
 func clear_asset_pack_location_store():
 	_asset_pack_location_store.clear()
@@ -55,13 +55,13 @@ func clear_asset_pack_location_store():
 # -----------------------------------------------------------------------------
 # Mock Functions
 # -----------------------------------------------------------------------------
-func getAssetLocation(_pack_name : String, _asset_path : String):
-	var dict_key = [_pack_name , _asset_path]
+func getAssetLocation(pack_name : String, asset_path : String):
+	var dict_key = [pack_name , asset_path]
 	if dict_key in _asset_location_store:
 		return _asset_location_store[dict_key]
 	return null
 
-func getPackLocation(_pack_name : String):
-	if _pack_name in _asset_pack_location_store:
-		return _asset_pack_location_store[_pack_name]
+func getPackLocation(pack_name : String):
+	if pack_name in _asset_pack_location_store:
+		return _asset_pack_location_store[pack_name]
 	return null
