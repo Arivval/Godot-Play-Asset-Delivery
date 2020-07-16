@@ -27,7 +27,6 @@ var _total_bytes : int
 var _pack_states : Dictionary
 
 func _init(init_dictionary : Dictionary):
-	_pack_states = Dictionary()
 	_total_bytes = init_dictionary["totalBytes"]
 	
 	var init_pack_states_dict : Dictionary = init_dictionary["packStates"]
