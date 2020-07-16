@@ -52,6 +52,9 @@ func remove_asset_pack_location(pack_name : String):
 func clear_asset_pack_location_store():
 	_asset_pack_location_store.clear()
 
+func set_asset_pack_locations(asset_pack_locations_dict : Dictionary):
+	_asset_pack_location_store = asset_pack_locations_dict
+
 # -----------------------------------------------------------------------------
 # Mock Functions
 # -----------------------------------------------------------------------------
@@ -65,3 +68,6 @@ func getPackLocation(pack_name : String):
 	if pack_name in _asset_pack_location_store:
 		return _asset_pack_location_store[pack_name]
 	return null
+
+func getPackLocations():
+	return _asset_pack_location_store

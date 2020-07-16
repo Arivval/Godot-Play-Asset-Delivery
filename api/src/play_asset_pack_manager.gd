@@ -111,6 +111,6 @@ func get_pack_locations() -> Dictionary:
 	
 	# convert inner dictionaries in raw_dict to PlayAssetLocation objects
 	for key in raw_dict.keys():
-		return_dict[key] = PlayAssetLocation.new(raw_dict[key])
+		return_dict[key] = PlayAssetPackLocation.new(raw_dict[key])
 	
 	return return_dict

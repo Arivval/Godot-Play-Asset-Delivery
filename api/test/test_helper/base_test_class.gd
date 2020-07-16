@@ -37,6 +37,11 @@ func assert_asset_pack_location_eq_dict(asset_pack_location: PlayAssetPackLocati
 	assert_eq(asset_pack_location.get_storage_method(), dict[PlayAssetPackLocation._PACK_STORAGE_METHOD_KEY])
 	assert_eq(asset_pack_location.get_path(), dict[PlayAssetLocation._PATH_KEY])
 
+func assert_asset_pack_locations_eq_dict(asset_pack_locations: Dictionary, dict: Dictionary):
+	assert_eq(asset_pack_locations.size(), dict.size())
+	for key in asset_pack_locations.keys():
+		assert_asset_pack_location_eq_dict(asset_pack_locations[key], dict[key])
+
 func assert_asset_pack_state_eq_dict(asset_pack_state: PlayAssetPackState, dict: Dictionary):
 	assert_eq(dict.size(), 6)
 	assert_eq(asset_pack_state.get_name(), dict[PlayAssetPackState._NAME_KEY])
@@ -83,6 +88,26 @@ func create_mock_asset_pack_states_dict() -> Dictionary:
 			"assetPack1": pack_1_dict,
 			"assetPack2": pack_2_dict
 		}
+	}
+	
+	return test_dict
+
+func create_mock_asset_locations_dict() -> Dictionary:
+	var pack_location_1_dict = {
+		PlayAssetPackLocation._ASSETS_PATH_KEY: "/assetsPath/", 
+		PlayAssetPackLocation._PACK_STORAGE_METHOD_KEY: PlayAssetPackManager.AssetPackStorageMethod.STORAGE_FILES, 
+		PlayAssetLocation._PATH_KEY: "/path/"
+	}
+
+	var pack_location_2_dict = {
+		PlayAssetPackLocation._ASSETS_PATH_KEY: "/assetsPath2/", 
+		PlayAssetPackLocation._PACK_STORAGE_METHOD_KEY: PlayAssetPackManager.AssetPackStorageMethod.STORAGE_FILES, 
+		PlayAssetLocation._PATH_KEY: "/path2/"
+	}
+	
+	var test_dict = {
+		"assetLocation1": pack_location_1_dict,
+		"assetLocation2": pack_location_2_dict,
 	}
 	
 	return test_dict
