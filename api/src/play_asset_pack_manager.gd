@@ -123,7 +123,7 @@ func cancel_asset_pack_request(pack_name : String) -> bool:
 	var raw_dict = _plugin_singleton.cancel([pack_name])
 	var updated_asset_pack_states : PlayAssetPackStates = PlayAssetPackStates.new(raw_dict)
 	
-	# return false if matching pack_name is found in updated PlayAssetPackStates
+	# return false if matching pack_name is not found in updated PlayAssetPackStates
 	if not pack_name in updated_asset_pack_states.get_pack_states().keys():
 		return false
 	
