@@ -35,13 +35,15 @@ func get_name() -> String:
 	return _asset_pack_state_dict["name"]
 
 # -----------------------------------------------------------------------------
-# Returns the download status of the pack.
+# Returns an int from PlayAssetPackManager.AssetPackStatus enum, represents
+# the download status of the pack.
 # -----------------------------------------------------------------------------
 func get_status() -> int:
 	return _asset_pack_state_dict["status"]
 
 # -----------------------------------------------------------------------------
-# Returns the error code for the pack, if Play has failed to download the pack.
+# Returns the error code (int from PlayAssetPackManager.AssetPackErrorCode enum)
+# for the pack, if Play has failed to download the pack.
 # -----------------------------------------------------------------------------
 func get_error_code() -> int:
 	return _asset_pack_state_dict["errorCode"]

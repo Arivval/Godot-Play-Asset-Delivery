@@ -36,8 +36,9 @@ func get_assets_path() -> String:
 	return _asset_pack_location_dict["assetsPath"]
 
 # -----------------------------------------------------------------------------
-# Returns AssetPackStorageMethod enum, which represents whether the pack is 
-# installed as an APK or extracted into a folder on the filesystem.
+# Returns PlayAssetPackManager.AssetPackStorageMethod enum, which represents 
+# whether the pack is installed as an APK or extracted into a folder on the 
+# filesystem.
 # -----------------------------------------------------------------------------
 func get_storage_method() -> int:
 	return _asset_pack_location_dict["packStorageMethod"]
