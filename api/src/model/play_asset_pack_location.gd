@@ -23,17 +23,21 @@
 class_name PlayAssetPackLocation
 extends Object
 
-var _asset_pack_location_dict : Dictionary
+var _assets_path : String
+var _storage_method : int
+var _path : String
 
 func _init(init_dictionary : Dictionary):
-	_asset_pack_location_dict = init_dictionary.duplicate()
+	_assets_path = init_dictionary["assetsPath"]
+	_storage_method = init_dictionary["packStorageMethod"]
+	_path = init_dictionary["path"]
 
 # -----------------------------------------------------------------------------
 # Returns the file path to the folder containing the pack's assets, if the 
 # storage method is STORAGE_FILES.
 # -----------------------------------------------------------------------------
 func get_assets_path() -> String:
-	return _asset_pack_location_dict["assetsPath"]
+	return _assets_path
 
 # -----------------------------------------------------------------------------
 # Returns PlayAssetPackManager.AssetPackStorageMethod enum, which represents 
@@ -41,11 +45,11 @@ func get_assets_path() -> String:
 # filesystem.
 # -----------------------------------------------------------------------------
 func get_storage_method() -> int:
-	return _asset_pack_location_dict["packStorageMethod"]
+	return _storage_method
 
 # -----------------------------------------------------------------------------
 # Returns the file path to the folder containing the extracted asset pack, if 
 # the storage method is STORAGE_FILES.
 # -----------------------------------------------------------------------------
 func get_path() -> String:
-	return _asset_pack_location_dict["path"]
+	return _path

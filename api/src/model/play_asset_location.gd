@@ -23,17 +23,21 @@
 class_name PlayAssetLocation
 extends Object
 
-var _asset_location_dict : Dictionary
+var _offset : int
+var _path : String
+var _size : int
 
 func _init(init_dictionary : Dictionary):
-	_asset_location_dict = init_dictionary.duplicate()
-
+	_offset = init_dictionary["offset"]
+	_path = init_dictionary["path"]
+	_size = init_dictionary["size"]
+	
 # -----------------------------------------------------------------------------
 # Returns the file offset where the asset starts, in bytes. If the 
 # AssetPackStorageMethod for the pack is STORAGE_FILES, the offset will be 0.
 # -----------------------------------------------------------------------------
 func get_offset() -> int:
-	return _asset_location_dict["offset"]
+	return _offset
 
 # -----------------------------------------------------------------------------
 # If the AssetPackStorageMethod for the pack is STORAGE_FILES, return the path 
@@ -41,10 +45,10 @@ func get_offset() -> int:
 # asset.
 # -----------------------------------------------------------------------------
 func get_path() -> String:
-	return _asset_location_dict["path"]
+	return _path
 
 # -----------------------------------------------------------------------------
 # Returns the size of the asset, in bytes.
 # -----------------------------------------------------------------------------
 func get_size() -> int:
-	return _asset_location_dict["size"]
+	return _size

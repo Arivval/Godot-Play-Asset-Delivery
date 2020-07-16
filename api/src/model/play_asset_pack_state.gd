@@ -23,45 +23,55 @@
 class_name PlayAssetPackState
 extends Object
 
-var _asset_pack_state_dict : Dictionary
+var _name : String
+var _status : int
+var _error_code : int
+var _bytes_downloaded : int
+var _total_bytes_to_download : int
+var _transfer_progress_percentage : int
 
 func _init(init_dictionary : Dictionary):
-	_asset_pack_state_dict = init_dictionary.duplicate()
+	_name = init_dictionary["name"]
+	_status = init_dictionary["status"]
+	_error_code = init_dictionary["errorCode"]
+	_bytes_downloaded = init_dictionary["bytesDownloaded"]
+	_total_bytes_to_download = init_dictionary["totalBytesToDownload"]
+	_transfer_progress_percentage = init_dictionary["transferProgressPercentage"]
 
 # -----------------------------------------------------------------------------
 # Returns the name of the pack.
 # -----------------------------------------------------------------------------
 func get_name() -> String:
-	return _asset_pack_state_dict["name"]
+	return _name
 
 # -----------------------------------------------------------------------------
 # Returns an int from PlayAssetPackManager.AssetPackStatus enum, represents
 # the download status of the pack.
 # -----------------------------------------------------------------------------
 func get_status() -> int:
-	return _asset_pack_state_dict["status"]
+	return _status
 
 # -----------------------------------------------------------------------------
 # Returns the error code (int from PlayAssetPackManager.AssetPackErrorCode enum)
 # for the pack, if Play has failed to download the pack.
 # -----------------------------------------------------------------------------
 func get_error_code() -> int:
-	return _asset_pack_state_dict["errorCode"]
+	return _error_code
 
 # -----------------------------------------------------------------------------
 # Returns the total number of bytes already downloaded for the pack.
 # -----------------------------------------------------------------------------
 func get_bytes_downloaded() -> int:
-	return _asset_pack_state_dict["bytesDownloaded"]
+	return _bytes_downloaded
 
 # -----------------------------------------------------------------------------
 # Returns the total size of the pack in bytes.
 # -----------------------------------------------------------------------------
 func get_total_bytes_to_download() -> int:
-	return _asset_pack_state_dict["totalBytesToDownload"]
+	return _total_bytes_to_download
 
 # -----------------------------------------------------------------------------
 # Returns the percentage of the asset pack already transferred to the app.
 # -----------------------------------------------------------------------------
 func get_transfer_progress_percentage() -> int:
-	return _asset_pack_state_dict["transferProgressPercentage"]
+	return _transfer_progress_percentage
