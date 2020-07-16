@@ -42,7 +42,6 @@ func assert_asset_pack_locations_eq_dict(asset_pack_locations: Dictionary, dict:
 	for key in asset_pack_locations.keys():
 		assert_asset_pack_location_eq_dict(asset_pack_locations[key], dict[key])
 
-
 func assert_asset_pack_state_eq_dict(asset_pack_state: PlayAssetPackState, dict: Dictionary):
 	assert_eq(dict.size(), 6)
 	assert_eq(asset_pack_state.get_name(), dict[PlayAssetPackState._NAME_KEY])
