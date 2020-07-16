@@ -28,9 +28,9 @@ func test_get_asset_location_valid():
 	var test_pack = "testPack"
 	var test_path = "/path/"
 	var return_dict = {
-		ASSET_LOCATION_OFFSET_KEY: 42, 
-		ASSET_LOCATION_PATH_KEY: "path/", 
-		ASSET_LOCATION_SIZE_KEY: 100
+		PlayAssetLocation._OFFSET_KEY: 42, 
+		PlayAssetLocation._PATH_KEY: "path/", 
+		PlayAssetLocation._SIZE_KEY: 100
 	}
 	
 	var mock_plugin = FakeAndroidPlugin.new()
@@ -45,9 +45,9 @@ func test_get_asset_location_not_exist():
 	var test_pack = "testPack"
 	var test_path = "/path/"
 	var pack_dict = {
-		ASSET_LOCATION_OFFSET_KEY: 42, 
-		ASSET_LOCATION_PATH_KEY: "path/", 
-		ASSET_LOCATION_SIZE_KEY: 100
+		PlayAssetLocation._OFFSET_KEY: 42, 
+		PlayAssetLocation._PATH_KEY: "path/", 
+		PlayAssetLocation._SIZE_KEY: 100
 	}
 	
 	var mock_plugin = FakeAndroidPlugin.new()
@@ -61,9 +61,9 @@ func test_get_asset_location_not_exist():
 func test_get_asset_pack_location_valid():
 	var test_pack = "testPack"
 	var return_dict = {
-		ASSET_PACK_LOCATION_ASSETS_PATH_KEY: "/assetsPath/", 
-		ASSET_PACK_LOCATION_STORAGE_METHOD_KEY: PlayAssetPackManager.AssetPackStorageMethod.STORAGE_FILES, 
-		ASSET_PACK_LOCATION_PATH_KEY: "/path/"
+		PlayAssetPackLocation._ASSETS_PATH_KEY: "/assetsPath/", 
+		PlayAssetPackLocation._PACK_STORAGE_METHOD_KEY: PlayAssetPackManager.AssetPackStorageMethod.STORAGE_FILES, 
+		PlayAssetLocation._PATH_KEY: "/path/"
 	}
 	
 	var mock_plugin = FakeAndroidPlugin.new()
@@ -77,9 +77,9 @@ func test_get_asset_pack_location_valid():
 func test_get_asset_pack_location_not_exist():
 	var test_pack = "testPack"
 	var return_dict = {
-		ASSET_PACK_LOCATION_ASSETS_PATH_KEY: "/assetsPath/", 
-		ASSET_PACK_LOCATION_STORAGE_METHOD_KEY: PlayAssetPackManager.AssetPackStorageMethod.STORAGE_FILES, 
-		ASSET_PACK_LOCATION_PATH_KEY: "/path/"
+		PlayAssetPackLocation._ASSETS_PATH_KEY: "/assetsPath/", 
+		PlayAssetPackLocation._PACK_STORAGE_METHOD_KEY: PlayAssetPackManager.AssetPackStorageMethod.STORAGE_FILES, 
+		PlayAssetLocation._PATH_KEY: "/path/"
 	}
 	
 	var mock_plugin = FakeAndroidPlugin.new()

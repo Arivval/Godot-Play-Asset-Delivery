@@ -19,12 +19,12 @@ extends "res://test/test_helper/base_test_class.gd"
 
 func test_play_asset_pack_state_valid():
 	var test_dict = {
-		ASSET_PACK_STATE_NAME_KEY: "assetPack", 
-		ASSET_PACK_STATE_STATUS_KEY: PlayAssetPackManager.AssetPackStatus.DOWNLOADING, 
-		ASSET_PACK_STATE_ERROR_CODE_KEY: PlayAssetPackManager.AssetPackErrorCode.NO_ERROR,
-		ASSET_PACK_STATE_BYTES_DOWNLOADED_KEY: 562,
-		ASSET_PACK_STATE_TOTAL_BYTES_TO_DOWNLOAD_KEY: 1337,
-		ASSET_PACK_STATE_TRANSFER_PROGRESS_PERCENTAGE_KEY: 42
+		PlayAssetPackState._NAME_KEY: "assetPack", 
+		PlayAssetPackState._STATUS_KEY: PlayAssetPackManager.AssetPackStatus.DOWNLOADING, 
+		PlayAssetPackState._ERROR_CODE_KEY: PlayAssetPackManager.AssetPackErrorCode.NO_ERROR,
+		PlayAssetPackState._BYTES_DOWNLOADED_KEY: 562,
+		PlayAssetPackState._TOTAL_BYTES_TO_DOWNLOAD: 1337,
+		PlayAssetPackState._TRANSFER_PROGRESS_PERCENTAGE_KEY: 42
 	}
 	var test_object = PlayAssetPackState.new(test_dict)
 	
@@ -32,12 +32,12 @@ func test_play_asset_pack_state_valid():
 
 func test_play_asset_pack_state_deepcopy():
 	var test_dict = {
-		ASSET_PACK_STATE_NAME_KEY: "assetPack", 
-		ASSET_PACK_STATE_STATUS_KEY: PlayAssetPackManager.AssetPackStatus.DOWNLOADING, 
-		ASSET_PACK_STATE_ERROR_CODE_KEY: PlayAssetPackManager.AssetPackErrorCode.NO_ERROR,
-		ASSET_PACK_STATE_BYTES_DOWNLOADED_KEY: 562,
-		ASSET_PACK_STATE_TOTAL_BYTES_TO_DOWNLOAD_KEY: 1337,
-		ASSET_PACK_STATE_TRANSFER_PROGRESS_PERCENTAGE_KEY: 42
+		PlayAssetPackState._NAME_KEY: "assetPack", 
+		PlayAssetPackState._STATUS_KEY: PlayAssetPackManager.AssetPackStatus.DOWNLOADING, 
+		PlayAssetPackState._ERROR_CODE_KEY: PlayAssetPackManager.AssetPackErrorCode.NO_ERROR,
+		PlayAssetPackState._BYTES_DOWNLOADED_KEY: 562,
+		PlayAssetPackState._TOTAL_BYTES_TO_DOWNLOAD: 1337,
+		PlayAssetPackState._TRANSFER_PROGRESS_PERCENTAGE_KEY: 42
 	}
 	var expected_dict = test_dict.duplicate()
 	var test_object = PlayAssetPackState.new(test_dict)
