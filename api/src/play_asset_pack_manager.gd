@@ -116,8 +116,8 @@ func get_pack_locations() -> Dictionary:
 	return return_dict
 
 # -----------------------------------------------------------------------------
-# Cancel a asset pack request specified with pack name, true if success. Note: 
-# Only active downloads can be canceled.
+# Cancels an asset pack request specified with pack name, true if success. 
+# Note: Only active downloads can be canceled.
 # -----------------------------------------------------------------------------
 func cancel_asset_pack_request(pack_name : String) -> bool:
 	var raw_dict = _plugin_singleton.cancel([pack_name])
