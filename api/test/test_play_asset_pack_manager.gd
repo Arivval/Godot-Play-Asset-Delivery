@@ -134,7 +134,7 @@ func test_cancel_asset_pack_request_downloading():
 	
 	assert_eq(test_result, false)
 
-func test_cancel_asset_pack_request_nonexisting_pack_name():
+func test_cancel_asset_pack_request_non_existing_pack_name():
 	var mock_plugin = FakeAndroidPlugin.new()
 	mock_plugin.on_cancel_return_not_found = true
 	var test_object = create_play_asset_pack_manager(mock_plugin)

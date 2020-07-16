@@ -114,7 +114,7 @@ func create_mock_asset_locations_dict() -> Dictionary:
 
 func create_mock_asset_pack_state_with_status_dict(status : int):
 	return {
-		PlayAssetPackState._NAME_KEY: "assetPack2", 
+		PlayAssetPackState._NAME_KEY: "assetPackName", 
 		PlayAssetPackState._STATUS_KEY: status, 
 		PlayAssetPackState._ERROR_CODE_KEY: PlayAssetPackManager.AssetPackErrorCode.NO_ERROR,
 		PlayAssetPackState._BYTES_DOWNLOADED_KEY: 0,

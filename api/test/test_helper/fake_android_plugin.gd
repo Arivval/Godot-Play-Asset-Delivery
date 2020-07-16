@@ -80,10 +80,10 @@ func getPackLocations():
 	return _asset_pack_location_store
 
 # -----------------------------------------------------------------------------
-# If on_cancel_return_not_found is false, returns a AssetPackStates object where 
-# all the updated AssetPackState will be defined by _asset_pack_state_on_cancel.
-# Else returns an Dictionary that simulates the situation where user cancels
-# a nonexisting asset pack.
+# If on_cancel_return_not_found is false, returns an AssetPackStates object 
+# where all updated AssetPackState will be instantiated by duplicating
+# _asset_pack_state_on_cancel. Else returns an Dictionary that simulates 
+# the situation where user cancels a nonexisting asset pack.
 # -----------------------------------------------------------------------------
 func cancel(pack_names : Array):
 	if on_cancel_return_not_found:
