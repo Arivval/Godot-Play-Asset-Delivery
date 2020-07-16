@@ -23,6 +23,13 @@
 class_name PlayAssetPackState
 extends Object
 
+const NAME_KEY : String = "name"
+const STATUS_KEY : String = "status"
+const ERROR_CODE_KEY : String = "errorCode"
+const BYTES_DOWNLOADED_KEY : String = "bytesDownloaded"
+const TOTAL_BYTES_TO_DOWNLOAD : String = "totalBytesToDownload"
+const TRANSFER_PROGRESS_PERCENTAGE_KEY : String = "transferProgressPercentage"
+
 var _name : String
 var _status : int
 var _error_code : int
@@ -31,12 +38,12 @@ var _total_bytes_to_download : int
 var _transfer_progress_percentage : int
 
 func _init(init_dictionary : Dictionary):
-	_name = init_dictionary["name"]
-	_status = init_dictionary["status"]
-	_error_code = init_dictionary["errorCode"]
-	_bytes_downloaded = init_dictionary["bytesDownloaded"]
-	_total_bytes_to_download = init_dictionary["totalBytesToDownload"]
-	_transfer_progress_percentage = init_dictionary["transferProgressPercentage"]
+	_name = init_dictionary[NAME_KEY]
+	_status = init_dictionary[STATUS_KEY]
+	_error_code = init_dictionary[ERROR_CODE_KEY]
+	_bytes_downloaded = init_dictionary[BYTES_DOWNLOADED_KEY]
+	_total_bytes_to_download = init_dictionary[TOTAL_BYTES_TO_DOWNLOAD]
+	_transfer_progress_percentage = init_dictionary[TRANSFER_PROGRESS_PERCENTAGE_KEY]
 
 # -----------------------------------------------------------------------------
 # Returns the name of the pack.

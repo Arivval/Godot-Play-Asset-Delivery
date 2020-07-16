@@ -23,14 +23,18 @@
 class_name PlayAssetLocation
 extends Object
 
+const OFFSET_KEY : String = "offset"
+const PATH_KEY : String = "path"
+const SIZE_KEY : String = "size"
+
 var _offset : int
 var _path : String
 var _size : int
 
 func _init(init_dictionary : Dictionary):
-	_offset = init_dictionary["offset"]
-	_path = init_dictionary["path"]
-	_size = init_dictionary["size"]
+	_offset = init_dictionary[OFFSET_KEY]
+	_path = init_dictionary[PATH_KEY]
+	_size = init_dictionary[SIZE_KEY]
 	
 # -----------------------------------------------------------------------------
 # Returns the file offset where the asset starts, in bytes. If the 
