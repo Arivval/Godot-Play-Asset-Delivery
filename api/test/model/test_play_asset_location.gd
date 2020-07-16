@@ -22,7 +22,6 @@ func test_play_asset_location_valid():
 	var test_object = PlayAssetLocation.new(test_dict)
 	assert_asset_location_eq_dict(test_object, test_dict)
 
-
 func test_play_asset_location_deepcopy():
 	var test_dict = {"offset": 42, "path": "path/", "size": 100}
 	var expected_dict = test_dict.duplicate()
