@@ -69,6 +69,7 @@ func _ready():
 
 func _initialize():
 	_plugin_singleton = _initialize_plugin()
+	_request_tracker = PlayAssetPackRequestTracker.new()
 
 # -----------------------------------------------------------------------------
 # Returns the PlayAssetDelivery Android Plugin singleton, null if this plugin

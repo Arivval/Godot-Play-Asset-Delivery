@@ -26,23 +26,37 @@
 class_name PlayAssetPackRequestTracker
 extends Object
 
+const _SIGNAL_ID_MAX = 9223372036854775807
+const _SIGNAL_ID_MIN = 0
+
 var _signal_id_counter : int
 var _signal_id_to_request_map : Dictionary
 
 func _init():
-	_signal_id_counter = 0
+	_signal_id_counter = _SIGNAL_ID_MIN
 	_signal_id_to_request_map = Dictionary()
 
 func get_current_signal_id() -> int:
 	return _signal_id_counter
 
-func increment_signal_id() -> void:
+# increment _signal_id_counter to the next available value not registered in 
+# _signal_id_to_request_map
+func _increment_to_next_available_signal_id():
+	_increment_signal_id()
+	while _signal_id_counter in _signal_id_to_request_map:
+		_increment_signal_id()
+
+# increment _signal_id_counter while avoid integer overflow by wrapping around to _SIGNAL_ID_MIN
+func _increment_signal_id() -> void:
+	if _signal_id_counter == _SIGNAL_ID_MAX:
+		_signal_id_counter = _SIGNAL_ID_MIN - 1
 	_signal_id_counter += 1
 
+# registers the request object and returned the signal_id assigned
 func register_request(request : PlayAssetPackRequest) -> int:
 	var return_signal_id = _signal_id_counter
 	_signal_id_to_request_map[return_signal_id] = request
-	increment_signal_id()
+	_increment_to_next_available_signal_id()
 	return return_signal_id
 
 func lookup_request(signal_id : int) -> PlayAssetPackRequest:
