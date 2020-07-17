@@ -38,7 +38,7 @@ func _init():
 	_asset_location_store = Dictionary()
 	_asset_pack_location_store = Dictionary()
 	
-	_asset_pack_states_store = EMPTY_ASSET_PACK_STATES
+	_asset_pack_states_store = EMPTY_ASSET_PACK_STATES.duplicate()
 
 # -----------------------------------------------------------------------------
 # Utility Functions
@@ -68,7 +68,7 @@ func set_asset_pack_states_store(asset_pack_states_dict : Dictionary):
 	_asset_pack_states_store = asset_pack_states_dict
 
 func clear_asset_pack_states_store():
-	_asset_pack_states_store = EMPTY_ASSET_PACK_STATES
+	_asset_pack_states_store = EMPTY_ASSET_PACK_STATES.duplicate()
 
 func add_asset_pack_state(asset_pack_state_dict : Dictionary):
 	_asset_pack_states_store[PlayAssetPackStates._TOTAL_BYTES_KEY] += \
@@ -107,7 +107,7 @@ func getPackLocations():
 # updated states.
 # -----------------------------------------------------------------------------
 func cancel(pack_names : Array):
-	var return_asset_pack_states = EMPTY_ASSET_PACK_STATES
+	var return_asset_pack_states = EMPTY_ASSET_PACK_STATES.duplicate()
 
 	# iterate through all pack_names, if they exist in _asset_pack_states_store, try cancel them
 	for pack_name in pack_names:
