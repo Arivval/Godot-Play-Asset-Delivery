@@ -88,9 +88,9 @@ func getPackLocations():
 func cancel(pack_names : Array):
 	if on_cancel_return_not_found:
 		var ret_dict = {
-		PlayAssetPackStates._TOTAL_BYTES_KEY: 0,
-		PlayAssetPackStates._PACK_STATES_KEY: {}
-	}
+			PlayAssetPackStates._TOTAL_BYTES_KEY: 0,
+			PlayAssetPackStates._PACK_STATES_KEY: {}
+		}
 		return ret_dict
 		
 	var pack_states = Dictionary()
