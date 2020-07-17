@@ -18,14 +18,27 @@
 #
 # The PlayAssetPackRequestTracker class generates unique signal_id integers and
 # keeps a mapping of signal_id to Request objects. This signal_id is used as an
-# identifier and passed to the Android plugin, so that we can know which signal
+# identifier and passed to the Android plugin. Eventually the Android plugin will
+# emit signals along with this signal_id. In this way we can know which signal 
 # emitted from the plugin corresponds to which Request object
 #
 # ##############################################################################
 class_name PlayAssetPackRequestTracker
 extends Object
 
-var signal_id_counter : int
+var _signal_id_counter : int
+var _signal_id_to_request_map : Dictionary
 
 func _init():
-	signal_id_counter = 0
+	_signal_id_counter = 0
+	_signal_id_to_request_map = Dictionary()
+
+func get_current_signal_id():
+	return _signal_id_counter
+
+func increment_signal_id():
+	_signal_id_counter += 1
+
+func register_request(request : PlayAssetPackRequest) -> int:
+	var return_signal_id = _signal_id_counter
+	
