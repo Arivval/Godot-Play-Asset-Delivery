@@ -33,7 +33,7 @@ var _signal_id_counter : int
 var _signal_id_to_request_map : Dictionary
 
 func _init():
-	_signal_id_counter = _SIGNAL_ID_MIN
+	_signal_id_counter = _SIGNAL_ID_MIN - 1
 	_signal_id_to_request_map = Dictionary()
 
 func get_current_signal_id() -> int:
@@ -54,10 +54,9 @@ func _increment_signal_id() -> void:
 
 # registers the request object and returned the signal_id assigned
 func register_request(request : PlayAssetPackRequest) -> int:
-	var return_signal_id = _signal_id_counter
-	_signal_id_to_request_map[return_signal_id] = request
 	_increment_to_next_available_signal_id()
-	return return_signal_id
+	_signal_id_to_request_map[_signal_id_counter] = request
+	return _signal_id_counter
 
 func lookup_request(signal_id : int) -> PlayAssetPackRequest:
 	if signal_id in _signal_id_to_request_map:
