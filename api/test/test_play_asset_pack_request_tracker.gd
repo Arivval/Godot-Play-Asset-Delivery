@@ -68,7 +68,7 @@ func test_remove_request_valid():
 	var test_request_object = PlayAssetPackRequest.new()
 	
 	var test_signal_id = test_request_tracker.register_request(test_request_object)
-	test_request_tracker.remove_request(test_signal_id)
+	test_request_tracker.unregister_request(test_signal_id)
 	
 	assert_true(not test_signal_id in test_request_tracker._signal_id_to_request_map)
 	assert_eq(test_request_tracker.lookup_request(test_signal_id), null)

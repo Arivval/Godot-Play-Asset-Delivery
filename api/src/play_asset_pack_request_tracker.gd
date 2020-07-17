@@ -33,6 +33,7 @@ var _signal_id_counter : int
 var _signal_id_to_request_map : Dictionary
 
 func _init():
+	# On first request's registration, _signal_id_counter should be incremented to _SIGNAL_ID_MIN
 	_signal_id_counter = _SIGNAL_ID_MIN - 1
 	_signal_id_to_request_map = Dictionary()
 
@@ -52,7 +53,7 @@ func _increment_signal_id() -> void:
 		_signal_id_counter = _SIGNAL_ID_MIN - 1
 	_signal_id_counter += 1
 
-# registers the request object and returned the signal_id assigned
+# registers the request object and returns the signal_id assigned
 func register_request(request : PlayAssetPackRequest) -> int:
 	_increment_to_next_available_signal_id()
 	_signal_id_to_request_map[_signal_id_counter] = request
@@ -63,7 +64,7 @@ func lookup_request(signal_id : int) -> PlayAssetPackRequest:
 		return _signal_id_to_request_map[signal_id]
 	return null
 
-func remove_request(signal_id : int) -> void:
+func unregister_request(signal_id : int) -> void:
 	if signal_id in _signal_id_to_request_map:
 		_signal_id_to_request_map.erase(signal_id)
 
