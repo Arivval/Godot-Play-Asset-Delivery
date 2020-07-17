@@ -40,15 +40,15 @@ func _init():
 func get_current_signal_id() -> int:
 	return _signal_id_counter
 
-# increment _signal_id_counter to the next available value not registered in 
-# _signal_id_to_request_map
 func _increment_to_next_available_signal_id():
+	# increment _signal_id_counter to the next available value not registered in 
+	# _signal_id_to_request_map
 	_increment_signal_id()
 	while _signal_id_counter in _signal_id_to_request_map:
 		_increment_signal_id()
 
-# increment _signal_id_counter while avoid integer overflow by wrapping around to _SIGNAL_ID_MIN
 func _increment_signal_id() -> void:
+	# increment _signal_id_counter while avoid integer overflow by wrapping around to _SIGNAL_ID_MIN
 	if _signal_id_counter == _SIGNAL_ID_MAX:
 		_signal_id_counter = _SIGNAL_ID_MIN - 1
 	_signal_id_counter += 1
