@@ -24,6 +24,7 @@
 extends Node
 
 var _plugin_singleton : Object
+var _request_tracker : PlayAssetPackRequestTracker
 
 # -----------------------------------------------------------------------------
 # Enums
