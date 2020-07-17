@@ -103,7 +103,9 @@ func getPackLocations():
 	return _asset_pack_location_store
 
 # -----------------------------------------------------------------------------
-# 
+# Simulates the cancel() function in PlayAssetDelivery Android plugin. Iterate
+# through all AssetPackState within _asset_pack_states_store and return the
+# updated states
 # -----------------------------------------------------------------------------
 func cancel(pack_names : Array):
 	var return_asset_pack_states = {
