@@ -27,7 +27,7 @@ extends Object
 const EMPTY_ASSET_PACK_STATES : Dictionary = {
 		PlayAssetPackStates._TOTAL_BYTES_KEY: 0,
 		PlayAssetPackStates._PACK_STATES_KEY: {}
-	}
+}
 
 var _asset_location_store : Dictionary
 var _asset_pack_location_store : Dictionary
