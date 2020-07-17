@@ -160,5 +160,4 @@ func test_cancel_asset_pack_request_non_existing_pack_name():
 	var test_object = create_play_asset_pack_manager(mock_plugin)
 	
 	var test_result : bool = test_object.cancel_asset_pack_request(test_pack_name)
-	
 	assert_eq(test_result, false)
