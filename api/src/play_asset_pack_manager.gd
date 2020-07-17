@@ -116,7 +116,7 @@ func get_pack_locations() -> Dictionary:
 	return return_dict
 
 # -----------------------------------------------------------------------------
-# Cancels an asset pack request specified with pack name, true if success. 
+# Cancels an asset pack request specified by pack_name, true if success. 
 # Note: Only active downloads can be canceled.
 # -----------------------------------------------------------------------------
 func cancel_asset_pack_request(pack_name : String) -> bool:
