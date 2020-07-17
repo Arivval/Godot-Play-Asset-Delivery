@@ -199,7 +199,7 @@ public class PlayAssetDelivery extends GodotPlugin {
    * @param packNamesArray String Array for all the packs to be fetched
    * @param signalID identifier used to track mapping of signals to Tasks
    */
-  public void fetch(String[] packNamesArray, int signalID) {
+  public void fetch(String[] packNamesArray, long signalID) {
     List<String> packNames = Arrays.asList(packNamesArray);
 
     OnSuccessListener<AssetPackStates> fetchSuccessListener =
@@ -252,7 +252,7 @@ public class PlayAssetDelivery extends GodotPlugin {
    * @param packNamesArray String Array for all the packs to request states
    * @param signalID identifier used to track mapping of signals to Tasks
    */
-  public void getPackStates(String[] packNamesArray, int signalID) {
+  public void getPackStates(String[] packNamesArray, long signalID) {
     List<String> packNames = Arrays.asList(packNamesArray);
 
     OnSuccessListener<AssetPackStates> getPackStatesSuccessListener =
@@ -274,14 +274,14 @@ public class PlayAssetDelivery extends GodotPlugin {
   }
 
   /**
-   * Calls removePack(String packName, int signalID) method in the Play Core Library. Deletes the
+   * Calls removePack(String packName) method in the Play Core Library. Deletes the
    * specified asset pack from the internal storage of the app. Emits removePackSuccess and
    * removePackError signals when the underlying task succeeds/fails.
    *
    * @param packName name of the asset pack to be removed
    * @param signalID identifier used to track mapping of signals to Tasks
    */
-  public void removePack(String packName, int signalID) {
+  public void removePack(String packName, long signalID) {
     OnSuccessListener<Void> removePackOnSuccessListener =
         result -> emitSignalWrapper(REMOVE_PACK_SUCCESS, signalID);
     OnFailureListener removePackOnFailureListener =
@@ -305,7 +305,7 @@ public class PlayAssetDelivery extends GodotPlugin {
    *
    * @param signalID identifier used to track mapping of signals to Tasks
    */
-  public void showCellularDataConfirmation(int signalID) {
+  public void showCellularDataConfirmation(long signalID) {
     OnSuccessListener<Integer> showCellularDataConfirmationSuccessListener =
         result -> emitSignalWrapper(SHOW_CELLULAR_DATA_CONFIRMATION_SUCCESS, result, signalID);
     OnFailureListener showCellularDataConfirmationFailureListener =
