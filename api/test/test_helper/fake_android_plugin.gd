@@ -42,7 +42,7 @@ func _create_empty_asset_pack_states() -> Dictionary:
 	return {
 		PlayAssetPackStates._TOTAL_BYTES_KEY: 0,
 		PlayAssetPackStates._PACK_STATES_KEY: {}
-}
+	}
 
 func add_asset_location(pack_name : String, asset_path : String, asset_location_dict : Dictionary):
 	_asset_location_store[[pack_name , asset_path]] = asset_location_dict
