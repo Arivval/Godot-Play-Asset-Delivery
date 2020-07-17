@@ -156,13 +156,7 @@ func test_cancel_asset_pack_request_failed():
 func test_cancel_asset_pack_request_non_existing_pack_name():
 	var test_pack_name = "assetPackName"
 
-	var test_states_dict = {
-		PlayAssetPackStates._TOTAL_BYTES_KEY: 0,
-		PlayAssetPackStates._PACK_STATES_KEY: {}
-	}
-	
 	var mock_plugin = FakeAndroidPlugin.new()
-	mock_plugin.set_asset_pack_states_store(test_states_dict)
 	var test_object = create_play_asset_pack_manager(mock_plugin)
 	
 	var test_result : bool = test_object.cancel_asset_pack_request(test_pack_name)
