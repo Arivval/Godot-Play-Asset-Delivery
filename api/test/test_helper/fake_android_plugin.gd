@@ -112,12 +112,13 @@ func cancel(pack_names : Array):
 		PlayAssetPackStates._TOTAL_BYTES_KEY: 0,
 		PlayAssetPackStates._PACK_STATES_KEY: {}
 	}
-	
+
 	# iterate through all pack_names, if they exist in _asset_pack_states_store, try cancel them
 	for pack_name in pack_names:
-		if pack_name in _asset_pack_states_store[PlayAssetPackStates._PACK_STATES_KEY]:
+		var current_asset_pack_states_dict = _asset_pack_states_store[PlayAssetPackStates._PACK_STATES_KEY]
+		if pack_name in current_asset_pack_states_dict:
 			# Only active downloads can be canceled
-			var current_asset_pack_dict = _asset_pack_states_store[PlayAssetPackStates._PACK_STATES_KEY][pack_name]
+			var current_asset_pack_dict = current_asset_pack_states_dict[pack_name]
 			var current_asset_pack_status = current_asset_pack_dict[PlayAssetPackState._STATUS_KEY]
 			if current_asset_pack_status == PlayAssetPackManager.AssetPackStatus.DOWNLOADING:
 				current_asset_pack_dict[PlayAssetPackState._STATUS_KEY] = \
