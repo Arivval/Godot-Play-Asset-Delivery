@@ -33,12 +33,24 @@ func _init():
 	_signal_id_counter = 0
 	_signal_id_to_request_map = Dictionary()
 
-func get_current_signal_id():
+func get_current_signal_id() -> int:
 	return _signal_id_counter
 
-func increment_signal_id():
+func increment_signal_id() -> void:
 	_signal_id_counter += 1
 
 func register_request(request : PlayAssetPackRequest) -> int:
 	var return_signal_id = _signal_id_counter
-	
+	_signal_id_to_request_map[return_signal_id] = request
+	increment_signal_id()
+	return return_signal_id
+
+func lookup_request(signal_id : int) -> PlayAssetPackRequest:
+	if signal_id in _signal_id_to_request_map:
+		return _signal_id_to_request_map[signal_id]
+	return null
+
+func remove_request(signal_id : int) -> void:
+	if signal_id in _signal_id_to_request_map:
+		_signal_id_to_request_map.erase(signal_id)
+
