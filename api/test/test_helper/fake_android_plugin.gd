@@ -24,6 +24,11 @@
 class_name FakeAndroidPlugin
 extends Object
 
+const EMPTY_ASSET_PACK_STATES : Dictionary = {
+		PlayAssetPackStates._TOTAL_BYTES_KEY: 0,
+		PlayAssetPackStates._PACK_STATES_KEY: {}
+	}
+
 var _asset_location_store : Dictionary
 var _asset_pack_location_store : Dictionary
 
@@ -33,10 +38,7 @@ func _init():
 	_asset_location_store = Dictionary()
 	_asset_pack_location_store = Dictionary()
 	
-	_asset_pack_states_store = {
-		PlayAssetPackStates._TOTAL_BYTES_KEY: 0,
-		PlayAssetPackStates._PACK_STATES_KEY: {}
-	}
+	_asset_pack_states_store = EMPTY_ASSET_PACK_STATES
 
 # -----------------------------------------------------------------------------
 # Utility Functions
@@ -66,10 +68,7 @@ func set_asset_pack_states_store(asset_pack_states_dict : Dictionary):
 	_asset_pack_states_store = asset_pack_states_dict
 
 func clear_asset_pack_states_store():
-	_asset_pack_states_store = {
-		PlayAssetPackStates._TOTAL_BYTES_KEY: 0,
-		PlayAssetPackStates._PACK_STATES_KEY: {}
-	}
+	_asset_pack_states_store = EMPTY_ASSET_PACK_STATES
 
 func add_asset_pack_state(asset_pack_state_dict : Dictionary):
 	_asset_pack_states_store[PlayAssetPackStates._TOTAL_BYTES_KEY] += \
@@ -108,10 +107,7 @@ func getPackLocations():
 # updated states.
 # -----------------------------------------------------------------------------
 func cancel(pack_names : Array):
-	var return_asset_pack_states = {
-		PlayAssetPackStates._TOTAL_BYTES_KEY: 0,
-		PlayAssetPackStates._PACK_STATES_KEY: {}
-	}
+	var return_asset_pack_states = EMPTY_ASSET_PACK_STATES
 
 	# iterate through all pack_names, if they exist in _asset_pack_states_store, try cancel them
 	for pack_name in pack_names:
