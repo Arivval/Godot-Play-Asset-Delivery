@@ -26,14 +26,17 @@ extends Object
 
 var _asset_location_store : Dictionary
 var _asset_pack_location_store : Dictionary
-# return this object as the updated AssetPackState when cancel() is called
-var _asset_pack_state_on_cancel : Dictionary
-# change this boolean so we can simulate the situation where the user cancels a nonexistent pack
-var on_cancel_return_not_found : bool = false
+
+var _asset_pack_states_store : Dictionary
 
 func _init():
 	_asset_location_store = Dictionary()
 	_asset_pack_location_store = Dictionary()
+	
+	_asset_pack_states_store = {
+		PlayAssetPackStates._TOTAL_BYTES_KEY: 0,
+		PlayAssetPackStates._PACK_STATES_KEY: {}
+	}
 
 # -----------------------------------------------------------------------------
 # Utility Functions
@@ -59,8 +62,28 @@ func clear_asset_pack_location_store():
 func set_asset_pack_locations(asset_pack_locations_dict : Dictionary):
 	_asset_pack_location_store = asset_pack_locations_dict
 
-func set_asset_pack_state_on_cancel(asset_pack_state_dict : Dictionary):
-	_asset_pack_state_on_cancel = asset_pack_state_dict
+func set_asset_pack_states_store(asset_pack_states_dict : Dictionary):
+	_asset_pack_states_store = asset_pack_states_dict
+
+func clear_asset_pack_states_store():
+	_asset_pack_states_store = {
+		PlayAssetPackStates._TOTAL_BYTES_KEY: 0,
+		PlayAssetPackStates._PACK_STATES_KEY: {}
+	}
+
+func add_asset_pack_state(asset_pack_state_dict : Dictionary):
+	_asset_pack_states_store[PlayAssetPackStates._TOTAL_BYTES_KEY] += \
+		asset_pack_state_dict[PlayAssetPackState._TOTAL_BYTES_TO_DOWNLOAD_KEY]
+	var pack_name = asset_pack_state_dict[PlayAssetPackState._NAME_KEY]
+	_asset_pack_states_store[PlayAssetPackStates._PACK_STATES_KEY][pack_name] = asset_pack_state_dict
+
+func remove_asset_pack_state(pack_name : String):
+	if pack_name in _asset_pack_states_store[PlayAssetPackStates._PACK_STATES_KEY]:
+		var pack_state = _asset_pack_states_store[PlayAssetPackStates._PACK_STATES_KEY][pack_name]
+		var pack_size = pack_state[PlayAssetPackState._TOTAL_BYTES_TO_DOWNLOAD_KEY]
+		# update totalBytes
+		_asset_pack_states_store[PlayAssetPackStates._TOTAL_BYTES_KEY] -= pack_size
+		_asset_pack_states_store[PlayAssetPackStates._PACK_STATES_KEY].erase(pack_name)
 
 # -----------------------------------------------------------------------------
 # Mock Functions
@@ -80,32 +103,27 @@ func getPackLocations():
 	return _asset_pack_location_store
 
 # -----------------------------------------------------------------------------
-# If on_cancel_return_not_found is false, returns an AssetPackStates object 
-# where all updated AssetPackState will be instantiated by duplicating
-# _asset_pack_state_on_cancel. Else returns an Dictionary that simulates 
-# the situation where user cancels a nonexisting asset pack.
+# 
 # -----------------------------------------------------------------------------
 func cancel(pack_names : Array):
-	if on_cancel_return_not_found:
-		var ret_dict = {
-			PlayAssetPackStates._TOTAL_BYTES_KEY: 0,
-			PlayAssetPackStates._PACK_STATES_KEY: {}
-		}
-		return ret_dict
-		
-	var pack_states = Dictionary()
-	var total_bytes = 0
-	for pack_name in pack_names:
-		var updated_asset_pack_state : Dictionary = _asset_pack_state_on_cancel.duplicate()
-		# ensure the returned dict is not corrupted by syncing pack names
-		updated_asset_pack_state[PlayAssetPackState._NAME_KEY] = pack_name
-		pack_states[pack_name] = updated_asset_pack_state
-		total_bytes += updated_asset_pack_state[PlayAssetPackState._TOTAL_BYTES_TO_DOWNLOAD_KEY]
-	
-	var ret_dict = {
-		PlayAssetPackStates._TOTAL_BYTES_KEY: total_bytes,
-		PlayAssetPackStates._PACK_STATES_KEY: pack_states
+	var return_asset_pack_states = {
+		PlayAssetPackStates._TOTAL_BYTES_KEY: 0,
+		PlayAssetPackStates._PACK_STATES_KEY: {}
 	}
 	
-	return ret_dict
- 
+	# iterate through all pack_names, if they exist in _asset_pack_states_store, try cancel them
+	for pack_name in pack_names:
+		if pack_name in _asset_pack_states_store[PlayAssetPackStates._PACK_STATES_KEY]:
+			# Only active downloads can be canceled
+			var current_asset_pack_dict = _asset_pack_states_store[PlayAssetPackStates._PACK_STATES_KEY][pack_name]
+			var current_asset_pack_status = current_asset_pack_dict[PlayAssetPackState._STATUS_KEY]
+			if current_asset_pack_status == PlayAssetPackManager.AssetPackStatus.DOWNLOADING:
+				current_asset_pack_dict[PlayAssetPackState._STATUS_KEY] = \
+					PlayAssetPackManager.AssetPackStatus.CANCELED
+			
+			# append resulting state to return_asset_pack_states
+			var current_asset_pack_size = current_asset_pack_dict[PlayAssetPackState._TOTAL_BYTES_TO_DOWNLOAD_KEY]
+			return_asset_pack_states[PlayAssetPackStates._TOTAL_BYTES_KEY] += current_asset_pack_size
+			return_asset_pack_states[PlayAssetPackStates._PACK_STATES_KEY][pack_name] = current_asset_pack_dict
+
+	return return_asset_pack_states

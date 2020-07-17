@@ -113,32 +113,58 @@ func test_get_asset_pack_location_empty():
 	assert_eq(test_result.size(), 0)
 
 func test_cancel_asset_pack_request_success():
-	var updated_state_dict = create_mock_asset_pack_state_with_status_dict(PlayAssetPackManager.AssetPackStatus.CANCELED)
+	var test_pack_name = "assetPackName"
+	var test_state_dict = create_mock_asset_pack_state_with_status_dict(
+		test_pack_name, PlayAssetPackManager.AssetPackStatus.DOWNLOADING)
+
+	var test_states_dict = {
+		PlayAssetPackStates._TOTAL_BYTES_KEY: test_state_dict[PlayAssetPackState._TOTAL_BYTES_TO_DOWNLOAD_KEY],
+		PlayAssetPackStates._PACK_STATES_KEY: {
+			test_pack_name: test_state_dict
+		}
+	}
 	
 	var mock_plugin = FakeAndroidPlugin.new()
-	mock_plugin.set_asset_pack_state_on_cancel(updated_state_dict)
+	mock_plugin.set_asset_pack_states_store(test_states_dict)
 	var test_object = create_play_asset_pack_manager(mock_plugin)
 	
-	var test_result : bool = test_object.cancel_asset_pack_request("pack_name")
+	var test_result : bool = test_object.cancel_asset_pack_request(test_pack_name)
 	
 	assert_eq(test_result, true)
 
-func test_cancel_asset_pack_request_downloading():
-	var updated_state_dict = create_mock_asset_pack_state_with_status_dict(PlayAssetPackManager.AssetPackStatus.DOWNLOADING)
+func test_cancel_asset_pack_request_failed():
+	var test_pack_name = "assetPackName"
+	# only ongoing downloads can be canceled, so we are unable to cancel a pack with UNKNOWN status
+	var test_state_dict = create_mock_asset_pack_state_with_status_dict(
+		test_pack_name, PlayAssetPackManager.AssetPackStatus.UNKNOWN)
+
+	var test_states_dict = {
+		PlayAssetPackStates._TOTAL_BYTES_KEY: test_state_dict[PlayAssetPackState._TOTAL_BYTES_TO_DOWNLOAD_KEY],
+		PlayAssetPackStates._PACK_STATES_KEY: {
+			test_pack_name: test_state_dict
+		}
+	}
 	
 	var mock_plugin = FakeAndroidPlugin.new()
-	mock_plugin.set_asset_pack_state_on_cancel(updated_state_dict)
+	mock_plugin.set_asset_pack_states_store(test_states_dict)
 	var test_object = create_play_asset_pack_manager(mock_plugin)
 	
-	var test_result : bool = test_object.cancel_asset_pack_request("pack_name")
+	var test_result : bool = test_object.cancel_asset_pack_request(test_pack_name)
 	
 	assert_eq(test_result, false)
 
 func test_cancel_asset_pack_request_non_existing_pack_name():
+	var test_pack_name = "assetPackName"
+
+	var test_states_dict = {
+		PlayAssetPackStates._TOTAL_BYTES_KEY: 0,
+		PlayAssetPackStates._PACK_STATES_KEY: {}
+	}
+	
 	var mock_plugin = FakeAndroidPlugin.new()
-	mock_plugin.on_cancel_return_not_found = true
+	mock_plugin.set_asset_pack_states_store(test_states_dict)
 	var test_object = create_play_asset_pack_manager(mock_plugin)
 	
-	var test_result : bool = test_object.cancel_asset_pack_request("pack_name")
+	var test_result : bool = test_object.cancel_asset_pack_request(test_pack_name)
 	
 	assert_eq(test_result, false)
