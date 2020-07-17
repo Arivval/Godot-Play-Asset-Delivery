@@ -48,7 +48,8 @@ func _increment_to_next_available_signal_id():
 		_increment_signal_id()
 
 func _increment_signal_id() -> void:
-	# increment _signal_id_counter while avoid integer overflow by wrapping around to _SIGNAL_ID_MIN
+	# increment _signal_id_counter while avoid integer overflow by wrapping around to 
+	# _SIGNAL_ID_MIN
 	if _signal_id_counter == _SIGNAL_ID_MAX:
 		_signal_id_counter = _SIGNAL_ID_MIN - 1
 	_signal_id_counter += 1
