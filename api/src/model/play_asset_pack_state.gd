@@ -30,7 +30,7 @@ const _NAME_KEY : String = "name"
 const _STATUS_KEY : String = "status"
 const _ERROR_CODE_KEY : String = "errorCode"
 const _BYTES_DOWNLOADED_KEY : String = "bytesDownloaded"
-const _TOTAL_BYTES_TO_DOWNLOAD : String = "totalBytesToDownload"
+const _TOTAL_BYTES_TO_DOWNLOAD_KEY : String = "totalBytesToDownload"
 const _TRANSFER_PROGRESS_PERCENTAGE_KEY : String = "transferProgressPercentage"
 
 var _name : String
@@ -45,7 +45,7 @@ func _init(init_dictionary : Dictionary):
 	_status = init_dictionary[_STATUS_KEY]
 	_error_code = init_dictionary[_ERROR_CODE_KEY]
 	_bytes_downloaded = init_dictionary[_BYTES_DOWNLOADED_KEY]
-	_total_bytes_to_download = init_dictionary[_TOTAL_BYTES_TO_DOWNLOAD]
+	_total_bytes_to_download = init_dictionary[_TOTAL_BYTES_TO_DOWNLOAD_KEY]
 	_transfer_progress_percentage = init_dictionary[_TRANSFER_PROGRESS_PERCENTAGE_KEY]
 
 # -----------------------------------------------------------------------------

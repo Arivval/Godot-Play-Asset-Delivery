@@ -99,3 +99,35 @@ func get_pack_location(pack_name : String) -> PlayAssetPackLocation:
 	if query_dict == null:
 		return null
 	return PlayAssetPackLocation.new(query_dict)
+
+# -----------------------------------------------------------------------------
+# Returns the location of all installed asset packs. More specifically, returns 
+# a Dictionary, where for each entry, the key is the asset pack name and value 
+# is the corresponding PlayAssetLocation object.
+# -----------------------------------------------------------------------------
+func get_pack_locations() -> Dictionary:
+	var return_dict = Dictionary()
+	var raw_dict = _plugin_singleton.getPackLocations()
+	
+	# convert inner dictionaries in raw_dict to PlayAssetLocation objects
+	for key in raw_dict.keys():
+		return_dict[key] = PlayAssetPackLocation.new(raw_dict[key])
+	
+	return return_dict
+
+# -----------------------------------------------------------------------------
+# Cancels an asset pack request specified by pack_name, true if success. 
+# Note: Only active downloads can be canceled.
+# -----------------------------------------------------------------------------
+func cancel_asset_pack_request(pack_name : String) -> bool:
+	var raw_dict = _plugin_singleton.cancel([pack_name])
+	var updated_asset_pack_states : PlayAssetPackStates = PlayAssetPackStates.new(raw_dict)
+	
+	# return false if no matching pack_name found in updated PlayAssetPackStates
+	if not pack_name in updated_asset_pack_states.get_pack_states().keys():
+		return false
+	
+	var updated_asset_pack_state : PlayAssetPackState = updated_asset_pack_states.get_pack_states()[pack_name]
+	var updated_asset_pack_status = updated_asset_pack_state.get_status()
+	
+	return updated_asset_pack_status == AssetPackStatus.CANCELED

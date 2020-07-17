@@ -23,7 +23,7 @@ func test_play_asset_pack_state_valid():
 		PlayAssetPackState._STATUS_KEY: PlayAssetPackManager.AssetPackStatus.DOWNLOADING, 
 		PlayAssetPackState._ERROR_CODE_KEY: PlayAssetPackManager.AssetPackErrorCode.NO_ERROR,
 		PlayAssetPackState._BYTES_DOWNLOADED_KEY: 562,
-		PlayAssetPackState._TOTAL_BYTES_TO_DOWNLOAD: 1337,
+		PlayAssetPackState._TOTAL_BYTES_TO_DOWNLOAD_KEY: 1337,
 		PlayAssetPackState._TRANSFER_PROGRESS_PERCENTAGE_KEY: 42
 	}
 	var test_object = PlayAssetPackState.new(test_dict)
@@ -36,7 +36,7 @@ func test_play_asset_pack_state_deepcopy():
 		PlayAssetPackState._STATUS_KEY: PlayAssetPackManager.AssetPackStatus.DOWNLOADING, 
 		PlayAssetPackState._ERROR_CODE_KEY: PlayAssetPackManager.AssetPackErrorCode.NO_ERROR,
 		PlayAssetPackState._BYTES_DOWNLOADED_KEY: 562,
-		PlayAssetPackState._TOTAL_BYTES_TO_DOWNLOAD: 1337,
+		PlayAssetPackState._TOTAL_BYTES_TO_DOWNLOAD_KEY: 1337,
 		PlayAssetPackState._TRANSFER_PROGRESS_PERCENTAGE_KEY: 42
 	}
 	var expected_dict = test_dict.duplicate()
