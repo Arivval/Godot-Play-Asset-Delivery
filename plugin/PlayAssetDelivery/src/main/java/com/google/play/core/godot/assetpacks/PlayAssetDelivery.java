@@ -274,9 +274,9 @@ public class PlayAssetDelivery extends GodotPlugin {
   }
 
   /**
-   * Calls removePack(String packName) method in the Play Core Library. Deletes the
-   * specified asset pack from the internal storage of the app. Emits removePackSuccess and
-   * removePackError signals when the underlying task succeeds/fails.
+   * Calls removePack(String packName) method in the Play Core Library. Deletes the specified asset
+   * pack from the internal storage of the app. Emits removePackSuccess and removePackError signals
+   * when the underlying task succeeds/fails.
    *
    * @param packName name of the asset pack to be removed
    * @param signalID identifier used to track mapping of signals to Tasks
