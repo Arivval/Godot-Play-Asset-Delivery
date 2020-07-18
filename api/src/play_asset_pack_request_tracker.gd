@@ -32,7 +32,6 @@ var _signal_id_counter : int
 var _signal_id_to_request_map : Dictionary
 
 func _init():
-	# On first request's registration, _signal_id_counter should be incremented to _SIGNAL_ID_MIN
 	_signal_id_counter = _SIGNAL_ID_MIN
 	_signal_id_to_request_map = Dictionary()
 
