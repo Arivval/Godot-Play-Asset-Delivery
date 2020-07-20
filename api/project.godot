@@ -15,6 +15,16 @@ _global_script_classes=[ {
 "path": "res://test/test_helper/fake_android_plugin.gd"
 }, {
 "base": "Object",
+"class": "PlayAssetDeliveryRequest",
+"language": "GDScript",
+"path": "res://src/model/request/play_asset_delivery_request.gd"
+}, {
+"base": "Object",
+"class": "PlayAssetDeliveryRequestTracker",
+"language": "GDScript",
+"path": "res://src/play_asset_delivery_request_tracker2.gd"
+}, {
+"base": "Object",
 "class": "PlayAssetLocation",
 "language": "GDScript",
 "path": "res://src/model/play_asset_location.gd"
@@ -24,15 +34,10 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://src/model/play_asset_pack_location.gd"
 }, {
-"base": "Object",
-"class": "PlayAssetPackRequest",
+"base": "Reference",
+"class": "PlayAssetPackRemoveRequest",
 "language": "GDScript",
-"path": "res://src/model/play_asset_pack_request.gd"
-}, {
-"base": "Object",
-"class": "PlayAssetPackRequestTracker",
-"language": "GDScript",
-"path": "res://src/play_asset_pack_request_tracker.gd"
+"path": "res://src/model/request/play_asset_pack_remove_request2.gd"
 }, {
 "base": "Object",
 "class": "PlayAssetPackState",
@@ -43,15 +48,22 @@ _global_script_classes=[ {
 "class": "PlayAssetPackStates",
 "language": "GDScript",
 "path": "res://src/model/play_asset_pack_states.gd"
+}, {
+"base": "PlayAssetDeliveryRequest",
+"class": "PlayCellularDataConfirmationRequest",
+"language": "GDScript",
+"path": "res://src/model/request/play_cellular_data_confirmation_request.gd"
 } ]
 _global_script_class_icons={
 "FakeAndroidPlugin": "",
+"PlayAssetDeliveryRequest": "",
+"PlayAssetDeliveryRequestTracker": "",
 "PlayAssetLocation": "",
 "PlayAssetPackLocation": "",
-"PlayAssetPackRequest": "",
-"PlayAssetPackRequestTracker": "",
+"PlayAssetPackRemoveRequest": "",
 "PlayAssetPackState": "",
-"PlayAssetPackStates": ""
+"PlayAssetPackStates": "",
+"PlayCellularDataConfirmationRequest": ""
 }
 
 [application]

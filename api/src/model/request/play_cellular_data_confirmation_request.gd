@@ -16,12 +16,16 @@
 #
 # ##############################################################################
 #
-# Base class used for handling async requests. Able to receive asynchronous 
-# signals emitted from PlayAssetDelivery Android Plugin.
+# TODO
 #
 # ##############################################################################
-class_name PlayAssetPackRequest
-extends Object
+class_name PlayCellularDataConfirmationRequest
+extends PlayAssetDeliveryRequest
 
-func _init():
-	pass
+func on_show_cellular_data_confirmation_success(result : int):
+	emit_signal("request_completed", true, result)
+
+func on_show_cellular_data_confirmation_error(error: Dictionary):
+	emit_signal("request_completed", true, error)
+
+

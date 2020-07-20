@@ -19,24 +19,24 @@
 extends "res://test/test_helper/base_test_class.gd"
 
 func test_register_request_single_request():
-	var test_request_tracker = PlayAssetPackRequestTracker.new()
-	var test_request_object = PlayAssetPackRequest.new()
+	var test_request_tracker = PlayAssetDeliveryRequestTracker.new()
+	var test_request_object = PlayAssetDeliveryRequest.new()
 	
 	# register the request
 	var test_signal_id = test_request_tracker.register_request(test_request_object)
 	
 	# lookup the request with signal_id
-	assert_eq(test_signal_id, PlayAssetPackRequestTracker._SIGNAL_ID_MIN)
+	assert_eq(test_signal_id, PlayAssetDeliveryRequestTracker._SIGNAL_ID_MIN)
 	assert_eq(test_request_tracker.lookup_request(test_signal_id), test_request_object)
 	
 func test_register_request_multiple_requests():
-	var test_request_tracker = PlayAssetPackRequestTracker.new()
+	var test_request_tracker = PlayAssetDeliveryRequestTracker.new()
 
-	var test_request_object1 = PlayAssetPackRequest.new()
-	var test_request_object2 = PlayAssetPackRequest.new()
-	var test_request_object3 = PlayAssetPackRequest.new()
-	var test_request_object4 = PlayAssetPackRequest.new()
-	var test_request_object5 = PlayAssetPackRequest.new()
+	var test_request_object1 = PlayAssetDeliveryRequest.new()
+	var test_request_object2 = PlayAssetDeliveryRequest.new()
+	var test_request_object3 = PlayAssetDeliveryRequest.new()
+	var test_request_object4 = PlayAssetDeliveryRequest.new()
+	var test_request_object5 = PlayAssetDeliveryRequest.new()
 
 	# register multiple requests
 	var test_signal_id1 = test_request_tracker.register_request(test_request_object1)
@@ -45,11 +45,11 @@ func test_register_request_multiple_requests():
 	var test_signal_id4 = test_request_tracker.register_request(test_request_object4)
 	var test_signal_id5 = test_request_tracker.register_request(test_request_object5)
 	
-	assert_eq(test_signal_id1, PlayAssetPackRequestTracker._SIGNAL_ID_MIN)
-	assert_eq(test_signal_id2, PlayAssetPackRequestTracker._SIGNAL_ID_MIN + 1)
-	assert_eq(test_signal_id3, PlayAssetPackRequestTracker._SIGNAL_ID_MIN + 2)
-	assert_eq(test_signal_id4, PlayAssetPackRequestTracker._SIGNAL_ID_MIN + 3)
-	assert_eq(test_signal_id5, PlayAssetPackRequestTracker._SIGNAL_ID_MIN + 4)
+	assert_eq(test_signal_id1, PlayAssetDeliveryRequestTracker._SIGNAL_ID_MIN)
+	assert_eq(test_signal_id2, PlayAssetDeliveryRequestTracker._SIGNAL_ID_MIN + 1)
+	assert_eq(test_signal_id3, PlayAssetDeliveryRequestTracker._SIGNAL_ID_MIN + 2)
+	assert_eq(test_signal_id4, PlayAssetDeliveryRequestTracker._SIGNAL_ID_MIN + 3)
+	assert_eq(test_signal_id5, PlayAssetDeliveryRequestTracker._SIGNAL_ID_MIN + 4)
 
 	# lookup requests
 	assert_eq(test_request_tracker.lookup_request(test_signal_id1), test_request_object1)
@@ -59,13 +59,13 @@ func test_register_request_multiple_requests():
 	assert_eq(test_request_tracker.lookup_request(test_signal_id5), test_request_object5)
 
 func test_lookup_request_nonexistent_signal_id():
-	var test_request_tracker = PlayAssetPackRequestTracker.new()
+	var test_request_tracker = PlayAssetDeliveryRequestTracker.new()
 	var test_signal_id = 42
 	assert_eq(test_request_tracker.lookup_request(test_signal_id), null)
 
 func test_remove_request_valid():
-	var test_request_tracker = PlayAssetPackRequestTracker.new()
-	var test_request_object = PlayAssetPackRequest.new()
+	var test_request_tracker = PlayAssetDeliveryRequestTracker.new()
+	var test_request_object = PlayAssetDeliveryRequest.new()
 	
 	var test_signal_id = test_request_tracker.register_request(test_request_object)
 	test_request_tracker.unregister_request(test_signal_id)
@@ -76,10 +76,10 @@ func test_remove_request_valid():
 func test_register_request_concurrency():
 	# Use Godot's multithreading API to register several requests at once.
 	# Test if RequestTracker is thread-safe
-	var test_request_tracker = PlayAssetPackRequestTracker.new()
+	var test_request_tracker = PlayAssetDeliveryRequestTracker.new()
 
-	var test_request_object1 = PlayAssetPackRequest.new()
-	var test_request_object2 = PlayAssetPackRequest.new()
+	var test_request_object1 = PlayAssetDeliveryRequest.new()
+	var test_request_object2 = PlayAssetDeliveryRequest.new()
 	
 	var thread1 = Thread.new()
 	thread1.start(self, "register_request_concurrency_helper", [test_request_tracker, test_request_object1])
@@ -93,6 +93,6 @@ func test_register_request_concurrency():
 	assert_true(test_request_object2 in test_request_tracker._signal_id_to_request_map.values())
 
 func register_request_concurrency_helper(input_array : Array):
-	var test_request_tracker : PlayAssetPackRequestTracker = input_array[0]
-	var test_request_object : PlayAssetPackRequest = input_array[1]
+	var test_request_tracker : PlayAssetDeliveryRequestTracker = input_array[0]
+	var test_request_object : PlayAssetDeliveryRequest = input_array[1]
 	test_request_tracker.register_request(test_request_object)

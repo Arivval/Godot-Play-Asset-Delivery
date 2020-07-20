@@ -16,7 +16,7 @@
 #
 # ##############################################################################
 #
-# The PlayAssetPackRequestTracker class generates unique signal_id integers and
+# The PlayAssetDeliveryRequestTracker class generates unique signal_id integers and
 # keeps a mapping of signal_id to Request objects. This signal_id is used as an
 # identifier and passed to the Android plugin. Eventually the Android plugin will
 # emit signals along with this signal_id. In this way we can know which signal 
@@ -25,7 +25,7 @@
 # we need to handle all the critical sections.
 #
 # ##############################################################################
-class_name PlayAssetPackRequestTracker
+class_name PlayAssetDeliveryRequestTracker
 extends Object
 
 const _SIGNAL_ID_MIN = 0
@@ -43,7 +43,7 @@ func get_current_signal_id() -> int:
 	return _signal_id_counter
 
 # registers the request object and returns the signal_id assigned
-func register_request(request : PlayAssetPackRequest) -> int:
+func register_request(request) -> int:
 	_request_tracker_mutex.lock()
 	var return_signal_id = _signal_id_counter
 	_signal_id_to_request_map[_signal_id_counter] = request
@@ -51,7 +51,7 @@ func register_request(request : PlayAssetPackRequest) -> int:
 	_request_tracker_mutex.unlock()
 	return return_signal_id
 
-func lookup_request(signal_id : int) -> PlayAssetPackRequest:
+func lookup_request(signal_id : int):
 	var return_request = null
 	_request_tracker_mutex.lock()
 	if signal_id in _signal_id_to_request_map:

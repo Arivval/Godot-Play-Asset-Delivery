@@ -24,7 +24,7 @@
 extends Node
 
 var _plugin_singleton : Object
-var _request_tracker : PlayAssetPackRequestTracker
+var _request_tracker : PlayAssetDeliveryRequestTracker
 
 # -----------------------------------------------------------------------------
 # Enums
@@ -69,7 +69,7 @@ func _ready():
 
 func _initialize():
 	_plugin_singleton = _initialize_plugin()
-	_request_tracker = PlayAssetPackRequestTracker.new()
+	_request_tracker = PlayAssetDeliveryRequestTracker.new()
 
 # -----------------------------------------------------------------------------
 # Returns the PlayAssetDelivery Android Plugin singleton, null if this plugin
@@ -77,10 +77,35 @@ func _initialize():
 # -----------------------------------------------------------------------------
 func _initialize_plugin() -> Object:
 	if Engine.has_singleton("PlayAssetDelivery"):
-		return Engine.get_singleton("PlayAssetDelivery")
+		var plugin = Engine.get_singleton("PlayAssetDelivery")
+		# connect signals
+		plugin.connect("removePackSuccess", self, "remove_pack_success")
+		plugin.connect("removeError", self, "remove_pack_error")
+		plugin.connect("showCellularDataConfirmationSuccess", self, "show_cellular_data_confirmation_success")
+		plugin.connect("showCellularDataConfirmationError", self, "show_cellular_data_confirmation_error")
+		return plugin
 	else:
 		push_error("Android plugin singleton not found!")
 		return null
+
+# -----------------------------------------------------------------------------
+# Helper functions that receive the signals emitted from the plugin
+# -----------------------------------------------------------------------------
+func show_cellular_data_confirmation_success(result : int, signal_id : int):
+	var target_request = _request_tracker.lookup_request(signal_id)
+	target_request.on_show_cellular_data_confirmation_success(result)
+
+func show_cellular_data_confirmation_error(error : Dictionary, signal_id : int):
+	var target_request = _request_tracker.lookup_request(signal_id)
+	target_request.on_show_cellular_data_confirmation_error(error)
+
+func remove_pack_success(signal_id : int):
+	var target_request = _request_tracker.lookup_request(signal_id)
+	target_request.on_remove_pack_success()
+
+func remove_pack_error(error : int, signal_id : int):
+	var target_request = _request_tracker.lookup_request(signal_id)
+	target_request.on_remove_pack_error(error)
 
 # -----------------------------------------------------------------------------
 # Returns the location of the specified asset in pack on the device, null if 
@@ -133,3 +158,16 @@ func cancel_asset_pack_request(pack_name : String) -> bool:
 	var updated_asset_pack_status = updated_asset_pack_state.get_status()
 	
 	return updated_asset_pack_status == AssetPackStatus.CANCELED
+
+func show_cellular_data_confirmation():
+	var return_request = PlayCellularDataConfirmationRequest.new()
+	var signal_id = _request_tracker.register_request(return_request)
+	_plugin_singleton.showCellularDataConfirmation(signal_id)
+	return return_request
+
+
+func remove_asset_pack(pack_name: String):
+	var return_request = PlayAssetPackRemoveRequest.new()
+	var signal_id = _request_tracker.register_request(return_request)
+	_plugin_singleton.removePack(pack_name, signal_id)
+	return return_request
