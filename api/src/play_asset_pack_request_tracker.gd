@@ -29,13 +29,13 @@ extends Object
 const _SIGNAL_ID_MIN = 0
 
 var _signal_id_counter : int
-var _register_request_mutex : Mutex
+var _request_tracker_mutex : Mutex
 var _signal_id_to_request_map : Dictionary
 
 func _init():
 	_signal_id_counter = _SIGNAL_ID_MIN
 	_signal_id_to_request_map = Dictionary()
-	_register_request_mutex = Mutex.new()
+	_request_tracker_mutex = Mutex.new()
 
 func get_current_signal_id() -> int:
 	return _signal_id_counter
@@ -44,19 +44,23 @@ func get_current_signal_id() -> int:
 func register_request(request : PlayAssetPackRequest) -> int:
 	# since we read _signal_id_counter at start and increment at end of this function,
 	# we need to make it a critical section
-	_register_request_mutex.lock()
+	_request_tracker_mutex.lock()
 	var return_signal_id = _signal_id_counter
 	_signal_id_to_request_map[_signal_id_counter] = request
 	_signal_id_counter += 1
-	_register_request_mutex.unlock()
+	_request_tracker_mutex.unlock()
 	return return_signal_id
 
 func lookup_request(signal_id : int) -> PlayAssetPackRequest:
+	_request_tracker_mutex.lock()
 	if signal_id in _signal_id_to_request_map:
 		return _signal_id_to_request_map[signal_id]
+	_request_tracker_mutex.unlock()
 	return null
 
 func unregister_request(signal_id : int) -> void:
+	_request_tracker_mutex.lock()
 	if signal_id in _signal_id_to_request_map:
 		_signal_id_to_request_map.erase(signal_id)
+	_request_tracker_mutex.unlock()
 
