@@ -29,11 +29,13 @@ extends Object
 const _SIGNAL_ID_MIN = 0
 
 var _signal_id_counter : int
+var _register_request_mutex : Mutex
 var _signal_id_to_request_map : Dictionary
 
 func _init():
 	_signal_id_counter = _SIGNAL_ID_MIN
 	_signal_id_to_request_map = Dictionary()
+	_register_request_mutex = Mutex.new()
 
 func get_current_signal_id() -> int:
 	return _signal_id_counter
@@ -43,9 +45,13 @@ func _increment_signal_id() -> void:
 
 # registers the request object and returns the signal_id assigned
 func register_request(request : PlayAssetPackRequest) -> int:
+	# since we read _signal_id_counter at start and increment at end of this function,
+	# we need to make it a critical section
+	_register_request_mutex.lock()
 	var return_signal_id = _signal_id_counter
 	_signal_id_to_request_map[_signal_id_counter] = request
 	_increment_signal_id()
+	_register_request_mutex.unlock()
 	return return_signal_id
 
 func lookup_request(signal_id : int) -> PlayAssetPackRequest:
