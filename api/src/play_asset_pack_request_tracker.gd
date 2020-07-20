@@ -52,13 +52,12 @@ func register_request(request : PlayAssetPackRequest) -> int:
 	return return_signal_id
 
 func lookup_request(signal_id : int) -> PlayAssetPackRequest:
+	var return_request = null
 	_request_tracker_mutex.lock()
 	if signal_id in _signal_id_to_request_map:
-		var return_request = _signal_id_to_request_map[signal_id]
-		_request_tracker_mutex.unlock()
-		return return_request
+		return_request = _signal_id_to_request_map[signal_id]
 	_request_tracker_mutex.unlock()
-	return null
+	return return_request
 
 func unregister_request(signal_id : int) -> void:
 	_request_tracker_mutex.lock()
