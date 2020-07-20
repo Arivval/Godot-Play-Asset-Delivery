@@ -20,7 +20,9 @@
 # keeps a mapping of signal_id to Request objects. This signal_id is used as an
 # identifier and passed to the Android plugin. Eventually the Android plugin will
 # emit signals along with this signal_id. In this way we can know which signal 
-# emitted from the plugin corresponds to which Request object
+# emitted from the plugin corresponds to which Request object. Since multiple
+# threads can read and write to _signal_id_to_request_map and _signal_id_counter,
+# we need to lock all the critical sections.
 #
 # ##############################################################################
 class_name PlayAssetPackRequestTracker
@@ -42,8 +44,6 @@ func get_current_signal_id() -> int:
 
 # registers the request object and returns the signal_id assigned
 func register_request(request : PlayAssetPackRequest) -> int:
-	# since we read _signal_id_counter at start and increment at end of this function,
-	# we need to make it a critical section
 	_request_tracker_mutex.lock()
 	var return_signal_id = _signal_id_counter
 	_signal_id_to_request_map[_signal_id_counter] = request
