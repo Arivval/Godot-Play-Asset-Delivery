@@ -17,6 +17,7 @@
 # ##############################################################################
 
 extends "res://test/test_helper/base_test_class.gd"
+signal start_concurrency_signal
 
 func test_register_request_single_request():
 	var test_request_tracker = PlayAssetPackRequestTracker.new()
@@ -72,3 +73,27 @@ func test_remove_request_valid():
 	
 	assert_true(not test_signal_id in test_request_tracker._signal_id_to_request_map)
 	assert_eq(test_request_tracker.lookup_request(test_signal_id), null)
+
+func test_register_request_concurrency():
+	# Use Godot's multithreading API to register serveral requests at once.
+	# Test if RequestTracker is thread-safe
+	var test_request_tracker = PlayAssetPackRequestTracker.new()
+
+	var test_request_object1 = PlayAssetPackRequest.new()
+	var test_request_object2 = PlayAssetPackRequest.new()
+	
+	var thread1 = Thread.new()
+	thread1.start(self, "register_request_concurrency_helper", [test_request_tracker, test_request_object1])
+	var thread2 = Thread.new()
+	thread2.start(self, "register_request_concurrency_helper", [test_request_tracker, test_request_object2])
+	thread1.wait_to_finish()
+	thread2.wait_to_finish()
+	
+	assert_eq(test_request_tracker.get_current_signal_id(), 2)
+	assert_true(test_request_object1 in test_request_tracker._signal_id_to_request_map.values())
+	assert_true(test_request_object2 in test_request_tracker._signal_id_to_request_map.values())
+
+func register_request_concurrency_helper(input_array : Array):
+	var test_request_tracker : PlayAssetPackRequestTracker = input_array[0]
+	var test_request_object : PlayAssetPackRequest = input_array[1]
+	test_request_tracker.register_request(test_request_object)
