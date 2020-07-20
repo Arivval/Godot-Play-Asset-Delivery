@@ -54,6 +54,7 @@ func register_request(request : PlayAssetPackRequest) -> int:
 func lookup_request(signal_id : int) -> PlayAssetPackRequest:
 	_request_tracker_mutex.lock()
 	if signal_id in _signal_id_to_request_map:
+		_request_tracker_mutex.unlock()
 		return _signal_id_to_request_map[signal_id]
 	_request_tracker_mutex.unlock()
 	return null
