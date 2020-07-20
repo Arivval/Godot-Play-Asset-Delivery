@@ -40,9 +40,6 @@ func _init():
 func get_current_signal_id() -> int:
 	return _signal_id_counter
 
-func _increment_signal_id() -> void:
-	_signal_id_counter += 1
-
 # registers the request object and returns the signal_id assigned
 func register_request(request : PlayAssetPackRequest) -> int:
 	# since we read _signal_id_counter at start and increment at end of this function,
@@ -50,7 +47,7 @@ func register_request(request : PlayAssetPackRequest) -> int:
 	_register_request_mutex.lock()
 	var return_signal_id = _signal_id_counter
 	_signal_id_to_request_map[_signal_id_counter] = request
-	_increment_signal_id()
+	_signal_id_counter += 1
 	_register_request_mutex.unlock()
 	return return_signal_id
 
