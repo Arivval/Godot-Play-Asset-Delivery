@@ -74,7 +74,7 @@ func test_remove_request_valid():
 	assert_eq(test_request_tracker.lookup_request(test_signal_id), null)
 
 func test_register_request_concurrency():
-	# Use Godot's multithreading API to register serveral requests at once.
+	# Use Godot's multithreading API to register several requests at once.
 	# Test if RequestTracker is thread-safe
 	var test_request_tracker = PlayAssetPackRequestTracker.new()
 
