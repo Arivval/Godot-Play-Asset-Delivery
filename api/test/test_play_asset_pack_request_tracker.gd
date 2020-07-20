@@ -17,7 +17,6 @@
 # ##############################################################################
 
 extends "res://test/test_helper/base_test_class.gd"
-signal start_concurrency_signal
 
 func test_register_request_single_request():
 	var test_request_tracker = PlayAssetPackRequestTracker.new()
