@@ -16,7 +16,14 @@
 #
 # ##############################################################################
 #
-# TODO
+# Request object that handles asychronous logic related to 
+# show_cellular_data_confirmation().
+#
+# Emits request_completed signal upon success/error.
+# The first boolean argument will be true if remove request succeeds.
+# If success the second arguemtn will be contain the integer result, represented
+# by an AssetPackStorageMethod enum. Else the second argument will contain a 
+# PlayAssetPackException object representing the exception encountered.
 #
 # ##############################################################################
 class_name PlayCellularDataConfirmationRequest
@@ -26,6 +33,7 @@ func on_show_cellular_data_confirmation_success(result : int):
 	emit_signal("request_completed", true, result)
 
 func on_show_cellular_data_confirmation_error(error: Dictionary):
-	emit_signal("request_completed", true, error)
+	var exception_object = PlayAssetPackException.new(error)
+	emit_signal("request_completed", false, exception_object)
 
 

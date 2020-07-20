@@ -69,7 +69,19 @@ func _ready():
 
 func _initialize():
 	_plugin_singleton = _initialize_plugin()
+	_connect_plugin_signals()
 	_request_tracker = PlayAssetDeliveryRequestTracker.new()
+
+# -----------------------------------------------------------------------------
+# Connect signals so that signals emitted from the plugin can be correctly
+# linked to functions in the front-facing API
+# -----------------------------------------------------------------------------
+func _connect_plugin_signals():
+	if _plugin_singleton != null:
+		_plugin_singleton.connect("removePackSuccess", self, "remove_pack_success")
+		_plugin_singleton.connect("removeError", self, "remove_pack_error")
+		_plugin_singleton.connect("showCellularDataConfirmationSuccess", self, "show_cellular_data_confirmation_success")
+		_plugin_singleton.connect("showCellularDataConfirmationError", self, "show_cellular_data_confirmation_error")
 
 # -----------------------------------------------------------------------------
 # Returns the PlayAssetDelivery Android Plugin singleton, null if this plugin
@@ -77,13 +89,7 @@ func _initialize():
 # -----------------------------------------------------------------------------
 func _initialize_plugin() -> Object:
 	if Engine.has_singleton("PlayAssetDelivery"):
-		var plugin = Engine.get_singleton("PlayAssetDelivery")
-		# connect signals
-		plugin.connect("removePackSuccess", self, "remove_pack_success")
-		plugin.connect("removeError", self, "remove_pack_error")
-		plugin.connect("showCellularDataConfirmationSuccess", self, "show_cellular_data_confirmation_success")
-		plugin.connect("showCellularDataConfirmationError", self, "show_cellular_data_confirmation_error")
-		return plugin
+		return Engine.get_singleton("PlayAssetDelivery")
 	else:
 		push_error("Android plugin singleton not found!")
 		return null
@@ -159,15 +165,42 @@ func cancel_asset_pack_request(pack_name : String) -> bool:
 	
 	return updated_asset_pack_status == AssetPackStatus.CANCELED
 
-func show_cellular_data_confirmation():
-	var return_request = PlayCellularDataConfirmationRequest.new()
-	var signal_id = _request_tracker.register_request(return_request)
-	_plugin_singleton.showCellularDataConfirmation(signal_id)
-	return return_request
-
-
+# -----------------------------------------------------------------------------
+# Deletes the specified asset pack from the internal storage of the app.
+#
+# Use this method to delete asset packs instead of deleting files manually. 
+# This ensures that the Asset Pack will not be re-downloaded during an app 
+# update.
+#
+# If the asset pack is currently being downloaded or installed, this method 
+# does not cancel the process. For this case, use cancel_asset_pack_request()
+# instead.
+#
+# Returns a PlayAssetPackRemoveRequest object that can emit onComplete signal
+# once the remove request succeeded or failed.
+# -----------------------------------------------------------------------------
 func remove_asset_pack(pack_name: String):
 	var return_request = PlayAssetPackRemoveRequest.new()
 	var signal_id = _request_tracker.register_request(return_request)
 	_plugin_singleton.removePack(pack_name, signal_id)
+	return return_request
+
+# -----------------------------------------------------------------------------
+# Shows a confirmation dialog to resume all pack downloads that are currently 
+# in the WAITING_FOR_WIFI state. If the user accepts the dialog, packs are 
+# downloaded over cellular data. 
+# 
+# The status of an asset pack is set to WAITING_FOR_WIFI if the user is 
+# currently not on a Wi-Fi connection and the asset pack is large or the user 
+# has set their download preference in the Play Store to only download apps 
+# over Wi-Fi. By showing this dialog, your app can ask the user if they accept 
+# downloading the asset pack over cellular data instead of waiting for Wi-Fi.
+#
+# Returns a PlayCellularDataConfirmationRequest object that can emit onComplete 
+# signal once the the dialog has been accepted, denied, closed.
+# -----------------------------------------------------------------------------
+func show_cellular_data_confirmation():
+	var return_request = PlayCellularDataConfirmationRequest.new()
+	var signal_id = _request_tracker.register_request(return_request)
+	_plugin_singleton.showCellularDataConfirmation(signal_id)
 	return return_request

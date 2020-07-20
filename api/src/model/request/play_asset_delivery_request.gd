@@ -16,7 +16,8 @@
 #
 # ##############################################################################
 #
-# TODO
+# Base class used for handling async requests. Able to receive asynchronous 
+# signals emitted from PlayAssetDelivery Android Plugin.
 #
 # ##############################################################################
 class_name PlayAssetDeliveryRequest

@@ -16,7 +16,12 @@
 #
 # ##############################################################################
 #
-# TODO
+# Request object that handles asychronous logic related to remove_asset_pack().
+# 
+# Emits request_completed signal upon success/error.
+# The first boolean argument is true is remove request is success.
+# If success the second arguemtn will be null. Else the second argument will
+# contain a PlayAssetPackException object representing the exception encountered.
 #
 # ##############################################################################
 class_name PlayAssetPackRemoveRequest
@@ -26,6 +31,7 @@ func on_remove_pack_success():
 	emit_signal("request_completed", true, null)
 
 func on_remove_pack_error(error: Dictionary):
-	emit_signal("request_completed", true, error)
+	var exception_object = PlayAssetPackException.new(error)
+	emit_signal("request_completed", false, exception_object)
 
 
