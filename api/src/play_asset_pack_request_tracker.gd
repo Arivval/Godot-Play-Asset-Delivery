@@ -22,7 +22,7 @@
 # emit signals along with this signal_id. In this way we can know which signal 
 # emitted from the plugin corresponds to which Request object. Since multiple
 # threads can read and write to _signal_id_to_request_map and _signal_id_counter,
-# we need to lock all the critical sections.
+# we need to handle all the critical sections.
 #
 # ##############################################################################
 class_name PlayAssetPackRequestTracker
