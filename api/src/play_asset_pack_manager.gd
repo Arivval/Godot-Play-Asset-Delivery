@@ -24,7 +24,7 @@
 extends Node
 
 var _plugin_singleton : Object
-var _request_tracker : PlayAssetDeliveryRequestTracker
+var _request_tracker
 
 # -----------------------------------------------------------------------------
 # Enums
@@ -98,7 +98,9 @@ func _initialize_plugin() -> Object:
 # Helper functions that receive the signals emitted from the plugin
 # -----------------------------------------------------------------------------
 func show_cellular_data_confirmation_success(result : int, signal_id : int):
+	print("show_cellular_data_confirmation_success called")
 	var target_request = _request_tracker.lookup_request(signal_id)
+	print(target_request)
 	target_request.on_show_cellular_data_confirmation_success(result)
 
 func show_cellular_data_confirmation_error(error : Dictionary, signal_id : int):

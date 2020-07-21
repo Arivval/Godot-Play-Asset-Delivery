@@ -128,3 +128,9 @@ func create_mock_asset_pack_state_with_status_dict(pack_name : String, status : 
 		PlayAssetPackState._TRANSFER_PROGRESS_PERCENTAGE_KEY: 0
 	}
 
+func create_mock_asset_pack_java_lang_exception_dict():
+	return {
+		PlayAssetPackException._TYPE_KEY: "java.lang.Exception", 
+		PlayAssetPackException._MESSAGE_KEY: "Just an usual exception", 
+		PlayAssetPackException._ERROR_CODE_KEY: -100
+	}

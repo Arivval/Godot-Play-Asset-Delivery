@@ -18,20 +18,12 @@
 extends "res://test/test_helper/base_test_class.gd"
 
 func test_play_asset_pack_exception_valid():
-	var test_dict = {
-		PlayAssetPackException._TYPE_KEY: "java.lang.Exception", 
-		PlayAssetPackException._MESSAGE_KEY: "Just an usual exception", 
-		PlayAssetPackException._ERROR_CODE_KEY: -100
-	}
+	var test_dict = create_mock_asset_pack_java_lang_exception_dict()
 	var test_object = PlayAssetPackException.new(test_dict)
 	assert_asset_pack_exception_eq_dict(test_object, test_dict)
 
 func test_play_asset_location_deepcopy():
-	var test_dict = {
-		PlayAssetPackException._TYPE_KEY: "java.lang.Exception", 
-		PlayAssetPackException._MESSAGE_KEY: "Just an usual exception", 
-		PlayAssetPackException._ERROR_CODE_KEY: -100
-	}
+	var test_dict = create_mock_asset_pack_java_lang_exception_dict()
 	var expected_dict = test_dict.duplicate()
 	var test_object = PlayAssetPackException.new(test_dict)
 	

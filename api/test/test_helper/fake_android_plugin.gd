@@ -24,10 +24,21 @@
 class_name FakeAndroidPlugin
 extends Object
 
+signal removePackSuccess
+signal removePackError
+signal showCellularDataConfirmationSuccess
+signal showCellularDataConfirmationError
+
 var _asset_location_store : Dictionary
 var _asset_pack_location_store : Dictionary
 
 var _asset_pack_states_store : Dictionary
+
+var _show_confirmation_success : bool
+var _show_confirmation_result : int
+var _show_confirmation_error : Dictionary
+
+var _show_confirmation_thread : Thread
 
 func _init():
 	_asset_location_store = Dictionary()
@@ -85,6 +96,25 @@ func remove_asset_pack_state(pack_name : String):
 		_asset_pack_states_store[PlayAssetPackStates._TOTAL_BYTES_KEY] -= pack_size
 		_asset_pack_states_store[PlayAssetPackStates._PACK_STATES_KEY].erase(pack_name)
 
+func set_show_confirmation_response(success : bool, result : int, error : Dictionary):
+	_show_confirmation_success = success
+	_show_confirmation_result = result
+	_show_confirmation_error = error
+
+# -----------------------------------------------------------------------------
+# Helper function that emits the signal from another thread so we have time to connect to that 
+# signal on main thread for testing.
+# -----------------------------------------------------------------------------
+func emit_signal_helper(args : Array):
+	# Delay this thread by 100 milliseconds so we can connect/yield to signal in time.
+	OS.delay_msec(100)
+	# Since all the signals released by the plugin contains either 2 or 3 arguments, we only need
+	# to handle 2 cases.
+	if args.size() == 2:
+		emit_signal(args[0], args[1])
+	if args.size() == 3:
+		emit_signal(args[0], args[1], args[2])
+
 # -----------------------------------------------------------------------------
 # Mock Functions
 # -----------------------------------------------------------------------------
@@ -127,3 +157,12 @@ func cancel(pack_names : Array):
 			return_asset_pack_states[PlayAssetPackStates._PACK_STATES_KEY][pack_name] = current_asset_pack_dict
 
 	return return_asset_pack_states
+
+func showCellularDataConfirmation(signal_id : int):
+	_show_confirmation_thread = Thread.new()
+	if _show_confirmation_success:
+		var thread_args = ["showCellularDataConfirmationSuccess", _show_confirmation_result, signal_id]
+		_show_confirmation_thread.start(self, "emit_signal_helper", thread_args)
+	else:
+		var thread_args = ["showCellularDataConfirmationError", _show_confirmation_error, signal_id]
+		_show_confirmation_thread.start(self, "emit_signal_helper", thread_args)

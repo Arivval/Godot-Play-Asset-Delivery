@@ -22,6 +22,7 @@ func create_play_asset_pack_manager(mock_plugin):
 	var test_object = partial_double("res://src/play_asset_pack_manager.gd").new()
 	stub(test_object, "_initialize_plugin").to_return(mock_plugin)
 	test_object._initialize()
+	test_object._connect_plugin_signals()
 	return test_object
 
 func test_get_asset_location_valid():
@@ -161,3 +162,64 @@ func test_cancel_asset_pack_request_non_existing_pack_name():
 	
 	var test_result : bool = test_object.cancel_asset_pack_request(test_pack_name)
 	assert_eq(test_result, false)
+
+func test_show_cellular_data_confirmation_success():
+	var mock_plugin = FakeAndroidPlugin.new()
+
+	# configure what should be emitted upon show_cellular_data_confirmation() call
+	mock_plugin.set_show_confirmation_response(true, PlayAssetPackManager.AssetPackStorageMethod.STORAGE_FILES, {})
+	var test_object = create_play_asset_pack_manager(mock_plugin)
+	
+	var request_object = test_object.show_cellular_data_confirmation()
+	
+	request_object.connect("request_completed", self, "show_cellular_data_confirmation_success_helper")
+	
+	# yield to the request_completed signal for no longer than 1 seconds and assert for signal emitted
+	yield(yield_to(request_object, "request_completed", 1), YIELD)
+	assert_signal_emitted(request_object, "request_completed", "signal should have emitted")
+	
+	# assert using getters, simulating the workflow yielding the signals
+	assert_true(request_object.get_status())
+	assert_eq(request_object.get_result(), PlayAssetPackManager.AssetPackStorageMethod.STORAGE_FILES)
+	
+	# join instantiated thread
+	mock_plugin._show_confirmation_thread.wait_to_finish()
+
+func show_cellular_data_confirmation_success_helper(status : bool, result : int):
+	# assert using callback, simulating the workflow connecting callback to signal
+	assert_eq(status, true)
+	assert_eq(result, PlayAssetPackManager.AssetPackStorageMethod.STORAGE_FILES)
+
+func test_show_cellular_data_confirmation_success_error():
+	var mock_plugin = FakeAndroidPlugin.new()
+	
+	# configure what should be emitted upon show_cellular_data_confirmation() call
+	mock_plugin.set_show_confirmation_response(false, 0, create_mock_asset_pack_java_lang_exception_dict())
+	var test_object = create_play_asset_pack_manager(mock_plugin)
+	
+	var request_object = test_object.show_cellular_data_confirmation()
+
+	request_object.connect("request_completed", self, "show_cellular_data_confirmation_success_error_helper")
+	
+	# yield to the request_completed signal for no longer than 1 seconds and assert for signal emitted
+	yield(yield_to(request_object, "request_completed", 1), YIELD)
+	assert_signal_emitted(request_object, "request_completed", "signal should have emitted")
+	
+	# assert using getters, simulating the workflow yielding the signals
+	assert_true(not request_object.get_status())
+	assert_asset_pack_exception_eq_dict(request_object.get_error(), \
+		create_mock_asset_pack_java_lang_exception_dict())
+	
+	# join instantiated thread
+	mock_plugin._show_confirmation_thread.wait_to_finish()
+
+func show_cellular_data_confirmation_success_error_helper(status : bool, error : PlayAssetPackException):
+	# assert using callback, simulating the workflow connecting callback to signal
+	assert_eq(status, false)
+	assert_asset_pack_exception_eq_dict(error, create_mock_asset_pack_java_lang_exception_dict())
+
+func test_remove_asset_pack_connect_success():
+	pass
+
+func test_remove_asset_pack_connect_error():
+	pass
