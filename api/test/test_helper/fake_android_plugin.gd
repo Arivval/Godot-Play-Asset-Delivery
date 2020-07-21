@@ -29,6 +29,8 @@ signal removePackError
 signal showCellularDataConfirmationSuccess
 signal showCellularDataConfirmationError
 
+const _EMIT_DELAYED_SIGNAL_FUNCTION : String = "emit_delayed_signal"
+
 var _asset_location_store : Dictionary
 var _asset_pack_location_store : Dictionary
 
@@ -176,10 +178,10 @@ func showCellularDataConfirmation(signal_id : int):
 	_show_confirmation_thread = Thread.new()
 	if _show_confirmation_success:
 		var thread_args = ["showCellularDataConfirmationSuccess", _show_confirmation_result, signal_id]
-		_show_confirmation_thread.start(self, "emit_delayed_signal", thread_args)
+		_show_confirmation_thread.start(self, _EMIT_DELAYED_SIGNAL_FUNCTION, thread_args)
 	else:
 		var thread_args = ["showCellularDataConfirmationError", _show_confirmation_error, signal_id]
-		_show_confirmation_thread.start(self, "emit_delayed_signal", thread_args)
+		_show_confirmation_thread.start(self, _EMIT_DELAYED_SIGNAL_FUNCTION, thread_args)
 
 # -----------------------------------------------------------------------------
 # Simulates the removePack() function in PlayAssetDelivery Android plugin. 
@@ -191,7 +193,7 @@ func removePack(pack_name : String, signal_id : int):
 	_remove_pack_thread = Thread.new()
 	if _remove_pack_success:
 		var thread_args = ["removePackSuccess", signal_id]
-		_remove_pack_thread.start(self, "emit_delayed_signal", thread_args)
+		_remove_pack_thread.start(self, _EMIT_DELAYED_SIGNAL_FUNCTION, thread_args)
 	else:
 		var thread_args = ["removePackError", _remove_pack_error, signal_id]
-		_remove_pack_thread.start(self, "emit_delayed_signal", thread_args)
+		_remove_pack_thread.start(self, _EMIT_DELAYED_SIGNAL_FUNCTION, thread_args)
