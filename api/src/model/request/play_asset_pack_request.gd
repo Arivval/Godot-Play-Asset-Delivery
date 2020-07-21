@@ -61,11 +61,11 @@ func get_error() -> PlayAssetPackException:
 func on_completed_success(asset_pack_state_dict : Dictionary):
 	_status = true
 	_pack_state = PlayAssetPackState.new(asset_pack_state_dict)
-	emit_signal("request_completed", true, _pack_state.duplicate())
+	emit_signal("request_completed", true, _pack_state)
 
 func on_completed_error(error: Dictionary):
 	_status = false
 	_error = PlayAssetPackException.new(error)
-	emit_signal("request_completed", false, _error.duplicate())
+	emit_signal("request_completed", false, _error)
 
 
