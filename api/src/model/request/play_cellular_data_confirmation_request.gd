@@ -20,7 +20,7 @@
 # show_cellular_data_confirmation().
 # 
 # This object provides relevant getters so that it is possible to retrieve
-# the updated states from this object using the yield to signal approach.
+# the updated states from this object once the request completes.
 #
 # ##############################################################################
 class_name PlayCellularDataConfirmationRequest
@@ -60,12 +60,12 @@ func get_error() -> PlayAssetPackException:
 # 	result : AssetPackStorageMethod enum if request succeeded, otherwise -1
 #	exception: PlayAssetPackException object if request failed, otherwise null
 # -----------------------------------------------------------------------------
-func on_show_cellular_data_confirmation_success(result : int):
+func _on_show_cellular_data_confirmation_success(result : int):
 	_did_succeed = true
 	_result = result
 	emit_signal("request_completed", true, result, null)
 
-func on_show_cellular_data_confirmation_error(error: Dictionary):
+func _on_show_cellular_data_confirmation_error(error: Dictionary):
 	_did_succeed = false
 	_error = PlayAssetPackException.new(error)
 	emit_signal("request_completed", false, -1, _error)

@@ -104,22 +104,22 @@ func _initialize_plugin() -> Object:
 # -----------------------------------------------------------------------------
 func _forward_show_cellular_data_confirmation_success(result : int, signal_id : int):
 	var target_request = _request_tracker.lookup_request(signal_id)
-	target_request.on_show_cellular_data_confirmation_success(result)
+	target_request._on_show_cellular_data_confirmation_success(result)
 	_request_tracker.unregister_request(signal_id)
 
 func _forward_show_cellular_data_confirmation_error(error : Dictionary, signal_id : int):
 	var target_request = _request_tracker.lookup_request(signal_id)
-	target_request.on_show_cellular_data_confirmation_error(error)
+	target_request._on_show_cellular_data_confirmation_error(error)
 	_request_tracker.unregister_request(signal_id)
 
 func _forward_remove_pack_success(signal_id : int):
 	var target_request = _request_tracker.lookup_request(signal_id)
-	target_request.on_remove_pack_success()
+	target_request._on_remove_pack_success()
 	_request_tracker.unregister_request(signal_id)
 
 func _forward_remove_pack_error(error : Dictionary, signal_id : int):
 	var target_request = _request_tracker.lookup_request(signal_id)
-	target_request.on_remove_pack_error(error)
+	target_request._on_remove_pack_error(error)
 	_request_tracker.unregister_request(signal_id)
 
 # -----------------------------------------------------------------------------

@@ -19,7 +19,7 @@
 # Request object that handles asynchronous logic related to remove_pack().
 #
 # This object provides relevant getters so that it is possible to retrieve
-# the updated states from this object using the yield to signal approach.
+# the updated states from this object once the request completes.
 #
 # ##############################################################################
 class_name PlayAssetPackRemoveRequest
@@ -50,11 +50,11 @@ func get_error() -> PlayAssetPackException:
 # 	did_succeed : boolean indicating request succeeded/failed
 #	exception: PlayAssetPackException object if request failed, otherwise null
 # -----------------------------------------------------------------------------
-func on_remove_pack_success():
+func _on_remove_pack_success():
 	_did_succeed = true
 	emit_signal("request_completed", true, null)
 
-func on_remove_pack_error(error: Dictionary):
+func _on_remove_pack_error(error: Dictionary):
 	_did_succeed = false
 	_error = PlayAssetPackException.new(error)
 	emit_signal("request_completed", false, _error)
