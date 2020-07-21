@@ -56,8 +56,7 @@ func on_remove_pack_success():
 
 func on_remove_pack_error(error: Dictionary):
 	_status = false
-	var exception_object = PlayAssetPackException.new(error)
-	_error = exception_object
-	emit_signal("request_completed", false, exception_object)
+	_error = PlayAssetPackException.new(error)
+	emit_signal("request_completed", false, _error)
 
 
