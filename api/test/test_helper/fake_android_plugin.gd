@@ -36,6 +36,7 @@ var _asset_pack_location_store : Dictionary
 
 var _asset_pack_states_store : Dictionary
 
+# TODO: refactor these variables into their own class
 var _show_confirmation_thread : Thread
 var _show_confirmation_success : bool
 var _show_confirmation_result : int
