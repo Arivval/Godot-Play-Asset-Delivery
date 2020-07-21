@@ -25,9 +25,9 @@ class_name FakeAndroidPlugin
 extends Object
 
 signal removePackSuccess(signalID)
-signal removePackError(errorDict, signalID)
+signal removePackError(exceptionDictionary, signalID)
 signal showCellularDataConfirmationSuccess(resultInt, signalID)
-signal showCellularDataConfirmationError(errorDict, signalID)
+signal showCellularDataConfirmationError(exceptionDictionary, signalID)
 
 const _EMIT_DELAYED_SIGNAL_FUNCTION : String = "emit_delayed_signal"
 
