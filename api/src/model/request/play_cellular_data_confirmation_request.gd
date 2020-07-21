@@ -26,7 +26,7 @@
 class_name PlayCellularDataConfirmationRequest
 extends PlayAssetDeliveryRequest
 
-signal request_completed
+signal request_completed(did_succeed, result, exception)
 
 var _did_succeed : bool
 var _result : int
@@ -54,20 +54,20 @@ func get_error() -> PlayAssetPackException:
 # -----------------------------------------------------------------------------
 # Callback functions handling signals emitted from the plugin.
 #
-# Emits request_completed signal upon success/error.
-# The first boolean argument will be true and the second argument will contain 
-# an integer value, represented by an AssetPackStorageMethod enum if remove 
-# request succeeds. Otherwise the second argument will contain a 
-# PlayAssetPackException object representing the exception encountered.
+# Emits request_completed(did_succeed, result, exception) upon request 
+# succeeds/fails.
+# 	did_succeed : boolean indicating request succeeded/failed
+# 	result : AssetPackStorageMethod enum if request succeeded, otherwise -1
+#	exception: PlayAssetPackException object if request failed, otherwise null
 # -----------------------------------------------------------------------------
 func on_show_cellular_data_confirmation_success(result : int):
 	_did_succeed = true
 	_result = result
-	emit_signal("request_completed", true, result)
+	emit_signal("request_completed", true, result, null)
 
 func on_show_cellular_data_confirmation_error(error: Dictionary):
 	_did_succeed = false
 	_error = PlayAssetPackException.new(error)
-	emit_signal("request_completed", false, _error)
+	emit_signal("request_completed", false, -1, _error)
 
 

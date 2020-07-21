@@ -25,7 +25,7 @@
 class_name PlayAssetPackRemoveRequest
 extends PlayAssetDeliveryRequest
 
-signal request_completed
+signal request_completed(did_succeed, exception)
 
 var _did_succeed : bool
 var _error : PlayAssetPackException
@@ -45,10 +45,10 @@ func get_error() -> PlayAssetPackException:
 # -----------------------------------------------------------------------------
 # Callback functions handling signals emitted from the plugin.
 # 
-# Emits request_completed signal upon success/error. For this signal, the first 
-# boolean argument will be true and the second argument will be null if remove 
-# request succeeds. Otherwise the second argument will contain a 
-# PlayAssetPackException object representing the exception encountered.
+# Emits request_completed(did_succeed, exception) upon request 
+# succeeds/fails.
+# 	did_succeed : boolean indicating request succeeded/failed
+#	exception: PlayAssetPackException object if request failed, otherwise null
 # -----------------------------------------------------------------------------
 func on_remove_pack_success():
 	_did_succeed = true

@@ -186,10 +186,11 @@ func test_show_cellular_data_confirmation_success():
 	# join instantiated thread
 	mock_plugin._show_confirmation_thread.wait_to_finish()
 
-func show_cellular_data_confirmation_success_helper(status : bool, result : int):
+func show_cellular_data_confirmation_success_helper(status : bool, result : int, exception : PlayAssetPackException):
 	# assert using callback, simulating the workflow of connecting callback to signal
 	assert_true(status)
 	assert_eq(result, PlayAssetPackManager.AssetPackStorageMethod.STORAGE_FILES)
+	assert_eq(exception, null)
 
 func test_show_cellular_data_confirmation_error():
 	var mock_plugin = FakeAndroidPlugin.new()
@@ -215,10 +216,11 @@ func test_show_cellular_data_confirmation_error():
 	# join instantiated thread
 	mock_plugin._show_confirmation_thread.wait_to_finish()
 
-func show_cellular_data_confirmation_error_helper(status : bool, error : PlayAssetPackException):
+func show_cellular_data_confirmation_error_helper(status : bool, result : int, exception : PlayAssetPackException):
 	# assert using callback, simulating the workflow of connecting callback to signal
 	assert_true(not status)
-	assert_asset_pack_exception_eq_dict(error, create_mock_asset_pack_java_lang_exception_dict())
+	assert_eq(result, -1)
+	assert_asset_pack_exception_eq_dict(exception, create_mock_asset_pack_java_lang_exception_dict())
 
 func test_remove_pack_success():
 	var mock_plugin = FakeAndroidPlugin.new()
@@ -242,10 +244,10 @@ func test_remove_pack_success():
 	# join instantiated thread
 	mock_plugin._remove_pack_thread.wait_to_finish()
 
-func remove_pack_success_helper(status : bool, error : PlayAssetPackException):
+func remove_pack_success_helper(status : bool, exception : PlayAssetPackException):
 	# assert using callback, simulating the workflow of connecting callback to signal
 	assert_eq(status, true)
-	assert_eq(error, null)
+	assert_eq(exception, null)
 
 func test_remove_pack_error():
 	var mock_plugin = FakeAndroidPlugin.new()
@@ -271,8 +273,8 @@ func test_remove_pack_error():
 	# join instantiated thread
 	mock_plugin._remove_pack_thread.wait_to_finish()
 
-func remove_pack_error_helper(status : bool, error : PlayAssetPackException):
+func remove_pack_error_helper(status : bool, exception : PlayAssetPackException):
 	# assert using callback, simulating the workflow of connecting callback to signal
 	assert_true(not status)
-	assert_asset_pack_exception_eq_dict(error, \
+	assert_asset_pack_exception_eq_dict(exception, \
 		create_mock_asset_pack_java_lang_exception_dict())
