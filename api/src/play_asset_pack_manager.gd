@@ -73,7 +73,7 @@ func _initialize():
 	_request_tracker = PlayAssetDeliveryRequestTracker.new()
 
 # -----------------------------------------------------------------------------
-# Connect signals so that signals emitted from the plugin can be correctly
+# Connect signals, allowing signals emitted from the plugin to be correctly
 # linked to functions in the front-facing API
 # -----------------------------------------------------------------------------
 func _connect_plugin_signals():
@@ -95,7 +95,7 @@ func _initialize_plugin() -> Object:
 		return null
 
 # -----------------------------------------------------------------------------
-# Helper functions that receive the signals emitted from the plugin
+# Helper functions that receive signals emitted from the plugin
 # -----------------------------------------------------------------------------
 func show_cellular_data_confirmation_success(result : int, signal_id : int):
 	var target_request = _request_tracker.lookup_request(signal_id)
@@ -169,7 +169,7 @@ func cancel_asset_pack_request(pack_name : String) -> bool:
 # Deletes the specified asset pack from the internal storage of the app.
 #
 # Use this method to delete asset packs instead of deleting files manually. 
-# This ensures that the Asset Pack will not be re-downloaded during an app 
+# This ensures that the asset pack will not be re-downloaded during an app 
 # update.
 #
 # If the asset pack is currently being downloaded or installed, this method 

@@ -109,11 +109,11 @@ func set_remove_pack_response(success : bool, error : Dictionary):
 	_remove_pack_error = error
 
 # -----------------------------------------------------------------------------
-# Helper function that emits the signal from another thread with latency so we 
+# Helper function that emits signal from another thread with latency so we 
 # have time to connect to that signal on main thread for testing.
 # -----------------------------------------------------------------------------
 func emit_signal_helper(args : Array):
-	# Delay this thread by 100 milliseconds so we can connect/yield to signal in time.
+	# Delay this thread by 100 milliseconds, allowing us to connect/yield to signal in time.
 	OS.delay_msec(100)
 	# Since all the signals released by the plugin contains either 2 or 3 arguments, we only need
 	# to handle 2 cases.

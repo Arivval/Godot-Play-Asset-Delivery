@@ -16,13 +16,13 @@
 #
 # ##############################################################################
 #
-# Request object that handles asychronous logic related to 
+# Request object that handles asynchronous logic related to 
 # show_cellular_data_confirmation().
 #
 # Emits request_completed signal upon success/error.
-# The first boolean argument will be true if remove request succeeds.
-# If success the second arguemtn will be contain the integer result, represented
-# by an AssetPackStorageMethod enum. Else the second argument will contain a 
+# The first boolean argument will be true and the second argument will contain 
+# an integer value, represented by an AssetPackStorageMethod enum if remove 
+# request succeeds. Else the second argument will contain a 
 # PlayAssetPackException object representing the exception encountered.
 # 
 # This object also provides relevant getters so that it is possible to retrieve
