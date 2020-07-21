@@ -23,3 +23,5 @@
 class_name PlayAssetDeliveryRequest
 extends Object
 
+func _init():
+	pass
