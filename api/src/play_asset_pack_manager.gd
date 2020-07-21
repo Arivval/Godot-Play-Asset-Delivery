@@ -74,7 +74,10 @@ func _initialize():
 
 # -----------------------------------------------------------------------------
 # Connect signals, allowing signals emitted from the plugin to be correctly
-# linked to functions in the front-facing API
+# linked to functions in the front-facing API.
+# TODO: Currently these signals will be emitted on the same thread as Android
+# plugin's signals. Need to test for concurrency behavior and evaluate the 
+# decision of whether to redirect these signals to the main thread.
 # -----------------------------------------------------------------------------
 func _connect_plugin_signals():
 	if _plugin_singleton != null:
