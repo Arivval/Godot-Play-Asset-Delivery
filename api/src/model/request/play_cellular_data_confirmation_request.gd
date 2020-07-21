@@ -63,11 +63,11 @@ func get_error() -> PlayAssetPackException:
 func _on_show_cellular_data_confirmation_success(result : int):
 	_did_succeed = true
 	_result = result
-	emit_signal("request_completed", true, result, null)
+	call_deferred("emit_signal", "request_completed", true, result, null)
 
 func _on_show_cellular_data_confirmation_error(error: Dictionary):
 	_did_succeed = false
 	_error = PlayAssetPackException.new(error)
-	emit_signal("request_completed", false, -1, _error)	
+	call_deferred("emit_signal", "request_completed", false, -1, _error)	
 
 
