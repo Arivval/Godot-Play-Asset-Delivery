@@ -61,6 +61,12 @@ enum AssetPackErrorCode {
 	INTERNAL_ERROR = -100
 }
 
+enum CellularDataConfirmationResult {
+	RESULT_UNDEFINED = -2,
+	RESULT_OK = -1,
+	RESULT_CANCELED = 0
+}
+
 # -----------------------------------------------------------------------------
 # Setup
 # -----------------------------------------------------------------------------

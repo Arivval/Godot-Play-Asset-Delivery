@@ -40,7 +40,7 @@ func get_did_succeed() -> bool:
 
 # -----------------------------------------------------------------------------
 # Returns the result of a succeeded Request, represent by an 
-# AssetPackStorageMethod enum.
+# CellularDataConfirmationResult enum.
 # -----------------------------------------------------------------------------
 func get_result() -> int:
 	return _result
@@ -57,7 +57,7 @@ func get_error() -> PlayAssetPackException:
 # Emits request_completed(did_succeed, result, exception) signal upon request 
 # succeeds/fails.
 # 	did_succeed : boolean indicating request succeeded/failed
-# 	result : AssetPackStorageMethod enum if request succeeded, otherwise -1
+# 	result : CellularDataConfirmationResult enum
 #	exception: PlayAssetPackException object if request failed, otherwise null
 # -----------------------------------------------------------------------------
 func _on_show_cellular_data_confirmation_success(result : int):
@@ -68,6 +68,7 @@ func _on_show_cellular_data_confirmation_success(result : int):
 func _on_show_cellular_data_confirmation_error(error: Dictionary):
 	_did_succeed = false
 	_error = PlayAssetPackException.new(error)
-	call_deferred("emit_signal", "request_completed", false, -1, _error)	
+	_result = PlayAssetPackManager.CellularDataConfirmationResult.RESULT_UNDEFINED
+	call_deferred("emit_signal", "request_completed", false, _result, _error)	
 
 

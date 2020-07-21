@@ -167,7 +167,7 @@ func test_show_cellular_data_confirmation_success():
 	var mock_plugin = FakeAndroidPlugin.new()
 
 	# configure what should be emitted upon show_cellular_data_confirmation() call
-	mock_plugin.set_show_confirmation_response(true, PlayAssetPackManager.AssetPackStorageMethod.STORAGE_FILES, {})
+	mock_plugin.set_show_confirmation_response(true, PlayAssetPackManager.CellularDataConfirmationResult.RESULT_OK, {})
 	var test_object = create_play_asset_pack_manager(mock_plugin)
 	
 	var request_object = test_object.show_cellular_data_confirmation()
@@ -181,7 +181,8 @@ func test_show_cellular_data_confirmation_success():
 	
 	# assert using getters, simulating the workflow of yielding the signals
 	assert_true(request_object.get_did_succeed())
-	assert_eq(request_object.get_result(), PlayAssetPackManager.AssetPackStorageMethod.STORAGE_FILES)
+	assert_eq(request_object.get_error(), null)
+	assert_eq(request_object.get_result(), PlayAssetPackManager.CellularDataConfirmationResult.RESULT_OK)
 	
 	# join instantiated thread
 	mock_plugin._show_confirmation_thread.wait_to_finish()
@@ -189,14 +190,14 @@ func test_show_cellular_data_confirmation_success():
 func assert_show_cellular_data_confirmation_signal_is_success(did_succeed : bool, result : int, exception : PlayAssetPackException):
 	# assert using callback, simulating the workflow of connecting callback to signal
 	assert_true(did_succeed)
-	assert_eq(result, PlayAssetPackManager.AssetPackStorageMethod.STORAGE_FILES)
+	assert_eq(result, PlayAssetPackManager.CellularDataConfirmationResult.RESULT_OK)
 	assert_eq(exception, null)
 
 func test_show_cellular_data_confirmation_error():
 	var mock_plugin = FakeAndroidPlugin.new()
 	
 	# configure what should be emitted upon show_cellular_data_confirmation() call
-	mock_plugin.set_show_confirmation_response(false, 0, create_mock_asset_pack_java_lang_exception_dict())
+	mock_plugin.set_show_confirmation_response(false, PlayAssetPackManager.CellularDataConfirmationResult.RESULT_UNDEFINED, create_mock_asset_pack_java_lang_exception_dict())
 	var test_object = create_play_asset_pack_manager(mock_plugin)
 	
 	var request_object = test_object.show_cellular_data_confirmation()
@@ -212,14 +213,14 @@ func test_show_cellular_data_confirmation_error():
 	assert_true(not request_object.get_did_succeed())
 	assert_asset_pack_exception_eq_dict(request_object.get_error(), \
 		create_mock_asset_pack_java_lang_exception_dict())
-	
+	assert_eq(request_object.get_result(), PlayAssetPackManager.CellularDataConfirmationResult.RESULT_UNDEFINED)
 	# join instantiated thread
 	mock_plugin._show_confirmation_thread.wait_to_finish()
 
 func assert_show_cellular_data_confirmation_signal_is_error(did_succeed : bool, result : int, exception : PlayAssetPackException):
 	# assert using callback, simulating the workflow of connecting callback to signal
 	assert_true(not did_succeed)
-	assert_eq(result, -1)
+	assert_eq(result, PlayAssetPackManager.CellularDataConfirmationResult.RESULT_UNDEFINED)
 	assert_asset_pack_exception_eq_dict(exception, create_mock_asset_pack_java_lang_exception_dict())
 
 func test_remove_pack_success():
@@ -240,6 +241,7 @@ func test_remove_pack_success():
 	
 	# assert using getters, simulating the workflow of yielding the signals
 	assert_true(request_object.get_did_succeed())
+	assert_eq(request_object.get_error(), null)
 	
 	# join instantiated thread
 	mock_plugin._remove_pack_thread.wait_to_finish()
