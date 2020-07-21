@@ -34,11 +34,14 @@ var _asset_pack_location_store : Dictionary
 
 var _asset_pack_states_store : Dictionary
 
+var _show_confirmation_thread : Thread
 var _show_confirmation_success : bool
 var _show_confirmation_result : int
 var _show_confirmation_error : Dictionary
 
-var _show_confirmation_thread : Thread
+var _remove_pack_thread : Thread
+var _remove_pack_success : bool
+var _remove_pack_error : Dictionary
 
 func _init():
 	_asset_location_store = Dictionary()
@@ -101,9 +104,13 @@ func set_show_confirmation_response(success : bool, result : int, error : Dictio
 	_show_confirmation_result = result
 	_show_confirmation_error = error
 
+func set_remove_pack_response(success : bool, error : Dictionary):
+	_remove_pack_success = success
+	_remove_pack_error = error
+
 # -----------------------------------------------------------------------------
-# Helper function that emits the signal from another thread so we have time to connect to that 
-# signal on main thread for testing.
+# Helper function that emits the signal from another thread with latency so we 
+# have time to connect to that signal on main thread for testing.
 # -----------------------------------------------------------------------------
 func emit_signal_helper(args : Array):
 	# Delay this thread by 100 milliseconds so we can connect/yield to signal in time.
@@ -158,6 +165,11 @@ func cancel(pack_names : Array):
 
 	return return_asset_pack_states
 
+# -----------------------------------------------------------------------------
+# Simulates the showCellularDataConfirmation() function in PlayAssetDelivery 
+# Android plugin. Emits signal with arguments configured using 
+# set_show_confirmation_response().
+# -----------------------------------------------------------------------------
 func showCellularDataConfirmation(signal_id : int):
 	_show_confirmation_thread = Thread.new()
 	if _show_confirmation_success:
@@ -166,3 +178,16 @@ func showCellularDataConfirmation(signal_id : int):
 	else:
 		var thread_args = ["showCellularDataConfirmationError", _show_confirmation_error, signal_id]
 		_show_confirmation_thread.start(self, "emit_signal_helper", thread_args)
+
+# -----------------------------------------------------------------------------
+# Simulates the removePack() function in PlayAssetDelivery Android plugin. 
+# Emits signal with arguments configured using set_remove_pack_response().
+# -----------------------------------------------------------------------------
+func removePack(pack_name : String, signal_id : int):
+	_remove_pack_thread = Thread.new()
+	if _remove_pack_success:
+		var thread_args = ["removePackSuccess", {}, signal_id]
+		_remove_pack_thread.start(self, "emit_signal_helper", thread_args)
+	else:
+		var thread_args = ["removePackError", _remove_pack_error, signal_id]
+		_remove_pack_thread.start(self, "emit_signal_helper", thread_args)

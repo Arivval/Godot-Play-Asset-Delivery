@@ -79,7 +79,7 @@ func _initialize():
 func _connect_plugin_signals():
 	if _plugin_singleton != null:
 		_plugin_singleton.connect("removePackSuccess", self, "remove_pack_success")
-		_plugin_singleton.connect("removeError", self, "remove_pack_error")
+		_plugin_singleton.connect("removePackError", self, "remove_pack_error")
 		_plugin_singleton.connect("showCellularDataConfirmationSuccess", self, "show_cellular_data_confirmation_success")
 		_plugin_singleton.connect("showCellularDataConfirmationError", self, "show_cellular_data_confirmation_error")
 
@@ -98,20 +98,18 @@ func _initialize_plugin() -> Object:
 # Helper functions that receive the signals emitted from the plugin
 # -----------------------------------------------------------------------------
 func show_cellular_data_confirmation_success(result : int, signal_id : int):
-	print("show_cellular_data_confirmation_success called")
 	var target_request = _request_tracker.lookup_request(signal_id)
-	print(target_request)
 	target_request.on_show_cellular_data_confirmation_success(result)
 
 func show_cellular_data_confirmation_error(error : Dictionary, signal_id : int):
 	var target_request = _request_tracker.lookup_request(signal_id)
 	target_request.on_show_cellular_data_confirmation_error(error)
 
-func remove_pack_success(signal_id : int):
+func remove_pack_success(error : Dictionary, signal_id : int):
 	var target_request = _request_tracker.lookup_request(signal_id)
 	target_request.on_remove_pack_success()
 
-func remove_pack_error(error : int, signal_id : int):
+func remove_pack_error(error : Dictionary, signal_id : int):
 	var target_request = _request_tracker.lookup_request(signal_id)
 	target_request.on_remove_pack_error(error)
 
@@ -181,7 +179,7 @@ func cancel_asset_pack_request(pack_name : String) -> bool:
 # Returns a PlayAssetPackRemoveRequest object that can emit onComplete signal
 # once the remove request succeeded or failed.
 # -----------------------------------------------------------------------------
-func remove_asset_pack(pack_name: String):
+func remove_pack(pack_name: String):
 	var return_request = PlayAssetPackRemoveRequest.new()
 	var signal_id = _request_tracker.register_request(return_request)
 	_plugin_singleton.removePack(pack_name, signal_id)

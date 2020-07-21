@@ -34,13 +34,12 @@ extends PlayAssetDeliveryRequest
 
 signal request_completed
 
-
 var _status : bool
 var _result : int
 var _error : PlayAssetPackException
 
 # -----------------------------------------------------------------------------
-# Returns the boolean status, true if Request succeeded, false if failed.
+# Returns boolean indicating Request succeeded/failed.
 # -----------------------------------------------------------------------------
 func get_status() -> bool:
 	return _status
@@ -58,6 +57,9 @@ func get_result() -> int:
 func get_error() -> PlayAssetPackException:
 	return _error
 
+# -----------------------------------------------------------------------------
+# Callback functions handling signals emitted from the plugin.
+# -----------------------------------------------------------------------------
 func on_show_cellular_data_confirmation_success(result : int):
 	_status = true
 	_result = result
