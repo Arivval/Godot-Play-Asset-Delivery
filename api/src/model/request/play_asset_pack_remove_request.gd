@@ -20,8 +20,8 @@
 # 
 # Emits request_completed signal upon success/error. For this signal, the first 
 # boolean argument will be true and the second argument will be null if remove 
-# request succeeds. Else the second argument will contain a PlayAssetPackException 
-# object representing the exception encountered.
+# request succeeds. Otherwise the second argument will contain a 
+# PlayAssetPackException object representing the exception encountered.
 #
 # This object also provides relevant getters so that it is possible to retrieve
 # the updated states from this object using the yield to signal approach.
