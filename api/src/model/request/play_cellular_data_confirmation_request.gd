@@ -18,14 +18,8 @@
 #
 # Request object that handles asynchronous logic related to 
 # show_cellular_data_confirmation().
-#
-# Emits request_completed signal upon success/error.
-# The first boolean argument will be true and the second argument will contain 
-# an integer value, represented by an AssetPackStorageMethod enum if remove 
-# request succeeds. Otherwise the second argument will contain a 
-# PlayAssetPackException object representing the exception encountered.
 # 
-# This object also provides relevant getters so that it is possible to retrieve
+# This object provides relevant getters so that it is possible to retrieve
 # the updated states from this object using the yield to signal approach.
 #
 # ##############################################################################
@@ -34,15 +28,15 @@ extends PlayAssetDeliveryRequest
 
 signal request_completed
 
-var _status : bool
+var _did_succeed : bool
 var _result : int
 var _error : PlayAssetPackException
 
 # -----------------------------------------------------------------------------
 # Returns boolean indicating Request succeeded/failed.
 # -----------------------------------------------------------------------------
-func get_status() -> bool:
-	return _status
+func get_did_succeed() -> bool:
+	return _did_succeed
 
 # -----------------------------------------------------------------------------
 # Returns the result of a succeeded Request, represent by an 
@@ -59,14 +53,20 @@ func get_error() -> PlayAssetPackException:
 
 # -----------------------------------------------------------------------------
 # Callback functions handling signals emitted from the plugin.
+#
+# Emits request_completed signal upon success/error.
+# The first boolean argument will be true and the second argument will contain 
+# an integer value, represented by an AssetPackStorageMethod enum if remove 
+# request succeeds. Otherwise the second argument will contain a 
+# PlayAssetPackException object representing the exception encountered.
 # -----------------------------------------------------------------------------
 func on_show_cellular_data_confirmation_success(result : int):
-	_status = true
+	_did_succeed = true
 	_result = result
 	emit_signal("request_completed", true, result)
 
 func on_show_cellular_data_confirmation_error(error: Dictionary):
-	_status = false
+	_did_succeed = false
 	_error = PlayAssetPackException.new(error)
 	emit_signal("request_completed", false, _error)
 

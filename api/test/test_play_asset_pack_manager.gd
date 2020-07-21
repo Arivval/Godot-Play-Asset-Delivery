@@ -180,7 +180,7 @@ func test_show_cellular_data_confirmation_success():
 	assert_signal_emitted(request_object, "request_completed", "signal should have emitted")
 	
 	# assert using getters, simulating the workflow of yielding the signals
-	assert_true(request_object.get_status())
+	assert_true(request_object.get_did_succeed())
 	assert_eq(request_object.get_result(), PlayAssetPackManager.AssetPackStorageMethod.STORAGE_FILES)
 	
 	# join instantiated thread
@@ -208,7 +208,7 @@ func test_show_cellular_data_confirmation_error():
 	assert_signal_emitted(request_object, "request_completed", "signal should have emitted")
 	
 	# assert using getters, simulating the workflow of yielding the signals
-	assert_true(not request_object.get_status())
+	assert_true(not request_object.get_did_succeed())
 	assert_asset_pack_exception_eq_dict(request_object.get_error(), \
 		create_mock_asset_pack_java_lang_exception_dict())
 	
@@ -237,7 +237,7 @@ func test_remove_pack_success():
 	assert_signal_emitted(request_object, "request_completed", "signal should have emitted")
 	
 	# assert using getters, simulating the workflow of yielding the signals
-	assert_true(request_object.get_status())
+	assert_true(request_object.get_did_succeed())
 	
 	# join instantiated thread
 	mock_plugin._remove_pack_thread.wait_to_finish()
@@ -264,7 +264,7 @@ func test_remove_pack_error():
 	assert_signal_emitted(request_object, "request_completed", "signal should have emitted")
 	
 	# assert using getters, simulating the workflow of yielding the signals
-	assert_true(not request_object.get_status())
+	assert_true(not request_object.get_did_succeed())
 	assert_asset_pack_exception_eq_dict(request_object.get_error(), \
 		create_mock_asset_pack_java_lang_exception_dict())
 

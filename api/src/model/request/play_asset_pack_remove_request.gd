@@ -17,13 +17,8 @@
 # ##############################################################################
 #
 # Request object that handles asynchronous logic related to remove_pack().
-# 
-# Emits request_completed signal upon success/error. For this signal, the first 
-# boolean argument will be true and the second argument will be null if remove 
-# request succeeds. Otherwise the second argument will contain a 
-# PlayAssetPackException object representing the exception encountered.
 #
-# This object also provides relevant getters so that it is possible to retrieve
+# This object provides relevant getters so that it is possible to retrieve
 # the updated states from this object using the yield to signal approach.
 #
 # ##############################################################################
@@ -32,14 +27,14 @@ extends PlayAssetDeliveryRequest
 
 signal request_completed
 
-var _status : bool
+var _did_succeed : bool
 var _error : PlayAssetPackException
 
 # -----------------------------------------------------------------------------
 # Returns boolean indicating Request succeeded/failed.
 # -----------------------------------------------------------------------------
-func get_status() -> bool:
-	return _status
+func get_did_succeed() -> bool:
+	return _did_succeed
 
 # -----------------------------------------------------------------------------
 # Returns a PlayAssetPackException if Request failed, else returns null.
@@ -49,13 +44,18 @@ func get_error() -> PlayAssetPackException:
 
 # -----------------------------------------------------------------------------
 # Callback functions handling signals emitted from the plugin.
+# 
+# Emits request_completed signal upon success/error. For this signal, the first 
+# boolean argument will be true and the second argument will be null if remove 
+# request succeeds. Otherwise the second argument will contain a 
+# PlayAssetPackException object representing the exception encountered.
 # -----------------------------------------------------------------------------
 func on_remove_pack_success():
-	_status = true
+	_did_succeed = true
 	emit_signal("request_completed", true, null)
 
 func on_remove_pack_error(error: Dictionary):
-	_status = false
+	_did_succeed = false
 	_error = PlayAssetPackException.new(error)
 	emit_signal("request_completed", false, _error)
 
