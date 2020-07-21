@@ -18,7 +18,7 @@
 #
 # Object used to represent AssetPackExceptions or Java Exceptions occured during
 # Android plugin calls. If exception type is AssetPackException, the error_code
-# will be represented using an AssetPackErrorCode enum. Otherwise error_cdoe will 
+# will be represented using an AssetPackErrorCode enum. Otherwise error_code will 
 # be default to AssetPackErrorCode.INTERNAL_ERROR.
 #
 # ##############################################################################
