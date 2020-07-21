@@ -173,7 +173,7 @@ func test_show_cellular_data_confirmation_success():
 	var request_object = test_object.show_cellular_data_confirmation()
 	
 	# connect to helper function, simulating the workflow of connecting callback to signal
-	request_object.connect("request_completed", self, "show_cellular_data_confirmation_success_helper")
+	request_object.connect("request_completed", self, "assert_cellular_data_confirmation_succeeded")
 	
 	# yield to the request_completed signal for no longer than 1 seconds and assert for signal emitted
 	yield(yield_to(request_object, "request_completed", 1), YIELD)
@@ -186,7 +186,7 @@ func test_show_cellular_data_confirmation_success():
 	# join instantiated thread
 	mock_plugin._show_confirmation_thread.wait_to_finish()
 
-func show_cellular_data_confirmation_success_helper(status : bool, result : int, exception : PlayAssetPackException):
+func assert_cellular_data_confirmation_succeeded(status : bool, result : int, exception : PlayAssetPackException):
 	# assert using callback, simulating the workflow of connecting callback to signal
 	assert_true(status)
 	assert_eq(result, PlayAssetPackManager.AssetPackStorageMethod.STORAGE_FILES)
@@ -202,7 +202,7 @@ func test_show_cellular_data_confirmation_error():
 	var request_object = test_object.show_cellular_data_confirmation()
 	
 	# connect to helper function, simulating the workflow of connecting callback to signal
-	request_object.connect("request_completed", self, "show_cellular_data_confirmation_error_helper")
+	request_object.connect("request_completed", self, "assert_cellular_data_confirmation_is_error")
 	
 	# yield to the request_completed signal for no longer than 1 seconds and assert for signal emitted
 	yield(yield_to(request_object, "request_completed", 1), YIELD)
@@ -216,7 +216,7 @@ func test_show_cellular_data_confirmation_error():
 	# join instantiated thread
 	mock_plugin._show_confirmation_thread.wait_to_finish()
 
-func show_cellular_data_confirmation_error_helper(status : bool, result : int, exception : PlayAssetPackException):
+func assert_cellular_data_confirmation_is_error(status : bool, result : int, exception : PlayAssetPackException):
 	# assert using callback, simulating the workflow of connecting callback to signal
 	assert_true(not status)
 	assert_eq(result, -1)
@@ -232,7 +232,7 @@ func test_remove_pack_success():
 	var request_object = test_object.remove_pack("packName")
 	
 	# connect to helper function, simulating the workflow of connecting callback to signal
-	request_object.connect("request_completed", self, "remove_pack_success_helper")
+	request_object.connect("request_completed", self, "assert_remove_pack_succeeded")
 	
 	# yield to the request_completed signal for no longer than 1 seconds and assert for signal emitted
 	yield(yield_to(request_object, "request_completed", 1), YIELD)
@@ -244,9 +244,9 @@ func test_remove_pack_success():
 	# join instantiated thread
 	mock_plugin._remove_pack_thread.wait_to_finish()
 
-func remove_pack_success_helper(status : bool, exception : PlayAssetPackException):
+func assert_remove_pack_succeeded(status : bool, exception : PlayAssetPackException):
 	# assert using callback, simulating the workflow of connecting callback to signal
-	assert_eq(status, true)
+	assert_true(status)
 	assert_eq(exception, null)
 
 func test_remove_pack_error():
@@ -259,7 +259,7 @@ func test_remove_pack_error():
 	var request_object = test_object.remove_pack("packName")
 	
 	# connect to helper function, simulating the workflow of connecting callback to signal
-	request_object.connect("request_completed", self, "remove_pack_error_helper")
+	request_object.connect("request_completed", self, "assert_remove_pack_is_error")
 	
 	# yield to the request_completed signal for no longer than 1 seconds and assert for signal emitted
 	yield(yield_to(request_object, "request_completed", 1), YIELD)
@@ -273,7 +273,7 @@ func test_remove_pack_error():
 	# join instantiated thread
 	mock_plugin._remove_pack_thread.wait_to_finish()
 
-func remove_pack_error_helper(status : bool, exception : PlayAssetPackException):
+func assert_remove_pack_is_error(status : bool, exception : PlayAssetPackException):
 	# assert using callback, simulating the workflow of connecting callback to signal
 	assert_true(not status)
 	assert_asset_pack_exception_eq_dict(exception, \
