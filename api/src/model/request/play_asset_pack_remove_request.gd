@@ -45,7 +45,7 @@ func get_error() -> PlayAssetPackException:
 # -----------------------------------------------------------------------------
 # Callback functions handling signals emitted from the plugin.
 # 
-# Emits request_completed(did_succeed, exception) upon request 
+# Emits request_completed(did_succeed, exception) signal upon request 
 # succeeds/fails.
 # 	did_succeed : boolean indicating request succeeded/failed
 #	exception: PlayAssetPackException object if request failed, otherwise null

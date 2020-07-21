@@ -54,7 +54,7 @@ func get_error() -> PlayAssetPackException:
 # -----------------------------------------------------------------------------
 # Callback functions handling signals emitted from the plugin.
 #
-# Emits request_completed(did_succeed, result, exception) upon request 
+# Emits request_completed(did_succeed, result, exception) signal upon request 
 # succeeds/fails.
 # 	did_succeed : boolean indicating request succeeded/failed
 # 	result : AssetPackStorageMethod enum if request succeeded, otherwise -1
