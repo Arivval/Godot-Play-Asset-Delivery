@@ -66,8 +66,8 @@ func on_show_cellular_data_confirmation_success(result : int):
 	emit_signal("request_completed", true, result)
 
 func on_show_cellular_data_confirmation_error(error: Dictionary):
-	_error = PlayAssetPackException.new(error)
 	_status = false
+	_error = PlayAssetPackException.new(error)
 	emit_signal("request_completed", false, _error)
 
 
