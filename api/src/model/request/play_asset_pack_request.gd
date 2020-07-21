@@ -20,10 +20,8 @@
 # and get_asset_pack_state().
 # 
 # Emits state_updated signal along with corresponding PlayAssetPackState. Also
-# emits request_completed upon success/error. For this signal, the first 
-# boolean argument will be true and the second argument will be PlayAssetPackState
-# if remove request succeeds. Otherwise the second argument will contain a 
-# PlayAssetPackException object representing the exception encountered.
+# emits request_completed if the updated AssetPackState's status reaches one of
+# the states from {CANCELED, COMPLETED, FAILED, NOT_INSTALLED}. TODO
 #
 # This object also provides relevant getters so that it is possible to retrieve
 # the updated states from this object using the yield to signal approach.
@@ -60,14 +58,14 @@ func get_error() -> PlayAssetPackException:
 # -----------------------------------------------------------------------------
 # Callback functions handling signals emitted from the plugin.
 # -----------------------------------------------------------------------------
-func on_remove_pack_success():
+func on_completed_success(asset_pack_state_dict : Dictionary):
 	_status = true
-	emit_signal("request_completed", true, null)
+	_pack_state = PlayAssetPackState.new(asset_pack_state_dict)
+	emit_signal("request_completed", true, _pack_state.duplicate())
 
-func on_remove_pack_error(error: Dictionary):
+func on_completed_error(error: Dictionary):
 	_status = false
-	var exception_object = PlayAssetPackException.new(error)
-	_error = exception_object
-	emit_signal("request_completed", false, exception_object)
+	_error = PlayAssetPackException.new(error)
+	emit_signal("request_completed", false, _error.duplicate())
 
 
