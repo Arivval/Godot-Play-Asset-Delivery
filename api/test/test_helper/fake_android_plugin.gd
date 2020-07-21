@@ -112,7 +112,7 @@ func set_remove_pack_response(success : bool, error : Dictionary):
 # Helper function that emits signal from another thread with latency so we 
 # have time to connect to that signal on main thread for testing.
 # -----------------------------------------------------------------------------
-func emit_signal_helper(args : Array):
+func emit_delayed_signal_helper(args : Array):
 	# Delay this thread by 100 milliseconds, allowing us to connect/yield to signal in time.
 	OS.delay_msec(100)
 	# Since all the signals released by the plugin contains either 2 or 3 arguments, we only need
@@ -171,23 +171,27 @@ func cancel(pack_names : Array):
 # set_show_confirmation_response().
 # -----------------------------------------------------------------------------
 func showCellularDataConfirmation(signal_id : int):
+	# use multithreading to call emit_delayed_signal_helper() to emit signal with delay since Godot's main
+	# thread is blocking
 	_show_confirmation_thread = Thread.new()
 	if _show_confirmation_success:
 		var thread_args = ["showCellularDataConfirmationSuccess", _show_confirmation_result, signal_id]
-		_show_confirmation_thread.start(self, "emit_signal_helper", thread_args)
+		_show_confirmation_thread.start(self, "emit_delayed_signal_helper", thread_args)
 	else:
 		var thread_args = ["showCellularDataConfirmationError", _show_confirmation_error, signal_id]
-		_show_confirmation_thread.start(self, "emit_signal_helper", thread_args)
+		_show_confirmation_thread.start(self, "emit_delayed_signal_helper", thread_args)
 
 # -----------------------------------------------------------------------------
 # Simulates the removePack() function in PlayAssetDelivery Android plugin. 
 # Emits signal with arguments configured using set_remove_pack_response().
 # -----------------------------------------------------------------------------
 func removePack(pack_name : String, signal_id : int):
+	# use multithreading to call emit_delayed_signal_helper() to emit signal with delay since Godot's main
+	# thread is blocking
 	_remove_pack_thread = Thread.new()
 	if _remove_pack_success:
 		var thread_args = ["removePackSuccess", signal_id]
-		_remove_pack_thread.start(self, "emit_signal_helper", thread_args)
+		_remove_pack_thread.start(self, "emit_delayed_signal_helper", thread_args)
 	else:
 		var thread_args = ["removePackError", _remove_pack_error, signal_id]
-		_remove_pack_thread.start(self, "emit_signal_helper", thread_args)
+		_remove_pack_thread.start(self, "emit_delayed_signal_helper", thread_args)
