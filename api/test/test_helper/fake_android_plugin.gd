@@ -115,7 +115,6 @@ func set_remove_pack_response(success : bool, error : Dictionary):
 func emit_signal_helper(args : Array):
 	# Delay this thread by 100 milliseconds, allowing us to connect/yield to signal in time.
 	OS.delay_msec(100)
-	print(args, args.size())
 	# Since all the signals released by the plugin contains either 2 or 3 arguments, we only need
 	# to handle 2 cases.
 	if args.size() == 2:
