@@ -78,10 +78,10 @@ func _initialize():
 # -----------------------------------------------------------------------------
 func _connect_plugin_signals():
 	if _plugin_singleton != null:
-		_plugin_singleton.connect("removePackSuccess", self, "remove_pack_success")
-		_plugin_singleton.connect("removePackError", self, "remove_pack_error")
-		_plugin_singleton.connect("showCellularDataConfirmationSuccess", self, "show_cellular_data_confirmation_success")
-		_plugin_singleton.connect("showCellularDataConfirmationError", self, "show_cellular_data_confirmation_error")
+		_plugin_singleton.connect("removePackSuccess", self, "_remove_pack_success")
+		_plugin_singleton.connect("removePackError", self, "_remove_pack_error")
+		_plugin_singleton.connect("showCellularDataConfirmationSuccess", self, "_show_cellular_data_confirmation_success")
+		_plugin_singleton.connect("showCellularDataConfirmationError", self, "_show_cellular_data_confirmation_error")
 
 # -----------------------------------------------------------------------------
 # Returns the PlayAssetDelivery Android Plugin singleton, null if this plugin
@@ -97,22 +97,22 @@ func _initialize_plugin() -> Object:
 # -----------------------------------------------------------------------------
 # Helper functions that receive signals emitted from the plugin
 # -----------------------------------------------------------------------------
-func show_cellular_data_confirmation_success(result : int, signal_id : int):
+func _show_cellular_data_confirmation_success(result : int, signal_id : int):
 	var target_request = _request_tracker.lookup_request(signal_id)
 	target_request.on_show_cellular_data_confirmation_success(result)
 	_request_tracker.unregister_request(signal_id)
 
-func show_cellular_data_confirmation_error(error : Dictionary, signal_id : int):
+func _show_cellular_data_confirmation_error(error : Dictionary, signal_id : int):
 	var target_request = _request_tracker.lookup_request(signal_id)
 	target_request.on_show_cellular_data_confirmation_error(error)
 	_request_tracker.unregister_request(signal_id)
 
-func remove_pack_success(signal_id : int):
+func _remove_pack_success(signal_id : int):
 	var target_request = _request_tracker.lookup_request(signal_id)
 	target_request.on_remove_pack_success()
 	_request_tracker.unregister_request(signal_id)
 
-func remove_pack_error(error : Dictionary, signal_id : int):
+func _remove_pack_error(error : Dictionary, signal_id : int):
 	var target_request = _request_tracker.lookup_request(signal_id)
 	target_request.on_remove_pack_error(error)
 	_request_tracker.unregister_request(signal_id)
