@@ -105,7 +105,7 @@ func show_cellular_data_confirmation_error(error : Dictionary, signal_id : int):
 	var target_request = _request_tracker.lookup_request(signal_id)
 	target_request.on_show_cellular_data_confirmation_error(error)
 
-func remove_pack_success(error : Dictionary, signal_id : int):
+func remove_pack_success(signal_id : int):
 	var target_request = _request_tracker.lookup_request(signal_id)
 	target_request.on_remove_pack_success()
 
