@@ -52,11 +52,11 @@ func get_error() -> PlayAssetPackException:
 # -----------------------------------------------------------------------------
 func _on_remove_pack_success():
 	_did_succeed = true
-	emit_signal("request_completed", true, null)
+	call_deferred("emit_signal", "request_completed", true, null)
 
 func _on_remove_pack_error(error: Dictionary):
 	_did_succeed = false
 	_error = PlayAssetPackException.new(error)
-	emit_signal("request_completed", false, _error)
+	call_deferred("emit_signal", "request_completed", false, _error)
 
 
