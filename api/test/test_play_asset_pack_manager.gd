@@ -186,9 +186,9 @@ func test_show_cellular_data_confirmation_success():
 	# join instantiated thread
 	mock_plugin._show_confirmation_thread.wait_to_finish()
 
-func assert_cellular_data_confirmation_is_success(status : bool, result : int, exception : PlayAssetPackException):
+func assert_cellular_data_confirmation_is_success(did_succeed : bool, result : int, exception : PlayAssetPackException):
 	# assert using callback, simulating the workflow of connecting callback to signal
-	assert_true(status)
+	assert_true(did_succeed)
 	assert_eq(result, PlayAssetPackManager.AssetPackStorageMethod.STORAGE_FILES)
 	assert_eq(exception, null)
 
@@ -216,9 +216,9 @@ func test_show_cellular_data_confirmation_error():
 	# join instantiated thread
 	mock_plugin._show_confirmation_thread.wait_to_finish()
 
-func assert_cellular_data_confirmation_is_error(status : bool, result : int, exception : PlayAssetPackException):
+func assert_cellular_data_confirmation_is_error(did_succeed : bool, result : int, exception : PlayAssetPackException):
 	# assert using callback, simulating the workflow of connecting callback to signal
-	assert_true(not status)
+	assert_true(not did_succeed)
 	assert_eq(result, -1)
 	assert_asset_pack_exception_eq_dict(exception, create_mock_asset_pack_java_lang_exception_dict())
 
@@ -244,9 +244,9 @@ func test_remove_pack_success():
 	# join instantiated thread
 	mock_plugin._remove_pack_thread.wait_to_finish()
 
-func assert_remove_pack_is_success(status : bool, exception : PlayAssetPackException):
+func assert_remove_pack_is_success(did_succeed : bool, exception : PlayAssetPackException):
 	# assert using callback, simulating the workflow of connecting callback to signal
-	assert_true(status)
+	assert_true(did_succeed)
 	assert_eq(exception, null)
 
 func test_remove_pack_error():
@@ -273,8 +273,8 @@ func test_remove_pack_error():
 	# join instantiated thread
 	mock_plugin._remove_pack_thread.wait_to_finish()
 
-func assert_remove_pack_is_error(status : bool, exception : PlayAssetPackException):
+func assert_remove_pack_is_error(did_succeed : bool, exception : PlayAssetPackException):
 	# assert using callback, simulating the workflow of connecting callback to signal
-	assert_true(not status)
+	assert_true(not did_succeed)
 	assert_asset_pack_exception_eq_dict(exception, \
 		create_mock_asset_pack_java_lang_exception_dict())
