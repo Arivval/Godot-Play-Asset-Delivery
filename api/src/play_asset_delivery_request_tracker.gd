@@ -43,7 +43,7 @@ func get_current_signal_id() -> int:
 	return _signal_id_counter
 
 # registers the request object and returns the signal_id assigned
-func register_request(request) -> int:
+func register_request(request : PlayAssetDeliveryRequest) -> int:
 	_request_tracker_mutex.lock()
 	var return_signal_id = _signal_id_counter
 	_signal_id_to_request_map[_signal_id_counter] = request
@@ -51,7 +51,7 @@ func register_request(request) -> int:
 	_request_tracker_mutex.unlock()
 	return return_signal_id
 
-func lookup_request(signal_id : int):
+func lookup_request(signal_id : int) -> PlayAssetDeliveryRequest:
 	var return_request = null
 	_request_tracker_mutex.lock()
 	if signal_id in _signal_id_to_request_map:
