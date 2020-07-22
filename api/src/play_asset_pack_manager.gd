@@ -175,6 +175,7 @@ func get_pack_locations() -> Dictionary:
 
 # -----------------------------------------------------------------------------
 # Requests download state or details for given asset pack.
+# 
 # Do not use this method to determine whether an asset pack is downloaded. 
 # Instead use get_pack_location(pack_name).
 # -----------------------------------------------------------------------------
@@ -186,6 +187,7 @@ func get_asset_pack_state(pack_name: String) -> PlayAssetPackStateRequest:
 
 # -----------------------------------------------------------------------------
 # Cancels an asset pack request specified by pack_name, true if success. 
+# 
 # Note: Only active downloads can be canceled.
 # -----------------------------------------------------------------------------
 func cancel_asset_pack_request(pack_name : String) -> bool:

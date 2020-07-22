@@ -257,6 +257,7 @@ func test_get_asset_pack_state_non_existent_pack():
 	
 	var test_object = create_play_asset_pack_manager(mock_plugin)
 	
+	# AssetPackStates dictionary returned by plugin should not contain this pack_name
 	var non_existent_pack_name = test_pack_name + "non-existent suffix"
 	var request_object = test_object.get_asset_pack_state(non_existent_pack_name)
 	
