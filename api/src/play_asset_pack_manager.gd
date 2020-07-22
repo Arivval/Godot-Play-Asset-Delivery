@@ -84,6 +84,8 @@ func _initialize():
 # -----------------------------------------------------------------------------
 func _connect_plugin_signals():
 	if _plugin_singleton != null:
+		_plugin_singleton.connect("getPackStatesSuccess", self, "_forward_get_pack_states_success")
+		_plugin_singleton.connect("getPackStatesError", self, "_forward_get_pack_states_error")
 		_plugin_singleton.connect("removePackSuccess", self, "_forward_remove_pack_success")
 		_plugin_singleton.connect("removePackError", self, "_forward_remove_pack_error")
 		_plugin_singleton.connect("showCellularDataConfirmationSuccess", self, \
@@ -105,6 +107,16 @@ func _initialize_plugin() -> Object:
 # -----------------------------------------------------------------------------
 # Helper functions that forward signals emitted from the plugin
 # -----------------------------------------------------------------------------
+func _forward_get_pack_states_success(result : Dictionary, signal_id : int):
+	var target_request = _request_tracker.lookup_request(signal_id)
+	target_request._on_get_asset_pack_state_success(result)
+	_request_tracker.unregister_request(signal_id)
+
+func _forward_get_pack_states_error(error : Dictionary, signal_id : int):
+	var target_request = _request_tracker.lookup_request(signal_id)
+	target_request._on_get_asset_pack_state_error(error)
+	_request_tracker.unregister_request(signal_id)
+
 func _forward_show_cellular_data_confirmation_success(result : int, signal_id : int):
 	var target_request = _request_tracker.lookup_request(signal_id)
 	target_request._on_show_cellular_data_confirmation_success(result)
@@ -159,6 +171,17 @@ func get_pack_locations() -> Dictionary:
 		return_dict[key] = PlayAssetPackLocation.new(raw_dict[key])
 	
 	return return_dict
+
+# -----------------------------------------------------------------------------
+# Requests download state or details for given asset pack.
+# Do not use this method to determine whether an asset pack is downloaded. 
+# Instead use get_pack_location(pack_name).
+# -----------------------------------------------------------------------------
+func get_asset_pack_state(pack_name: String) -> PlayAssetPackStateRequest:
+	var return_request = PlayAssetPackStateRequest.new()
+	var signal_id = _request_tracker.register_request(return_request)
+	_plugin_singleton.getPackStates([pack_name], signal_id)
+	return return_request
 
 # -----------------------------------------------------------------------------
 # Cancels an asset pack request specified by pack_name, true if success. 

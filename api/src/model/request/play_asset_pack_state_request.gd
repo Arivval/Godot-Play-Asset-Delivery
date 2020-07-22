@@ -17,7 +17,7 @@
 # ##############################################################################
 #
 # Request object that handles asynchronous logic related to 
-# get_asset_pack_state(). Requests the most updated PlayAssetPackState of a
+# get_asset_pack_state() and provides most updated PlayAssetPackState of a
 # given asset pack.
 # 
 # This object provides relevant getters so that it is possible to retrieve
@@ -63,13 +63,22 @@ func get_error() -> PlayAssetPackException:
 # -----------------------------------------------------------------------------
 func _on_get_asset_pack_state_success(result : Dictionary):
 	_did_succeed = true
-	_result = PlayAssetPackState.new(result)
-	call_deferred("emit_signal", "request_completed", true, _result, null)
+	
+	# getPackStates() in plugin returns a PlayAssetPackStates Dictionary
+	# TODO: exact behavior of get non-existent pack state.
+	# Currently we are handling as if the plugin won't emit an error, but we will have an empty 
+	# pack_states Dictionary. Hence if we encounter this situation we would consider it as 
+	# request failed.
+	var updated_asset_pack_states_list = PlayAssetPackStates.new(result).get_pack_states().values()
+	if updated_asset_pack_states_list.size() == 0:
+		# emit a failing signal where both result and error are null
+		call_deferred("emit_signal", "request_completed", false, null, null)	
+	else:	
+		call_deferred("emit_signal", "request_completed", true, _result, null)
 
 func _on_get_asset_pack_state_error(error: Dictionary):
 	_did_succeed = false
 	_error = PlayAssetPackException.new(error)
-	_result = PlayAssetPackManager.CellularDataConfirmationResult.RESULT_UNDEFINED
-	call_deferred("emit_signal", "request_completed", false, _result, _error)	
+	call_deferred("emit_signal", "request_completed", false, null, _error)	
 
 
