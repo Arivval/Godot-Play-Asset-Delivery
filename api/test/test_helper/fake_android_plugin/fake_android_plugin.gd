@@ -40,7 +40,6 @@ var _asset_pack_location_store : Dictionary
 
 var _asset_pack_states_store : Dictionary
 
-# TODO: refactor these variables into their own class
 var _fake_get_pack_states_handler : FakeGetPackStatesHandler
 var _fake_cellular_confirmation_handler : FakeCellularConfirmationHandler
 var _fake_remove_pack_handler : FakeRemovePackHandler
