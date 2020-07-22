@@ -50,8 +50,8 @@ func get_did_succeed() -> bool:
 	return _did_succeed
 
 # -----------------------------------------------------------------------------
-# Returns the result of a succeeded Request, represent by a 
-# CellularDataConfirmationResult enum.
+# Returns the result of a succeeded Request, represent by a PlayAssetPackState 
+# object.
 # -----------------------------------------------------------------------------
 func get_result() -> PlayAssetPackState:
 	return _result
@@ -91,6 +91,6 @@ func _on_get_asset_pack_state_success(result : Dictionary):
 func _on_get_asset_pack_state_error(error: Dictionary):
 	_did_succeed = false
 	_error = PlayAssetPackException.new(error)
-	call_deferred("emit_signal", "request_completed", false, _pack_name, null, _error)	
+	call_deferred("emit_signal", "request_completed", _did_succeed, _pack_name, null, _error)	
 
 
