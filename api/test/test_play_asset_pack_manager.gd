@@ -164,13 +164,56 @@ func test_cancel_asset_pack_request_non_existing_pack_name():
 	assert_eq(test_result, false)
 
 func test_get_asset_pack_state_success():
-	pass
+	var mock_plugin = FakeAndroidPlugin.new()
+	var test_object = create_play_asset_pack_manager(mock_plugin)
+	
+	var test_pack_name = "pack1"
+	var test_pack_status = PlayAssetPackManager.AssetPackStatus.DOWNLOADING
+	
+	var updated_asset_pack_state_dict = create_mock_asset_pack_state_with_status_dict(test_pack_name, test_pack_status)
+	var fake_asset_pack_state_updated_handler = FakeAssetPackStateUpdatedHandler.new(updated_asset_pack_state_dict)
+	# trigger mock assetPackStateUpdated signal
+	mock_plugin.trigger_asset_pack_state_updated_signal(fake_asset_pack_state_updated_handler)
+	# wait til the mock signal is emitted
+	fake_asset_pack_state_updated_handler.thread.wait_to_finish()
+	
+	var result_asset_pack_state : PlayAssetPackState = test_object.get_asset_pack_state(test_pack_name)
+	assert_asset_pack_state_eq_dict(result_asset_pack_state, updated_asset_pack_state_dict)
 
 func test_get_asset_pack_state_changing_state():
-	pass
+	var mock_plugin = FakeAndroidPlugin.new()
+	var test_object = create_play_asset_pack_manager(mock_plugin)
+	
+	var test_pack_name = "pack1"
+	var test_pack_status1 = PlayAssetPackManager.AssetPackStatus.DOWNLOADING
+	var test_pack_status2 = PlayAssetPackManager.AssetPackStatus.COMPLETED
+	
+	var updated_asset_pack_state_dict1 = create_mock_asset_pack_state_with_status_dict(test_pack_name, test_pack_status1)
+	var updated_asset_pack_state_dict2 = create_mock_asset_pack_state_with_status_dict(test_pack_name, test_pack_status2)
+	
+	# emit first signal
+	var fake_asset_pack_state_updated_handler = FakeAssetPackStateUpdatedHandler.new(updated_asset_pack_state_dict1)
+	# trigger mock assetPackStateUpdated signal
+	mock_plugin.trigger_asset_pack_state_updated_signal(fake_asset_pack_state_updated_handler)
+	# wait til the mock signal is emitted
+	fake_asset_pack_state_updated_handler.thread.wait_to_finish()
+
+	# emit second signal
+	fake_asset_pack_state_updated_handler = FakeAssetPackStateUpdatedHandler.new(updated_asset_pack_state_dict2)
+	# trigger mock assetPackStateUpdated signal
+	mock_plugin.trigger_asset_pack_state_updated_signal(fake_asset_pack_state_updated_handler)
+	# wait til the mock signal is emitted
+	fake_asset_pack_state_updated_handler.thread.wait_to_finish()
+	
+	var result_asset_pack_state : PlayAssetPackState = test_object.get_asset_pack_state(test_pack_name)
+	assert_asset_pack_state_eq_dict(result_asset_pack_state, updated_asset_pack_state_dict2)
+	
 
 func test_get_asset_pack_state_non_existent_pack():
-	pass
+	var mock_plugin = FakeAndroidPlugin.new()
+	var test_object = create_play_asset_pack_manager(mock_plugin)
+	var result_asset_pack_state : PlayAssetPackState = test_object.get_asset_pack_state("non existing pack")
+	assert_eq(result_asset_pack_state, null)
 
 func test_show_cellular_data_confirmation_success():
 	var mock_plugin = FakeAndroidPlugin.new()
