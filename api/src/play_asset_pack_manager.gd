@@ -18,8 +18,9 @@
 #
 # Singleton class that initializes the PlayAssetDelivery Android plugin and 
 # manages downloads of asset packs. Recommended to autoload this script by
-# modifying the configurations in Project -> Project Settings -> AutoLoad
-#
+# modifying the configurations in Project -> Project Settings -> AutoLoad.
+# Functions and signals providewd by the Android plugin will use camelCasing as 
+# the naming convention, since the plugin is written in Java.
 # ##############################################################################
 extends Node
 

@@ -18,7 +18,9 @@
 #
 # Class that creates a fake PlayAssetDelivery Android plugin, mocking the 
 # behaviour of the Java API. Provides helper functions that allow us to configure
-# returned object and side effects of PlayAssetDelivery plugin calls.
+# returned object and side effects of PlayAssetDelivery plugin calls. Some of 
+# the functions and signals in this class will use camelCasing as the naming
+# convention, since they are mocking the functions and signals written in Java.
 #
 # ##############################################################################
 class_name FakeAndroidPlugin
