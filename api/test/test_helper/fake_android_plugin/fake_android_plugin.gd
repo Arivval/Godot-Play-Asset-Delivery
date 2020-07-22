@@ -37,6 +37,7 @@ var _asset_pack_location_store : Dictionary
 var _asset_pack_states_store : Dictionary
 
 # TODO: refactor these variables into their own class
+var _fake_get_pack_states_handler : FakeGetPackStatesHandler
 var _fake_cellular_confirmation_handler : FakeCellularConfirmationHandler
 var _fake_remove_pack_handler : FakeRemovePackHandler
 
@@ -96,6 +97,9 @@ func remove_asset_pack_state(pack_name : String):
 		_asset_pack_states_store[PlayAssetPackStates._TOTAL_BYTES_KEY] -= pack_size
 		_asset_pack_states_store[PlayAssetPackStates._PACK_STATES_KEY].erase(pack_name)
 
+func set_fake_get_pack_states_handler(handler : FakeGetPackStatesHandler):
+	_fake_get_pack_states_handler = handler
+
 func set_fake_cellular_confirmation_handler(handler : FakeCellularConfirmationHandler):
 	_fake_cellular_confirmation_handler = handler
 
@@ -134,6 +138,20 @@ func getPackLocations():
 	return _asset_pack_location_store
 
 # -----------------------------------------------------------------------------
+# Simulates the getPackStates() function in PlayAssetDelivery Android plugin. 
+# Emits signal with arguments configured using 
+# set_fake_get_pack_states_handler().
+# -----------------------------------------------------------------------------
+func getPackStates(pack_names : Array, signal_id : int):
+	_fake_get_pack_states_handler.thread = Thread.new()
+	if _fake_get_pack_states_handler.success:
+		var thread_args = ["getPackStatesSuccess", _fake_get_pack_states_handler.result, signal_id]
+		_fake_get_pack_states_handler.thread.start(self, _EMIT_DELAYED_SIGNAL_FUNCTION, thread_args)
+	else:
+		var thread_args = ["getPackStatesError", _fake_get_pack_states_handler.error, signal_id]
+		_fake_get_pack_states_handler.thread.start(self, _EMIT_DELAYED_SIGNAL_FUNCTION, thread_args)
+
+# -----------------------------------------------------------------------------
 # Simulates the cancel() function in PlayAssetDelivery Android plugin. Iterate
 # through all AssetPackState within _asset_pack_states_store and return the
 # updated states.
@@ -161,8 +179,8 @@ func cancel(pack_names : Array):
 
 # -----------------------------------------------------------------------------
 # Simulates the showCellularDataConfirmation() function in PlayAssetDelivery 
-# Android plugin. Emits signal with arguments configured with
-# _fake_cellular_confirmation_handler.
+# Android plugin. Emits signal with arguments configured using
+# set_fake_cellular_confirmation_handler().
 # -----------------------------------------------------------------------------
 func showCellularDataConfirmation(signal_id : int):
 	# use multithreading to call emit_delayed_signal() to emit signal with delay since Godot's main
@@ -178,7 +196,7 @@ func showCellularDataConfirmation(signal_id : int):
 
 # -----------------------------------------------------------------------------
 # Simulates the removePack() function in PlayAssetDelivery Android plugin. 
-# Emits signal with arguments configured using set_remove_pack_response().
+# Emits signal with arguments configured using set_fake_remove_pack_handler().
 # -----------------------------------------------------------------------------
 func removePack(pack_name : String, signal_id : int):
 	# use multithreading to call emit_delayed_signal() to emit signal with delay since Godot's main

@@ -70,10 +70,11 @@ func _on_get_asset_pack_state_success(result : Dictionary):
 	# pack_states Dictionary. Hence if we encounter this situation we would consider it as 
 	# request failed.
 	var updated_asset_pack_states_list = PlayAssetPackStates.new(result).get_pack_states().values()
-	if updated_asset_pack_states_list.size() == 0:
+	if updated_asset_pack_states_list.size() != 1:
 		# emit a failing signal where both result and error are null
 		call_deferred("emit_signal", "request_completed", false, null, null)	
-	else:	
+	else:
+		_result = updated_asset_pack_states_list[0]
 		call_deferred("emit_signal", "request_completed", true, _result, null)
 
 func _on_get_asset_pack_state_error(error: Dictionary):

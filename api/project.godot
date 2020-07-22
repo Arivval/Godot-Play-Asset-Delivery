@@ -20,6 +20,11 @@ _global_script_classes=[ {
 "path": "res://test/test_helper/fake_android_plugin/handler/fake_cellular_confirmation_handler.gd"
 }, {
 "base": "Object",
+"class": "FakeGetPackStatesHandler",
+"language": "GDScript",
+"path": "res://test/test_helper/fake_android_plugin/handler/fake_get_pack_states_handler.gd"
+}, {
+"base": "Object",
 "class": "FakeRemovePackHandler",
 "language": "GDScript",
 "path": "res://test/test_helper/fake_android_plugin/handler/fake_remove_pack_handler.gd"
@@ -77,6 +82,7 @@ _global_script_classes=[ {
 _global_script_class_icons={
 "FakeAndroidPlugin": "",
 "FakeCellularConfirmationHandler": "",
+"FakeGetPackStatesHandler": "",
 "FakeRemovePackHandler": "",
 "PlayAssetDeliveryRequest": "",
 "PlayAssetDeliveryRequestTracker": "",
