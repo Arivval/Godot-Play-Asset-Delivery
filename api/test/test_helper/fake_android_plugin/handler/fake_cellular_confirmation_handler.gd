@@ -17,7 +17,8 @@
 # ##############################################################################
 #
 # Object used to define the expected behavior of calling 
-# showCellularDataConfirmation() in FakeAndroidPlugin.
+# showCellularDataConfirmation() in FakeAndroidPlugin. The result field will be 
+# a CellularDataConfirmationResult enum.
 #
 # ##############################################################################
 class_name FakeCellularConfirmationHandler

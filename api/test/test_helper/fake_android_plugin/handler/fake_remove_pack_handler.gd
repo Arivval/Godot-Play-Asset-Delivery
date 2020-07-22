@@ -16,8 +16,8 @@
 #
 # ##############################################################################
 #
-# Object used to define the expected behavior of calling 
-# removePack() in FakeAndroidPlugin.
+# Object used to define the expected behavior of calling removePack() in 
+# FakeAndroidPlugin.
 #
 # ##############################################################################
 class_name FakeRemovePackHandler

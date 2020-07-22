@@ -16,9 +16,8 @@
 #
 # ##############################################################################
 #
-# Object used to define the expected behavior of calling 
-# getPackStates() in FakeAndroidPlugin. The result field will 
-# be an AssetPackStates Dictionary.
+# Object used to define the expected behavior of calling getPackStates() in 
+# FakeAndroidPlugin. The result field will be an AssetPackStates Dictionary.
 #
 # ##############################################################################
 class_name FakeGetPackStatesHandler
