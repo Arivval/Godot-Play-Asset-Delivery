@@ -208,7 +208,6 @@ func test_get_asset_pack_state_changing_state():
 	var result_asset_pack_state : PlayAssetPackState = test_object.get_asset_pack_state(test_pack_name)
 	assert_asset_pack_state_eq_dict(result_asset_pack_state, updated_asset_pack_state_dict2)
 	
-
 func test_get_asset_pack_state_non_existent_pack():
 	var mock_plugin = FakeAndroidPlugin.new()
 	var test_object = create_play_asset_pack_manager(mock_plugin)
