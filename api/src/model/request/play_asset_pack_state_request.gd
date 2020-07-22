@@ -27,15 +27,21 @@
 class_name PlayAssetPackStateRequest
 extends PlayAssetDeliveryRequest
 
-signal request_completed(did_succeed, result, exception)
+signal request_completed(did_succeed, pack_name, result, exception)
 
+var _pack_name : String
 var _did_succeed : bool
 var _result : PlayAssetPackState
 var _error : PlayAssetPackException
-var _pack_name : String
 
 func _init(pack_name):
 	_pack_name = pack_name
+
+# -----------------------------------------------------------------------------
+# Returns the requested asset pack's name
+# -----------------------------------------------------------------------------
+func get_pack_name() -> String:
+	return _pack_name
 
 # -----------------------------------------------------------------------------
 # Returns boolean indicating Request succeeded/failed.
@@ -62,6 +68,7 @@ func get_error() -> PlayAssetPackException:
 # Emits request_completed(did_succeed, result, exception) signal upon request 
 # succeeds/fails.
 # 	did_succeed : boolean indicating request succeeded/failed
+# 	pack_name: String, name of the requested asset pack
 # 	result : PlayAssetPackState object if request succeeded, otherwise null
 #	exception: PlayAssetPackException object if request failed, otherwise null
 #
@@ -78,15 +85,15 @@ func _on_get_asset_pack_state_success(result : Dictionary):
 	if updated_asset_pack_states_dict.size() == 1 and _pack_name in updated_asset_pack_states_dict.keys():
 		_did_succeed = true
 		_result = updated_asset_pack_states_dict[_pack_name]
-		call_deferred("emit_signal", "request_completed", _did_succeed, _result, null)
+		call_deferred("emit_signal", "request_completed", _did_succeed, _pack_name, _result, null)
 	else:
 		_did_succeed = false
 		# emit a failing signal where both result and error are null
-		call_deferred("emit_signal", "request_completed", _did_succeed, null, null)	
+		call_deferred("emit_signal", "request_completed", _did_succeed, _pack_name, null, null)	
 
 func _on_get_asset_pack_state_error(error: Dictionary):
 	_did_succeed = false
 	_error = PlayAssetPackException.new(error)
-	call_deferred("emit_signal", "request_completed", false, null, _error)	
+	call_deferred("emit_signal", "request_completed", false, _pack_name, null, _error)	
 
 
