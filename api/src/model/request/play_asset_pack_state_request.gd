@@ -84,8 +84,10 @@ func _on_get_asset_pack_state_success(result : Dictionary):
 		_result = updated_asset_pack_states_dict[_pack_name]
 		call_deferred("emit_signal", "request_completed", _did_succeed, _pack_name, _result, null)
 	else:
+		# Although we received a getPackStatesSuccess signal, the result field does not contain
+		# needed AssetPackState dictionary.
+		# Hence emit a failing signal where both result and error are null 
 		_did_succeed = false
-		# emit a failing signal where both result and error are null
 		call_deferred("emit_signal", "request_completed", _did_succeed, _pack_name, null, null)	
 
 func _on_get_asset_pack_state_error(error: Dictionary):
