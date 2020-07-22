@@ -187,6 +187,7 @@ func get_asset_pack_state(pack_name: String) -> PlayAssetPackState:
 	var return_asset_pack_state = null
 	if pack_name in _asset_pack_states_store.keys():
 		return_asset_pack_state = PlayAssetPackState.new(_asset_pack_states_store[pack_name])
+	_asset_pack_states_store_mutex.unlock()
 	return return_asset_pack_state
 
 # -----------------------------------------------------------------------------
