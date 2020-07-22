@@ -170,7 +170,7 @@ func test_get_asset_pack_state_success():
 	var test_asset_pack_state = create_mock_asset_pack_state_dict()
 	var test_pack_name = test_asset_pack_state[PlayAssetPackState._NAME_KEY]
 	
-	# the plugin call will return an AssetPackStates dictionary enclose the given test_asset_pack_state
+	# the plugin call will return an AssetPackStates dictionary enclosing the given test_asset_pack_state
 	var test_asset_pack_states = create_mock_asset_pack_states_with_single_state_dict(test_asset_pack_state)
 	var handler = FakeGetPackStatesHandler.new(true, \
 		test_asset_pack_states, {})
@@ -196,7 +196,8 @@ func test_get_asset_pack_state_success():
 	# join instantiated thread
 	handler.thread.wait_to_finish()
 
-func assert_get_asset_pack_state_signal_is_success(did_succeed : bool, pack_name : String, result : PlayAssetPackState, exception : PlayAssetPackException):
+func assert_get_asset_pack_state_signal_is_success(did_succeed : bool, pack_name : String, \
+	result : PlayAssetPackState, exception : PlayAssetPackException):
 	# assert using callback, simulating the workflow of connecting callback to signal
 	var expected_pack_state_dict = create_mock_asset_pack_state_dict()
 	var expected_pack_name = expected_pack_state_dict[PlayAssetPackState._NAME_KEY]
@@ -208,7 +209,6 @@ func assert_get_asset_pack_state_signal_is_success(did_succeed : bool, pack_name
 func test_get_asset_pack_state_error():
 	var mock_plugin = FakeAndroidPlugin.new()
 	
-	# the plugin call will return an AssetPackStates dictionary enclose the given test_asset_pack_state
 	var handler = FakeGetPackStatesHandler.new(false, {}, \
 		create_mock_asset_pack_java_lang_exception_dict())
 	mock_plugin.set_fake_get_pack_states_handler(handler)
@@ -234,7 +234,8 @@ func test_get_asset_pack_state_error():
 	# join instantiated thread
 	handler.thread.wait_to_finish()
 
-func assert_get_asset_pack_state_signal_is_error(did_succeed : bool, pack_name : String, result : PlayAssetPackState, exception : PlayAssetPackException):
+func assert_get_asset_pack_state_signal_is_error(did_succeed : bool, pack_name : String, \
+	result : PlayAssetPackState, exception : PlayAssetPackException):
 	# assert using callback, simulating the workflow of connecting callback to signal
 	assert_true(not did_succeed)
 	assert_eq(pack_name, "random pack name")
@@ -275,7 +276,8 @@ func test_get_asset_pack_state_non_existent_pack():
 	# join instantiated thread
 	handler.thread.wait_to_finish()
 
-func assert_get_asset_pack_state_signal_non_existent_pack(did_succeed : bool, pack_name : String, result : PlayAssetPackState, exception : PlayAssetPackException):
+func assert_get_asset_pack_state_signal_non_existent_pack(did_succeed : bool, pack_name : String, \
+	result : PlayAssetPackState, exception : PlayAssetPackException):
 	# assert using callback, simulating the workflow of connecting callback to signal
 	var non_existent_pack_name = create_mock_asset_pack_state_dict()[PlayAssetPackState._NAME_KEY] + "non-existent suffix"
 	assert_true(not did_succeed)
