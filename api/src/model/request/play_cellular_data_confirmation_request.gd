@@ -39,7 +39,7 @@ func get_did_succeed() -> bool:
 	return _did_succeed
 
 # -----------------------------------------------------------------------------
-# Returns the result of a succeeded Request, represent by an 
+# Returns the result of a succeeded Request, represent by a 
 # CellularDataConfirmationResult enum.
 # -----------------------------------------------------------------------------
 func get_result() -> int:
