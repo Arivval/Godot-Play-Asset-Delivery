@@ -20,7 +20,7 @@
 # signals emitted from PlayAssetDelivery Android Plugin.
 #
 # ##############################################################################
-class_name PlayAssetPackRequest
+class_name PlayAssetDeliveryRequest
 extends Object
 
 func _init():

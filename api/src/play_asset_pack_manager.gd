@@ -24,7 +24,7 @@
 extends Node
 
 var _plugin_singleton : Object
-var _request_tracker : PlayAssetPackRequestTracker
+var _request_tracker : PlayAssetDeliveryRequestTracker
 
 # -----------------------------------------------------------------------------
 # Enums
@@ -61,6 +61,12 @@ enum AssetPackErrorCode {
 	INTERNAL_ERROR = -100
 }
 
+enum CellularDataConfirmationResult {
+	RESULT_UNDEFINED = -2,
+	RESULT_OK = -1,
+	RESULT_CANCELED = 0
+}
+
 # -----------------------------------------------------------------------------
 # Setup
 # -----------------------------------------------------------------------------
@@ -69,7 +75,21 @@ func _ready():
 
 func _initialize():
 	_plugin_singleton = _initialize_plugin()
-	_request_tracker = PlayAssetPackRequestTracker.new()
+	_connect_plugin_signals()
+	_request_tracker = PlayAssetDeliveryRequestTracker.new()
+
+# -----------------------------------------------------------------------------
+# Connect signals, allowing signals emitted from the plugin to be correctly
+# linked to functions in the front-facing API.
+# -----------------------------------------------------------------------------
+func _connect_plugin_signals():
+	if _plugin_singleton != null:
+		_plugin_singleton.connect("removePackSuccess", self, "_forward_remove_pack_success")
+		_plugin_singleton.connect("removePackError", self, "_forward_remove_pack_error")
+		_plugin_singleton.connect("showCellularDataConfirmationSuccess", self, \
+			"_forward_show_cellular_data_confirmation_success")
+		_plugin_singleton.connect("showCellularDataConfirmationError", self, \
+			"_forward_show_cellular_data_confirmation_error")
 
 # -----------------------------------------------------------------------------
 # Returns the PlayAssetDelivery Android Plugin singleton, null if this plugin
@@ -81,6 +101,29 @@ func _initialize_plugin() -> Object:
 	else:
 		push_error("Android plugin singleton not found!")
 		return null
+
+# -----------------------------------------------------------------------------
+# Helper functions that forward signals emitted from the plugin
+# -----------------------------------------------------------------------------
+func _forward_show_cellular_data_confirmation_success(result : int, signal_id : int):
+	var target_request = _request_tracker.lookup_request(signal_id)
+	target_request._on_show_cellular_data_confirmation_success(result)
+	_request_tracker.unregister_request(signal_id)
+
+func _forward_show_cellular_data_confirmation_error(error : Dictionary, signal_id : int):
+	var target_request = _request_tracker.lookup_request(signal_id)
+	target_request._on_show_cellular_data_confirmation_error(error)
+	_request_tracker.unregister_request(signal_id)
+
+func _forward_remove_pack_success(signal_id : int):
+	var target_request = _request_tracker.lookup_request(signal_id)
+	target_request._on_remove_pack_success()
+	_request_tracker.unregister_request(signal_id)
+
+func _forward_remove_pack_error(error : Dictionary, signal_id : int):
+	var target_request = _request_tracker.lookup_request(signal_id)
+	target_request._on_remove_pack_error(error)
+	_request_tracker.unregister_request(signal_id)
 
 # -----------------------------------------------------------------------------
 # Returns the location of the specified asset in pack on the device, null if 
@@ -133,3 +176,43 @@ func cancel_asset_pack_request(pack_name : String) -> bool:
 	var updated_asset_pack_status = updated_asset_pack_state.get_status()
 	
 	return updated_asset_pack_status == AssetPackStatus.CANCELED
+
+# -----------------------------------------------------------------------------
+# Deletes the specified asset pack from the internal storage of the app.
+#
+# Use this method to delete asset packs instead of deleting files manually. 
+# This ensures that the asset pack will not be re-downloaded during an app 
+# update.
+#
+# If the asset pack is currently being downloaded or installed, this method 
+# does not cancel the process. For this case, use cancel_asset_pack_request()
+# instead.
+#
+# Returns a PlayAssetPackRemoveRequest object that can emit onComplete signal
+# once the remove request succeeded or failed.
+# -----------------------------------------------------------------------------
+func remove_pack(pack_name: String):
+	var return_request = PlayAssetPackRemoveRequest.new()
+	var signal_id = _request_tracker.register_request(return_request)
+	_plugin_singleton.removePack(pack_name, signal_id)
+	return return_request
+
+# -----------------------------------------------------------------------------
+# Shows a confirmation dialog to resume all pack downloads that are currently 
+# in the WAITING_FOR_WIFI state. If the user accepts the dialog, packs are 
+# downloaded over cellular data. 
+# 
+# The status of an asset pack is set to WAITING_FOR_WIFI if the user is 
+# currently not on a Wi-Fi connection and the asset pack is large or the user 
+# has set their download preference in the Play Store to only download apps 
+# over Wi-Fi. By showing this dialog, your app can ask the user if they accept 
+# downloading the asset pack over cellular data instead of waiting for Wi-Fi.
+#
+# Returns a PlayCellularDataConfirmationRequest object that can emit onComplete 
+# signal once the the dialog has been accepted, denied, closed.
+# -----------------------------------------------------------------------------
+func show_cellular_data_confirmation():
+	var return_request = PlayCellularDataConfirmationRequest.new()
+	var signal_id = _request_tracker.register_request(return_request)
+	_plugin_singleton.showCellularDataConfirmation(signal_id)
+	return return_request

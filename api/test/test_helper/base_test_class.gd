@@ -63,6 +63,12 @@ func assert_asset_pack_states_eq_dict(asset_pack_states: PlayAssetPackStates, di
 		assert_true(key in pack_states)
 		assert_asset_pack_state_eq_dict(pack_states[key], dict[PlayAssetPackStates._PACK_STATES_KEY][key])
 
+func assert_asset_pack_exception_eq_dict(exception: PlayAssetPackException, dict: Dictionary):
+	assert_eq(dict.size(), 3)
+	assert_eq(exception.get_type(), dict[PlayAssetPackException._TYPE_KEY])
+	assert_eq(exception.get_message(), dict[PlayAssetPackException._MESSAGE_KEY])
+	assert_eq(exception.get_error_code(), dict[PlayAssetPackException._ERROR_CODE_KEY])
+
 func create_mock_asset_pack_states_dict() -> Dictionary:
 	var pack_1_dict = {
 		PlayAssetPackState._NAME_KEY: "assetPack1", 
@@ -122,3 +128,9 @@ func create_mock_asset_pack_state_with_status_dict(pack_name : String, status : 
 		PlayAssetPackState._TRANSFER_PROGRESS_PERCENTAGE_KEY: 0
 	}
 
+func create_mock_asset_pack_java_lang_exception_dict():
+	return {
+		PlayAssetPackException._TYPE_KEY: "java.lang.Exception", 
+		PlayAssetPackException._MESSAGE_KEY: "Just a usual exception", 
+		PlayAssetPackException._ERROR_CODE_KEY: PlayAssetPackManager.AssetPackErrorCode.INTERNAL_ERROR
+	}
