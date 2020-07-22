@@ -57,7 +57,7 @@ func get_result() -> PlayAssetPackState:
 	return _result
 
 # -----------------------------------------------------------------------------
-# Returns a PlayAssetPackException if Request failed.
+# Returns a PlayAssetPackException if exception occurred.
 # -----------------------------------------------------------------------------
 func get_error() -> PlayAssetPackException:
 	return _error
@@ -65,8 +65,8 @@ func get_error() -> PlayAssetPackException:
 # -----------------------------------------------------------------------------
 # Callback functions handling signals emitted from the plugin.
 #
-# Emits request_completed(did_succeed, result, exception) signal upon request 
-# succeeds/fails.
+# Emits request_completed(did_succeed, pack_name, result, exception) signal 
+# upon request succeeds/fails.
 # 	did_succeed : boolean indicating request succeeded/failed
 # 	pack_name: String, name of the requested asset pack
 # 	result : PlayAssetPackState object if request succeeded, otherwise null
@@ -76,11 +76,8 @@ func get_error() -> PlayAssetPackException:
 # did_succeed will be false and both result and exception will be null.
 # -----------------------------------------------------------------------------
 func _on_get_asset_pack_state_success(result : Dictionary):
-	# getPackStates() in plugin returns a PlayAssetPackStates Dictionary
-	# TODO: look into the exact behavior of get non-existent pack state.
-	# Currently we are handling as if the plugin won't emit an error, but we will have an empty 
-	# pack_states Dictionary. Hence if we encounter this situation we would consider it as 
-	# request failed.
+	# Since getPackStates() in plugin returns a PlayAssetPackStates Dictionary, we need to extract
+	# the PlayAssetPackState within.
 	var updated_asset_pack_states_dict = PlayAssetPackStates.new(result).get_pack_states()
 	if updated_asset_pack_states_dict.size() == 1 and _pack_name in updated_asset_pack_states_dict.keys():
 		_did_succeed = true
