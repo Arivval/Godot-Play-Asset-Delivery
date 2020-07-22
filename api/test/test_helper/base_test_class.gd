@@ -135,20 +135,24 @@ func create_mock_asset_pack_java_lang_exception_dict():
 		PlayAssetPackException._ERROR_CODE_KEY: PlayAssetPackManager.AssetPackErrorCode.INTERNAL_ERROR
 	}
 
-func create_mock_get_pack_states_dict() -> Dictionary:
-	var pack_dict = {
-		PlayAssetPackState._NAME_KEY: "assetPack1", 
+func create_mock_asset_pack_state_dict():
+	return {
+		PlayAssetPackState._NAME_KEY: "packName", 
 		PlayAssetPackState._STATUS_KEY: PlayAssetPackManager.AssetPackStatus.DOWNLOADING, 
 		PlayAssetPackState._ERROR_CODE_KEY: PlayAssetPackManager.AssetPackErrorCode.NO_ERROR,
 		PlayAssetPackState._BYTES_DOWNLOADED_KEY: 562,
 		PlayAssetPackState._TOTAL_BYTES_TO_DOWNLOAD_KEY: 1337,
 		PlayAssetPackState._TRANSFER_PROGRESS_PERCENTAGE_KEY: 42
 	}
+
+func create_mock_asset_pack_states_with_single_state_dict(asset_pack_state : Dictionary) -> Dictionary:
+	var pack_name = asset_pack_state[PlayAssetPackState._NAME_KEY]
+	var total_bytes = asset_pack_state[PlayAssetPackState._TOTAL_BYTES_TO_DOWNLOAD_KEY]
 	
 	var test_dict = {
-		PlayAssetPackStates._TOTAL_BYTES_KEY: 1337,
+		PlayAssetPackStates._TOTAL_BYTES_KEY: total_bytes,
 		PlayAssetPackStates._PACK_STATES_KEY: {
-			"assetPack1": pack_dict,
+			pack_name: asset_pack_state,
 		}
 	}
 	

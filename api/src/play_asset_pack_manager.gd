@@ -178,7 +178,7 @@ func get_pack_locations() -> Dictionary:
 # Instead use get_pack_location(pack_name).
 # -----------------------------------------------------------------------------
 func get_asset_pack_state(pack_name: String) -> PlayAssetPackStateRequest:
-	var return_request = PlayAssetPackStateRequest.new()
+	var return_request = PlayAssetPackStateRequest.new(pack_name)
 	var signal_id = _request_tracker.register_request(return_request)
 	_plugin_singleton.getPackStates([pack_name], signal_id)
 	return return_request

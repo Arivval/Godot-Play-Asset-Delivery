@@ -24,6 +24,8 @@
 class_name FakeAndroidPlugin
 extends Object
 
+signal getPackStatesSuccess(resultDictionary, signalID)
+signal getPackStatesError(exceptionDictionary, signalID)
 signal removePackSuccess(signalID)
 signal removePackError(exceptionDictionary, signalID)
 signal showCellularDataConfirmationSuccess(resultInt, signalID)
