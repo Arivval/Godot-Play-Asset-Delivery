@@ -198,7 +198,7 @@ func showCellularDataConfirmation(signal_id : int):
 
 # -----------------------------------------------------------------------------
 # Simulates the removePack() function in PlayAssetDelivery Android plugin. 
-# Emits signal with arguments configured using set_fake_remove_pack_handler().
+# Emits signal with arguments configured using set_remove_pack_response().
 # -----------------------------------------------------------------------------
 func removePack(pack_name : String, signal_id : int):
 	# use multithreading to call emit_delayed_signal() to emit signal with delay since Godot's main
