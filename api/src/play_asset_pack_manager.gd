@@ -108,32 +108,32 @@ func _initialize_plugin() -> Object:
 # Helper functions that forward signals emitted from the plugin
 # -----------------------------------------------------------------------------
 func _forward_get_pack_states_success(result : Dictionary, signal_id : int):
-	var target_request = _request_tracker.lookup_request(signal_id)
+	var target_request : PlayAssetPackStateRequest = _request_tracker.lookup_request(signal_id)
 	target_request._on_get_asset_pack_state_success(result)
 	_request_tracker.unregister_request(signal_id)
 
 func _forward_get_pack_states_error(error : Dictionary, signal_id : int):
-	var target_request = _request_tracker.lookup_request(signal_id)
+	var target_request : PlayAssetPackStateRequest = _request_tracker.lookup_request(signal_id)
 	target_request._on_get_asset_pack_state_error(error)
 	_request_tracker.unregister_request(signal_id)
 
 func _forward_show_cellular_data_confirmation_success(result : int, signal_id : int):
-	var target_request = _request_tracker.lookup_request(signal_id)
+	var target_request : PlayCellularDataConfirmationRequest = _request_tracker.lookup_request(signal_id)
 	target_request._on_show_cellular_data_confirmation_success(result)
 	_request_tracker.unregister_request(signal_id)
 
 func _forward_show_cellular_data_confirmation_error(error : Dictionary, signal_id : int):
-	var target_request = _request_tracker.lookup_request(signal_id)
+	var target_request : PlayCellularDataConfirmationRequest = _request_tracker.lookup_request(signal_id)
 	target_request._on_show_cellular_data_confirmation_error(error)
 	_request_tracker.unregister_request(signal_id)
 
 func _forward_remove_pack_success(signal_id : int):
-	var target_request = _request_tracker.lookup_request(signal_id)
+	var target_request : PlayAssetPackRemoveRequest = _request_tracker.lookup_request(signal_id)
 	target_request._on_remove_pack_success()
 	_request_tracker.unregister_request(signal_id)
 
 func _forward_remove_pack_error(error : Dictionary, signal_id : int):
-	var target_request = _request_tracker.lookup_request(signal_id)
+	var target_request : PlayAssetPackRemoveRequest = _request_tracker.lookup_request(signal_id)
 	target_request._on_remove_pack_error(error)
 	_request_tracker.unregister_request(signal_id)
 
