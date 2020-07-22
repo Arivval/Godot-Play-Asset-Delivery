@@ -21,7 +21,7 @@
 # given asset pack.
 # 
 # This object provides relevant getters so that it is possible to retrieve
-# the updated states from this object once the request completes.
+# the updated state from this object once the request completes.
 #
 # ##############################################################################
 class_name PlayAssetPackStateRequest
