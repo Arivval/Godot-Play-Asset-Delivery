@@ -64,6 +64,9 @@ func get_error() -> PlayAssetPackException:
 # 	did_succeed : boolean indicating request succeeded/failed
 # 	result : PlayAssetPackState object if request succeeded, otherwise null
 #	exception: PlayAssetPackException object if request failed, otherwise null
+#
+# Note: when calling get_asset_pack_state() on a non-existent pack_name, 
+# did_succeed will be false and both result and exception will be null.
 # -----------------------------------------------------------------------------
 func _on_get_asset_pack_state_success(result : Dictionary):
 	# getPackStates() in plugin returns a PlayAssetPackStates Dictionary
