@@ -142,8 +142,7 @@ func getPackLocations():
 
 # -----------------------------------------------------------------------------
 # Simulates the getPackStates() function in PlayAssetDelivery Android plugin. 
-# Emits signal with arguments configured using 
-# set_fake_get_pack_states_handler().
+# Emits signal with arguments configured using set_fake_get_pack_states_handler().
 # -----------------------------------------------------------------------------
 func getPackStates(pack_names : Array, signal_id : int):
 	_fake_get_pack_states_handler.thread = Thread.new()
@@ -199,7 +198,7 @@ func showCellularDataConfirmation(signal_id : int):
 
 # -----------------------------------------------------------------------------
 # Simulates the removePack() function in PlayAssetDelivery Android plugin. 
-# Emits signal with arguments configured using set_remove_pack_response().
+# Emits signal with arguments configured using set_fake_remove_pack_handler().
 # -----------------------------------------------------------------------------
 func removePack(pack_name : String, signal_id : int):
 	# use multithreading to call emit_delayed_signal() to emit signal with delay since Godot's main
