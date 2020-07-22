@@ -64,11 +64,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://src/model/play_asset_pack_state.gd"
 }, {
-"base": "PlayAssetDeliveryRequest",
-"class": "PlayAssetPackStateRequest",
-"language": "GDScript",
-"path": "res://src/model/request/play_asset_pack_state_request.gd"
-}, {
 "base": "Object",
 "class": "PlayAssetPackStates",
 "language": "GDScript",
@@ -91,7 +86,6 @@ _global_script_class_icons={
 "PlayAssetPackLocation": "",
 "PlayAssetPackRemoveRequest": "",
 "PlayAssetPackState": "",
-"PlayAssetPackStateRequest": "",
 "PlayAssetPackStates": "",
 "PlayCellularDataConfirmationRequest": ""
 }

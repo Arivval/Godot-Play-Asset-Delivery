@@ -164,126 +164,13 @@ func test_cancel_asset_pack_request_non_existing_pack_name():
 	assert_eq(test_result, false)
 
 func test_get_asset_pack_state_success():
-	var mock_plugin = FakeAndroidPlugin.new()
+	pass
 
-	# configure what should be emitted upon get_asset_pack_state() call
-	var test_asset_pack_state = create_mock_asset_pack_state_dict()
-	var test_pack_name = test_asset_pack_state[PlayAssetPackState._NAME_KEY]
-	
-	# the plugin call will return an AssetPackStates dictionary enclosing the given test_asset_pack_state
-	var test_asset_pack_states = create_mock_asset_pack_states_with_single_state_dict(test_asset_pack_state)
-	var handler = FakeGetPackStatesHandler.new(true, \
-		test_asset_pack_states, {})
-	mock_plugin.set_fake_get_pack_states_handler(handler)
-	
-	var test_object = create_play_asset_pack_manager(mock_plugin)
-	
-	var request_object = test_object.get_asset_pack_state(test_pack_name)
-	
-	# connect to helper function, simulating the workflow of connecting callback to signal
-	request_object.connect("request_completed", self, "assert_get_asset_pack_state_signal_is_success")
-	
-	# yield to the request_completed signal for no longer than 1 seconds and assert for signal emitted
-	yield(yield_to(request_object, "request_completed", 1), YIELD)
-	assert_signal_emitted(request_object, "request_completed", "signal should have emitted")
-	
-	# assert using getters, simulating the workflow of yielding the signals
-	assert_true(request_object.get_did_succeed())
-	assert_eq(request_object.get_pack_name(), test_pack_name)
-	assert_eq(request_object.get_error(), null)
-	assert_asset_pack_state_eq_dict(request_object.get_result(), test_asset_pack_state)
-	
-	# join instantiated thread
-	handler.thread.wait_to_finish()
-
-func assert_get_asset_pack_state_signal_is_success(did_succeed : bool, pack_name : String, \
-	result : PlayAssetPackState, exception : PlayAssetPackException):
-	# assert using callback, simulating the workflow of connecting callback to signal
-	var expected_pack_state_dict = create_mock_asset_pack_state_dict()
-	var expected_pack_name = expected_pack_state_dict[PlayAssetPackState._NAME_KEY]
-	assert_true(did_succeed)
-	assert_eq(pack_name, expected_pack_name)
-	assert_asset_pack_state_eq_dict(result, expected_pack_state_dict)
-	assert_eq(exception, null)
-
-func test_get_asset_pack_state_error():
-	var mock_plugin = FakeAndroidPlugin.new()
-	
-	var handler = FakeGetPackStatesHandler.new(false, {}, \
-		create_mock_asset_pack_java_lang_exception_dict())
-	mock_plugin.set_fake_get_pack_states_handler(handler)
-	
-	var test_object = create_play_asset_pack_manager(mock_plugin)
-	
-	var test_pack_name = "random pack name"
-	var request_object = test_object.get_asset_pack_state(test_pack_name)
-	
-	# connect to helper function, simulating the workflow of connecting callback to signal
-	request_object.connect("request_completed", self, "assert_get_asset_pack_state_signal_is_error")
-	
-	# yield to the request_completed signal for no longer than 1 seconds and assert for signal emitted
-	yield(yield_to(request_object, "request_completed", 1), YIELD)
-	assert_signal_emitted(request_object, "request_completed", "signal should have emitted")
-	
-	# assert using getters, simulating the workflow of yielding the signals
-	assert_true(not request_object.get_did_succeed())
-	assert_eq(request_object.get_pack_name(), test_pack_name)
-	assert_asset_pack_exception_eq_dict(request_object.get_error(), create_mock_asset_pack_java_lang_exception_dict())
-	assert_eq(request_object.get_result(), null)
-	
-	# join instantiated thread
-	handler.thread.wait_to_finish()
-
-func assert_get_asset_pack_state_signal_is_error(did_succeed : bool, pack_name : String, \
-	result : PlayAssetPackState, exception : PlayAssetPackException):
-	# assert using callback, simulating the workflow of connecting callback to signal
-	assert_true(not did_succeed)
-	assert_eq(pack_name, "random pack name")
-	assert_asset_pack_exception_eq_dict(exception, create_mock_asset_pack_java_lang_exception_dict())
-	assert_eq(result, null)
+func test_get_asset_pack_state_changing_state():
+	pass
 
 func test_get_asset_pack_state_non_existent_pack():
-	var mock_plugin = FakeAndroidPlugin.new()
-
-	# configure what should be emitted upon get_asset_pack_state() call
-	var test_asset_pack_state = create_mock_asset_pack_state_dict()
-	var test_pack_name = test_asset_pack_state[PlayAssetPackState._NAME_KEY]
-	
-	# the plugin call will return an AssetPackStates dictionary enclose the given test_asset_pack_state
-	var test_asset_pack_states = create_mock_asset_pack_states_with_single_state_dict(test_asset_pack_state)
-	var handler = FakeGetPackStatesHandler.new(true, \
-		test_asset_pack_states, {})
-	mock_plugin.set_fake_get_pack_states_handler(handler)
-	
-	var test_object = create_play_asset_pack_manager(mock_plugin)
-	
-	var non_existent_pack_name = test_pack_name + "non-existent suffix"
-	var request_object = test_object.get_asset_pack_state(non_existent_pack_name)
-	
-	# connect to helper function, simulating the workflow of connecting callback to signal
-	request_object.connect("request_completed", self, "assert_get_asset_pack_state_signal_non_existent_pack")
-	
-	# yield to the request_completed signal for no longer than 1 seconds and assert for signal emitted
-	yield(yield_to(request_object, "request_completed", 1), YIELD)
-	assert_signal_emitted(request_object, "request_completed", "signal should have emitted")
-	
-	# assert using getters, simulating the workflow of yielding the signals
-	assert_true(not request_object.get_did_succeed())
-	assert_eq(request_object.get_pack_name(), non_existent_pack_name)
-	assert_eq(request_object.get_error(), null)
-	assert_eq(request_object.get_result(), null)
-	
-	# join instantiated thread
-	handler.thread.wait_to_finish()
-
-func assert_get_asset_pack_state_signal_non_existent_pack(did_succeed : bool, pack_name : String, \
-	result : PlayAssetPackState, exception : PlayAssetPackException):
-	# assert using callback, simulating the workflow of connecting callback to signal
-	var non_existent_pack_name = create_mock_asset_pack_state_dict()[PlayAssetPackState._NAME_KEY] + "non-existent suffix"
-	assert_true(not did_succeed)
-	assert_eq(pack_name, non_existent_pack_name)
-	assert_eq(result, null)
-	assert_eq(exception, null)
+	pass
 
 func test_show_cellular_data_confirmation_success():
 	var mock_plugin = FakeAndroidPlugin.new()
