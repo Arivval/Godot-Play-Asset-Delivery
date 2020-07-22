@@ -66,19 +66,20 @@ func get_error() -> PlayAssetPackException:
 #	exception: PlayAssetPackException object if request failed, otherwise null
 # -----------------------------------------------------------------------------
 func _on_get_asset_pack_state_success(result : Dictionary):
-	_did_succeed = true
 	# getPackStates() in plugin returns a PlayAssetPackStates Dictionary
-	# TODO: exact behavior of get non-existent pack state.
+	# TODO: look into the exact behavior of get non-existent pack state.
 	# Currently we are handling as if the plugin won't emit an error, but we will have an empty 
 	# pack_states Dictionary. Hence if we encounter this situation we would consider it as 
 	# request failed.
 	var updated_asset_pack_states_dict = PlayAssetPackStates.new(result).get_pack_states()
 	if updated_asset_pack_states_dict.size() == 1 and _pack_name in updated_asset_pack_states_dict.keys():
+		_did_succeed = true
 		_result = updated_asset_pack_states_dict[_pack_name]
-		call_deferred("emit_signal", "request_completed", true, _result, null)
+		call_deferred("emit_signal", "request_completed", _did_succeed, _result, null)
 	else:
+		_did_succeed = false
 		# emit a failing signal where both result and error are null
-		call_deferred("emit_signal", "request_completed", false, null, null)	
+		call_deferred("emit_signal", "request_completed", _did_succeed, null, null)	
 
 func _on_get_asset_pack_state_error(error: Dictionary):
 	_did_succeed = false
