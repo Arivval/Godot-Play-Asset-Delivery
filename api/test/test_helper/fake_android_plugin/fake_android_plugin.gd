@@ -40,9 +40,9 @@ var _asset_pack_location_store : Dictionary
 
 var _asset_pack_states_store : Dictionary
 
-var _fake_get_pack_states_handler : FakeGetPackStatesInfo
-var _fake_cellular_confirmation_handler : FakeCellularConfirmationInfo
-var _fake_remove_pack_handler : FakeRemovePackInfo
+var _fake_get_pack_states_info : FakeGetPackStatesInfo
+var _fake_cellular_confirmation_info : FakeCellularConfirmationInfo
+var _fake_remove_pack_info : FakeRemovePackInfo
 
 func _init():
 	_asset_location_store = Dictionary()
@@ -100,14 +100,14 @@ func remove_asset_pack_state(pack_name : String):
 		_asset_pack_states_store[PlayAssetPackStates._TOTAL_BYTES_KEY] -= pack_size
 		_asset_pack_states_store[PlayAssetPackStates._PACK_STATES_KEY].erase(pack_name)
 
-func set_fake_get_pack_states_handler(handler : FakeGetPackStatesInfo):
-	_fake_get_pack_states_handler = handler
+func set_fake_get_pack_states_info(signal_info : FakeGetPackStatesInfo):
+	_fake_get_pack_states_info = signal_info
 
-func set_fake_cellular_confirmation_handler(handler : FakeCellularConfirmationInfo):
-	_fake_cellular_confirmation_handler = handler
+func set_fake_cellular_confirmation_info(signal_info : FakeCellularConfirmationInfo):
+	_fake_cellular_confirmation_info = signal_info
 
-func set_fake_remove_pack_handler(handler : FakeRemovePackInfo):
-	_fake_remove_pack_handler = handler
+func set_fake_remove_pack_info(signal_info : FakeRemovePackInfo):
+	_fake_remove_pack_info = signal_info
 
 # -----------------------------------------------------------------------------
 # Helper function that emits signal from another thread with latency so we 
@@ -142,16 +142,16 @@ func getPackLocations():
 
 # -----------------------------------------------------------------------------
 # Simulates the getPackStates() function in PlayAssetDelivery Android plugin. 
-# Emits signal with arguments configured using set_fake_get_pack_states_handler().
+# Emits signal with arguments configured using set_fake_get_pack_states_info().
 # -----------------------------------------------------------------------------
 func getPackStates(pack_names : Array, signal_id : int):
-	_fake_get_pack_states_handler.thread = Thread.new()
-	if _fake_get_pack_states_handler.success:
-		var thread_args = ["getPackStatesSuccess", _fake_get_pack_states_handler.result, signal_id]
-		_fake_get_pack_states_handler.thread.start(self, _EMIT_DELAYED_SIGNAL_FUNCTION, thread_args)
+	_fake_get_pack_states_info.thread = Thread.new()
+	if _fake_get_pack_states_info.success:
+		var thread_args = ["getPackStatesSuccess", _fake_get_pack_states_info.result, signal_id]
+		_fake_get_pack_states_info.thread.start(self, _EMIT_DELAYED_SIGNAL_FUNCTION, thread_args)
 	else:
-		var thread_args = ["getPackStatesError", _fake_get_pack_states_handler.error, signal_id]
-		_fake_get_pack_states_handler.thread.start(self, _EMIT_DELAYED_SIGNAL_FUNCTION, thread_args)
+		var thread_args = ["getPackStatesError", _fake_get_pack_states_info.error, signal_id]
+		_fake_get_pack_states_info.thread.start(self, _EMIT_DELAYED_SIGNAL_FUNCTION, thread_args)
 
 # -----------------------------------------------------------------------------
 # Simulates the cancel() function in PlayAssetDelivery Android plugin. Iterate
@@ -182,31 +182,31 @@ func cancel(pack_names : Array):
 # -----------------------------------------------------------------------------
 # Simulates the showCellularDataConfirmation() function in PlayAssetDelivery 
 # Android plugin. Emits signal with arguments configured using
-# set_fake_cellular_confirmation_handler().
+# set_fake_cellular_confirmation_info().
 # -----------------------------------------------------------------------------
 func showCellularDataConfirmation(signal_id : int):
 	# use multithreading to call emit_delayed_signal() to emit signal with delay since Godot's main
 	# thread is blocking
-	_fake_cellular_confirmation_handler.thread = Thread.new()
+	_fake_cellular_confirmation_info.thread = Thread.new()
 
-	if _fake_cellular_confirmation_handler.success:
-		var thread_args = ["showCellularDataConfirmationSuccess", _fake_cellular_confirmation_handler.result, signal_id]
-		_fake_cellular_confirmation_handler.thread.start(self, _EMIT_DELAYED_SIGNAL_FUNCTION, thread_args)
+	if _fake_cellular_confirmation_info.success:
+		var thread_args = ["showCellularDataConfirmationSuccess", _fake_cellular_confirmation_info.result, signal_id]
+		_fake_cellular_confirmation_info.thread.start(self, _EMIT_DELAYED_SIGNAL_FUNCTION, thread_args)
 	else:
-		var thread_args = ["showCellularDataConfirmationError", _fake_cellular_confirmation_handler.error, signal_id]
-		_fake_cellular_confirmation_handler.thread.start(self, _EMIT_DELAYED_SIGNAL_FUNCTION, thread_args)
+		var thread_args = ["showCellularDataConfirmationError", _fake_cellular_confirmation_info.error, signal_id]
+		_fake_cellular_confirmation_info.thread.start(self, _EMIT_DELAYED_SIGNAL_FUNCTION, thread_args)
 
 # -----------------------------------------------------------------------------
 # Simulates the removePack() function in PlayAssetDelivery Android plugin. 
-# Emits signal with arguments configured using set_fake_remove_pack_handler().
+# Emits signal with arguments configured using set_fake_remove_pack_info().
 # -----------------------------------------------------------------------------
 func removePack(pack_name : String, signal_id : int):
 	# use multithreading to call emit_delayed_signal() to emit signal with delay since Godot's main
 	# thread is blocking
-	_fake_remove_pack_handler.thread = Thread.new()
-	if _fake_remove_pack_handler.success:
+	_fake_remove_pack_info.thread = Thread.new()
+	if _fake_remove_pack_info.success:
 		var thread_args = ["removePackSuccess", signal_id]
-		_fake_remove_pack_handler.thread.start(self, _EMIT_DELAYED_SIGNAL_FUNCTION, thread_args)
+		_fake_remove_pack_info.thread.start(self, _EMIT_DELAYED_SIGNAL_FUNCTION, thread_args)
 	else:
-		var thread_args = ["removePackError", _fake_remove_pack_handler.error, signal_id]
-		_fake_remove_pack_handler.thread.start(self, _EMIT_DELAYED_SIGNAL_FUNCTION, thread_args)
+		var thread_args = ["removePackError", _fake_remove_pack_info.error, signal_id]
+		_fake_remove_pack_info.thread.start(self, _EMIT_DELAYED_SIGNAL_FUNCTION, thread_args)

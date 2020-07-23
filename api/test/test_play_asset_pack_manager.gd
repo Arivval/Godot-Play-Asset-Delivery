@@ -172,9 +172,9 @@ func test_get_asset_pack_state_success():
 	
 	# the plugin call will return an AssetPackStates dictionary enclosing the given test_asset_pack_state
 	var test_asset_pack_states = create_mock_asset_pack_states_with_single_state_dict(test_asset_pack_state)
-	var handler = FakeGetPackStatesInfo.new(true, \
+	var signal_info = FakeGetPackStatesInfo.new(true, \
 		test_asset_pack_states, {})
-	mock_plugin.set_fake_get_pack_states_handler(handler)
+	mock_plugin.set_fake_get_pack_states_info(signal_info)
 	
 	var test_object = create_play_asset_pack_manager(mock_plugin)
 	
@@ -194,7 +194,7 @@ func test_get_asset_pack_state_success():
 	assert_asset_pack_state_eq_dict(request_object.get_result(), test_asset_pack_state)
 	
 	# join instantiated thread
-	handler.thread.wait_to_finish()
+	signal_info.thread.wait_to_finish()
 
 func assert_get_asset_pack_state_signal_is_success(did_succeed : bool, pack_name : String, \
 	result : PlayAssetPackState, exception : PlayAssetPackException):
@@ -209,9 +209,9 @@ func assert_get_asset_pack_state_signal_is_success(did_succeed : bool, pack_name
 func test_get_asset_pack_state_error():
 	var mock_plugin = FakeAndroidPlugin.new()
 	
-	var handler = FakeGetPackStatesInfo.new(false, {}, \
+	var signal_info = FakeGetPackStatesInfo.new(false, {}, \
 		create_mock_asset_pack_java_lang_exception_dict())
-	mock_plugin.set_fake_get_pack_states_handler(handler)
+	mock_plugin.set_fake_get_pack_states_info(signal_info)
 	
 	var test_object = create_play_asset_pack_manager(mock_plugin)
 	
@@ -232,7 +232,7 @@ func test_get_asset_pack_state_error():
 	assert_eq(request_object.get_result(), null)
 	
 	# join instantiated thread
-	handler.thread.wait_to_finish()
+	signal_info.thread.wait_to_finish()
 
 func assert_get_asset_pack_state_signal_is_error(did_succeed : bool, pack_name : String, \
 	result : PlayAssetPackState, exception : PlayAssetPackException):
@@ -251,9 +251,9 @@ func test_get_asset_pack_state_non_existent_pack():
 	
 	# the plugin call will return an AssetPackStates dictionary enclosing the given test_asset_pack_state
 	var test_asset_pack_states = create_mock_asset_pack_states_with_single_state_dict(test_asset_pack_state)
-	var handler = FakeGetPackStatesInfo.new(true, \
+	var signal_info = FakeGetPackStatesInfo.new(true, \
 		test_asset_pack_states, {})
-	mock_plugin.set_fake_get_pack_states_handler(handler)
+	mock_plugin.set_fake_get_pack_states_info(signal_info)
 	
 	var test_object = create_play_asset_pack_manager(mock_plugin)
 	
@@ -275,7 +275,7 @@ func test_get_asset_pack_state_non_existent_pack():
 	assert_eq(request_object.get_result(), null)
 	
 	# join instantiated thread
-	handler.thread.wait_to_finish()
+	signal_info.thread.wait_to_finish()
 
 func assert_get_asset_pack_state_signal_non_existent_pack(did_succeed : bool, pack_name : String, \
 	result : PlayAssetPackState, exception : PlayAssetPackException):
@@ -289,8 +289,8 @@ func test_show_cellular_data_confirmation_success():
 	var mock_plugin = FakeAndroidPlugin.new()
 
 	# configure what should be emitted upon show_cellular_data_confirmation() call
-	var handler = FakeCellularConfirmationInfo.new(true, PlayAssetPackManager.CellularDataConfirmationResult.RESULT_OK, {})
-	mock_plugin.set_fake_cellular_confirmation_handler(handler)
+	var signal_info = FakeCellularConfirmationInfo.new(true, PlayAssetPackManager.CellularDataConfirmationResult.RESULT_OK, {})
+	mock_plugin.set_fake_cellular_confirmation_info(signal_info)
 	
 	var test_object = create_play_asset_pack_manager(mock_plugin)
 	
@@ -309,7 +309,7 @@ func test_show_cellular_data_confirmation_success():
 	assert_eq(request_object.get_result(), PlayAssetPackManager.CellularDataConfirmationResult.RESULT_OK)
 	
 	# join instantiated thread
-	handler.thread.wait_to_finish()
+	signal_info.thread.wait_to_finish()
 
 func assert_show_cellular_data_confirmation_signal_is_success(did_succeed : bool, result : int, exception : PlayAssetPackException):
 	# assert using callback, simulating the workflow of connecting callback to signal
@@ -321,10 +321,10 @@ func test_show_cellular_data_confirmation_error():
 	var mock_plugin = FakeAndroidPlugin.new()
 	
 	# configure what should be emitted upon show_cellular_data_confirmation() call
-	var handler = FakeCellularConfirmationInfo.new(false, \
+	var signal_info = FakeCellularConfirmationInfo.new(false, \
 		PlayAssetPackManager.CellularDataConfirmationResult.RESULT_UNDEFINED, \
 		create_mock_asset_pack_java_lang_exception_dict())
-	mock_plugin.set_fake_cellular_confirmation_handler(handler)
+	mock_plugin.set_fake_cellular_confirmation_info(signal_info)
 	var test_object = create_play_asset_pack_manager(mock_plugin)
 	
 	var request_object = test_object.show_cellular_data_confirmation()
@@ -342,7 +342,7 @@ func test_show_cellular_data_confirmation_error():
 		create_mock_asset_pack_java_lang_exception_dict())
 	assert_eq(request_object.get_result(), PlayAssetPackManager.CellularDataConfirmationResult.RESULT_UNDEFINED)
 	# join instantiated thread
-	handler.thread.wait_to_finish()
+	signal_info.thread.wait_to_finish()
 
 func assert_show_cellular_data_confirmation_signal_is_error(did_succeed : bool, result : int, exception : PlayAssetPackException):
 	# assert using callback, simulating the workflow of connecting callback to signal
@@ -354,8 +354,8 @@ func test_remove_pack_success():
 	var mock_plugin = FakeAndroidPlugin.new()
 
 	# configure what should be emitted upon remove_pack() call
-	var handler = FakeRemovePackInfo.new(true, {})
-	mock_plugin.set_fake_remove_pack_handler(handler)
+	var signal_info = FakeRemovePackInfo.new(true, {})
+	mock_plugin.set_fake_remove_pack_info(signal_info)
 	var test_object = create_play_asset_pack_manager(mock_plugin)
 	
 	var request_object = test_object.remove_pack("packName")
@@ -372,7 +372,7 @@ func test_remove_pack_success():
 	assert_eq(request_object.get_error(), null)
 	
 	# join instantiated thread
-	handler.thread.wait_to_finish()
+	signal_info.thread.wait_to_finish()
 
 func assert_remove_pack_signal_is_success(did_succeed : bool, exception : PlayAssetPackException):
 	# assert using callback, simulating the workflow of connecting callback to signal
@@ -383,8 +383,8 @@ func test_remove_pack_error():
 	var mock_plugin = FakeAndroidPlugin.new()
 
 	# configure what should be emitted upon remove_pack() call
-	var handler = FakeRemovePackInfo.new(false, create_mock_asset_pack_java_lang_exception_dict())
-	mock_plugin.set_fake_remove_pack_handler(handler)
+	var signal_info = FakeRemovePackInfo.new(false, create_mock_asset_pack_java_lang_exception_dict())
+	mock_plugin.set_fake_remove_pack_info(signal_info)
 	var test_object = create_play_asset_pack_manager(mock_plugin)
 	
 	var request_object = test_object.remove_pack("packName")
@@ -402,7 +402,7 @@ func test_remove_pack_error():
 		create_mock_asset_pack_java_lang_exception_dict())
 
 	# join instantiated thread
-	handler.thread.wait_to_finish()
+	signal_info.thread.wait_to_finish()
 
 func assert_remove_pack_signal_is_error(did_succeed : bool, exception : PlayAssetPackException):
 	# assert using callback, simulating the workflow of connecting callback to signal
