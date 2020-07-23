@@ -219,6 +219,9 @@ func get_asset_pack_state(pack_name: String) -> PlayAssetPackStateRequest:
 	_plugin_singleton.getPackStates([pack_name], signal_id)
 	return return_request
 
+# -----------------------------------------------------------------------------
+# Requests to download the specified asset packs.
+# -----------------------------------------------------------------------------
 func fetch_asset_pack(pack_name: String) -> PlayAssetPackFetchRequest:
 	var return_request = PlayAssetPackFetchRequest.new(pack_name)
 	var signal_id = _request_tracker.register_request(return_request)
