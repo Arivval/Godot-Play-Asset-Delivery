@@ -88,7 +88,6 @@ func _initialize():
 # -----------------------------------------------------------------------------
 func _connect_plugin_signals():
 	if _plugin_singleton != null:
-		print("connect sig", _plugin_singleton)
 		_plugin_singleton.connect("assetPackStateUpdated", self, "_asset_pack_state_updated")
 		_plugin_singleton.connect("getPackStatesSuccess", self, "_forward_get_pack_states_success")
 		_plugin_singleton.connect("getPackStatesError", self, "_forward_get_pack_states_error")
@@ -107,7 +106,6 @@ func _initialize_plugin() -> Object:
 	if Engine.has_singleton("PlayAssetDelivery"):
 		return Engine.get_singleton("PlayAssetDelivery")
 	else:
-		print("error")
 		push_error("Android plugin singleton not found!")
 		return null
 
