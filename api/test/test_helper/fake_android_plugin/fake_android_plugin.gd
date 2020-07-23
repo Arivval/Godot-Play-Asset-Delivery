@@ -26,6 +26,7 @@
 class_name FakeAndroidPlugin
 extends Object
 
+signal assetPackStateUpdated(resultDictionary)
 signal getPackStatesSuccess(resultDictionary, signalID)
 signal getPackStatesError(exceptionDictionary, signalID)
 signal removePackSuccess(signalID)
@@ -122,6 +123,15 @@ func emit_delayed_signal(args : Array):
 		emit_signal(args[0], args[1])
 	if args.size() == 3:
 		emit_signal(args[0], args[1], args[2])
+
+# -----------------------------------------------------------------------------
+# Helper function that emits a mocked assetPackStateUpdated signal, with result
+# specified by fake_asset_pack_state_updated_info.
+# -----------------------------------------------------------------------------
+func trigger_asset_pack_state_updated_signal(fake_asset_pack_state_updated_info : FakeAssetPackStateUpdatedInfo):
+	fake_asset_pack_state_updated_info.thread = Thread.new()
+	var thread_args = ["assetPackStateUpdated", fake_asset_pack_state_updated_info.result]
+	fake_asset_pack_state_updated_info.thread.start(self, _EMIT_DELAYED_SIGNAL_FUNCTION, thread_args)
 
 # -----------------------------------------------------------------------------
 # Mock Functions

@@ -26,6 +26,9 @@ extends Node
 
 var _plugin_singleton : Object
 var _request_tracker : PlayAssetDeliveryRequestTracker
+# Dictionary that stores the mapping of pack_name to most update-to-date AssetPackState Dictionary
+var _asset_pack_states_store : Dictionary
+var _asset_pack_states_store_mutex : Mutex
 
 # -----------------------------------------------------------------------------
 # Enums
@@ -85,6 +88,8 @@ func _initialize():
 # -----------------------------------------------------------------------------
 func _connect_plugin_signals():
 	if _plugin_singleton != null:
+		print("connect sig", _plugin_singleton)
+		_plugin_singleton.connect("assetPackStateUpdated", self, "_asset_pack_state_updated")
 		_plugin_singleton.connect("getPackStatesSuccess", self, "_forward_get_pack_states_success")
 		_plugin_singleton.connect("getPackStatesError", self, "_forward_get_pack_states_error")
 		_plugin_singleton.connect("removePackSuccess", self, "_forward_remove_pack_success")
@@ -102,8 +107,19 @@ func _initialize_plugin() -> Object:
 	if Engine.has_singleton("PlayAssetDelivery"):
 		return Engine.get_singleton("PlayAssetDelivery")
 	else:
+		print("error")
 		push_error("Android plugin singleton not found!")
 		return null
+
+# -----------------------------------------------------------------------------
+# Helper function that synchronizes _asset_pack_states_store when 
+# receiving the assetPackStateUpdated signal.
+# -----------------------------------------------------------------------------
+func _asset_pack_state_updated(result : Dictionary):
+	_asset_pack_states_store_mutex.lock()
+	var pack_name = result[PlayAssetPackState._NAME_KEY]
+	_asset_pack_states_store[pack_name] = result
+	_asset_pack_states_store_mutex.unlock()
 
 # -----------------------------------------------------------------------------
 # Helper functions that forward signals emitted from the plugin
