@@ -123,7 +123,20 @@ func _asset_pack_state_updated(result : Dictionary):
 	if _asset_pack_to_request_map.has(pack_name):
 		var request_list = _asset_pack_to_request_map[pack_name]
 		for request in request_list:
-			pass
+			# since devs might read request's state when updating, we need to call from main thread
+			request.call_deferred("_on_state_updated", result)
+	_asset_pack_to_request_map_mutex.unlock()
+
+# -----------------------------------------------------------------------------
+# Helper function that releases the reference of PlayAssetPackFetchRequest
+# object in _asset_pack_to_request_map. Called upon free() for given
+# PlayAssetPackFetchRequest object to avoid memroy leaks.
+# -----------------------------------------------------------------------------
+func _remove_fetch_request_reference(object : PlayAssetPackFetchRequest):
+	var pack_name = object.get_pack_name()
+	_asset_pack_to_request_map_mutex.lock()
+	if _asset_pack_to_request_map.has(pack_name):
+		_asset_pack_to_request_map[pack_name].erase(object)
 	_asset_pack_to_request_map_mutex.unlock()
 
 # -----------------------------------------------------------------------------
@@ -206,6 +219,19 @@ func get_asset_pack_state(pack_name: String) -> PlayAssetPackStateRequest:
 	_plugin_singleton.getPackStates([pack_name], signal_id)
 	return return_request
 
+func fetch_asset_pack(pack_name: String) -> PlayAssetPackFetchRequest:
+	var return_request = PlayAssetPackFetchRequest.new(pack_name)
+	var signal_id = _request_tracker.register_request(return_request)
+	
+	# Update mapping of pack_name to request object, so that assetStateUpdated global signal
+	# can be correctly routed to this request object.
+	if _asset_pack_to_request_map.has(pack_name):
+		_asset_pack_to_request_map[pack_name] = [return_request]
+	else:
+		_asset_pack_to_request_map[pack_name].append(return_request)
+	
+	_plugin_singleton.fetch([pack_name], signal_id)
+	return return_request
 # -----------------------------------------------------------------------------
 # Cancels an asset pack request specified by pack_name, true if success. 
 # 

@@ -33,10 +33,11 @@ extends PlayAssetDeliveryRequest
 # 	result : PlayAssetPackState object if request succeeded, otherwise null
 #	exception: PlayAssetPackException object if request failed, otherwise null
 #
-# Note: when calling get_asset_pack_state() on a non-existent pack_name, 
+# Note: when calling fetch_asset_pack() on a non-existent pack_name, 
 # did_succeed will be false and both result and exception will be null.
+# 
 # Emits state_updated(pack_name, result) signal upon fetched pack's state 
-# updated.
+# updated. Only available if request completed success status.
 # 	pack_name: String, name of the requested asset pack
 # 	result: most up-to-date PlayAssetPackState object
 # -----------------------------------------------------------------------------
@@ -50,6 +51,14 @@ var _error : PlayAssetPackException
 
 func _init(pack_name):
 	_pack_name = pack_name
+
+# -----------------------------------------------------------------------------
+# Release the reference of this Request object in PlayAssetPackManager 
+# singleton, then calls free() in superclass.
+# -----------------------------------------------------------------------------
+func free():
+	PlayAssetPackManager._remove_fetch_request_reference(self)
+	.free()
 
 # -----------------------------------------------------------------------------
 # Returns the requested asset pack's name.
@@ -78,16 +87,23 @@ func get_error() -> PlayAssetPackException:
 # Callback functions handling signals emitted from the plugin.
 # -----------------------------------------------------------------------------
 func _on_fetch_success(result: Dictionary):
-	_did_succeed = true
-	_state = PlayAssetPackState.new(result)
-	call_deferred("emit_signal", "request_completed", true, _pack_name, _state, null)
-
-func _on_fetch_error(error: Dictionary):
-	_did_succeed = false
-	_error = PlayAssetPackException.new(error)
-	call_deferred("emit_signal", "request_completed", false, _pack_name, null, _error)
+	# Since fetch() in plugin returns a PlayAssetPackStates Dictionary, we need to extract
+	# the PlayAssetPackState within.
+	var fetch_asset_pack_states_dict = PlayAssetPackStates.new(result).get_pack_states()
+	if fetch_asset_pack_states_dict.size() == 1 and fetch_asset_pack_states_dict.has(_pack_name):
+		_did_succeed = true
+		_state = fetch_asset_pack_states_dict[_pack_name]
+		call_deferred("emit_signal", "request_completed", _did_succeed, _pack_name, _state, null)
+	else:
+		# Although we received a fetchSuccess signal, the result field does not contain
+		# needed AssetPackState dictionary. Hence emit a failing signal where both state and error
+		# are null.
+		_did_succeed = false
+		call_deferred("emit_signal", "request_completed", _did_succeed, _pack_name, null, null)	
 
 func _on_state_updated(result: Dictionary):
 	_state = PlayAssetPackState.new(result)
-	call_deferred("emit_signal", "state_updated", _state)
+	# Since this method is always called on main thread by PlayAssetPackManager, call_deferred is
+	# not needed.
+	emit_signal("state_updated", _state)
 
