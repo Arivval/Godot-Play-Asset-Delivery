@@ -27,6 +27,17 @@
 class_name PlayAssetPackStateRequest
 extends PlayAssetDeliveryRequest
 
+# -----------------------------------------------------------------------------
+# Emits request_completed(did_succeed, pack_name, result, exception) signal 
+# upon request succeeds/fails.
+# 	did_succeed : boolean indicating request succeeded/failed
+# 	pack_name: String, name of the requested asset pack
+# 	result : PlayAssetPackState object if request succeeded, otherwise null
+#	exception: PlayAssetPackException object if request failed, otherwise null
+#
+# Note: when calling get_asset_pack_state() on a non-existent pack_name, 
+# did_succeed will be false and both result and exception will be null.
+# -----------------------------------------------------------------------------
 signal request_completed(did_succeed, pack_name, result, exception)
 
 var _pack_name : String
@@ -64,16 +75,6 @@ func get_error() -> PlayAssetPackException:
 
 # -----------------------------------------------------------------------------
 # Callback functions handling signals emitted from the plugin.
-#
-# Emits request_completed(did_succeed, pack_name, result, exception) signal 
-# upon request succeeds/fails.
-# 	did_succeed : boolean indicating request succeeded/failed
-# 	pack_name: String, name of the requested asset pack
-# 	result : PlayAssetPackState object if request succeeded, otherwise null
-#	exception: PlayAssetPackException object if request failed, otherwise null
-#
-# Note: when calling get_asset_pack_state() on a non-existent pack_name, 
-# did_succeed will be false and both result and exception will be null.
 # -----------------------------------------------------------------------------
 func _on_get_asset_pack_state_success(result : Dictionary):
 	# Since getPackStates() in plugin returns a PlayAssetPackStates Dictionary, we need to extract
