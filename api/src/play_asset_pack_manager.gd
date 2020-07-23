@@ -29,6 +29,9 @@ var _request_tracker : PlayAssetDeliveryRequestTracker
 # Dictionary that stores the mapping of pack_name to most update-to-date AssetPackState Dictionary
 var _asset_pack_states_store : Dictionary
 var _asset_pack_states_store_mutex : Mutex
+# Dictionary that stores the mapping of pack_name to relevant Request objects
+var _asset_pack_to_request_map : Dictionary
+var _asset_pack_to_request_map_mutex : Mutex
 
 # -----------------------------------------------------------------------------
 # Enums
@@ -114,10 +117,14 @@ func _initialize_plugin() -> Object:
 # receiving the assetPackStateUpdated signal.
 # -----------------------------------------------------------------------------
 func _asset_pack_state_updated(result : Dictionary):
-	_asset_pack_states_store_mutex.lock()
-	var pack_name = result[PlayAssetPackState._NAME_KEY]
-	_asset_pack_states_store[pack_name] = result
-	_asset_pack_states_store_mutex.unlock()
+	var updated_state : PlayAssetPackState = PlayAssetPackState.new(result)
+	var pack_name = updated_state.get_name()
+	_asset_pack_to_request_map_mutex.lock()
+	if _asset_pack_to_request_map.has(pack_name):
+		var request_list = _asset_pack_to_request_map[pack_name]
+		for request in request_list:
+			pass
+	_asset_pack_to_request_map_mutex.unlock()
 
 # -----------------------------------------------------------------------------
 # Helper functions that forward signals emitted from the plugin
@@ -209,7 +216,7 @@ func cancel_asset_pack_request(pack_name : String) -> bool:
 	var updated_asset_pack_states : PlayAssetPackStates = PlayAssetPackStates.new(raw_dict)
 	
 	# return false if no matching pack_name found in updated PlayAssetPackStates
-	if not pack_name in updated_asset_pack_states.get_pack_states().keys():
+	if not updated_asset_pack_states.get_pack_states().has(pack_name):
 		return false
 	
 	var updated_asset_pack_state : PlayAssetPackState = updated_asset_pack_states.get_pack_states()[pack_name]
