@@ -163,6 +163,18 @@ func test_cancel_asset_pack_request_non_existing_pack_name():
 	var test_result : bool = test_object.cancel_asset_pack_request(test_pack_name)
 	assert_eq(test_result, false)
 
+func test_fetch_asset_pack_success():
+	pass
+
+func test_fetch_asset_pack_error():
+	pass
+
+func test_fetch_asset_pack_non_existent_pack():
+	pass
+
+func test_fetch_asset_pack_cancel():
+	pass
+
 func test_get_asset_pack_state_success():
 	var mock_plugin = FakeAndroidPlugin.new()
 
