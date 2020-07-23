@@ -26,9 +26,7 @@ extends Node
 
 var _plugin_singleton : Object
 var _request_tracker : PlayAssetDeliveryRequestTracker
-# Dictionary that stores the mapping of pack_name to most update-to-date AssetPackState Dictionary
-var _asset_pack_states_store : Dictionary
-var _asset_pack_states_store_mutex : Mutex
+
 # Dictionary that stores the mapping of pack_name to relevant Request objects
 var _asset_pack_to_request_map : Dictionary
 var _asset_pack_to_request_map_mutex : Mutex
@@ -113,8 +111,8 @@ func _initialize_plugin() -> Object:
 		return null
 
 # -----------------------------------------------------------------------------
-# Helper function that synchronizes _asset_pack_states_store when 
-# receiving the assetPackStateUpdated signal.
+# Helper function that synchronizes request object's states in 
+# _asset_pack_to_request_map when receiving assetPackStateUpdated signal.
 # -----------------------------------------------------------------------------
 func _asset_pack_state_updated(result : Dictionary):
 	var updated_state : PlayAssetPackState = PlayAssetPackState.new(result)
