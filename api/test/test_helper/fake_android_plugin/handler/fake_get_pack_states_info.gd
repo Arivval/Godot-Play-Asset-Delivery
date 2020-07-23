@@ -16,17 +16,19 @@
 #
 # ##############################################################################
 #
-# Object used to define the expected behavior of calling removePack() in 
-# FakeAndroidPlugin.
+# Object used to define the expected behavior of calling getPackStates() in 
+# FakeAndroidPlugin. The result field will be an AssetPackStates Dictionary.
 #
 # ##############################################################################
-class_name FakeRemovePackHandler
+class_name FakeGetPackStatesInfo
 extends Object
 
 var thread : Thread
 var success : bool
+var result : Dictionary
 var error : Dictionary
 
-func _init(success : bool, error : Dictionary):
+func _init(success : bool, result : Dictionary, error : Dictionary):
 	self.success = success
+	self.result = result
 	self.error = error

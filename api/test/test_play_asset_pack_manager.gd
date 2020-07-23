@@ -172,7 +172,7 @@ func test_get_asset_pack_state_success():
 	
 	# the plugin call will return an AssetPackStates dictionary enclosing the given test_asset_pack_state
 	var test_asset_pack_states = create_mock_asset_pack_states_with_single_state_dict(test_asset_pack_state)
-	var handler = FakeGetPackStatesHandler.new(true, \
+	var handler = FakeGetPackStatesInfo.new(true, \
 		test_asset_pack_states, {})
 	mock_plugin.set_fake_get_pack_states_handler(handler)
 	
@@ -209,7 +209,7 @@ func assert_get_asset_pack_state_signal_is_success(did_succeed : bool, pack_name
 func test_get_asset_pack_state_error():
 	var mock_plugin = FakeAndroidPlugin.new()
 	
-	var handler = FakeGetPackStatesHandler.new(false, {}, \
+	var handler = FakeGetPackStatesInfo.new(false, {}, \
 		create_mock_asset_pack_java_lang_exception_dict())
 	mock_plugin.set_fake_get_pack_states_handler(handler)
 	
@@ -251,7 +251,7 @@ func test_get_asset_pack_state_non_existent_pack():
 	
 	# the plugin call will return an AssetPackStates dictionary enclosing the given test_asset_pack_state
 	var test_asset_pack_states = create_mock_asset_pack_states_with_single_state_dict(test_asset_pack_state)
-	var handler = FakeGetPackStatesHandler.new(true, \
+	var handler = FakeGetPackStatesInfo.new(true, \
 		test_asset_pack_states, {})
 	mock_plugin.set_fake_get_pack_states_handler(handler)
 	
@@ -289,7 +289,7 @@ func test_show_cellular_data_confirmation_success():
 	var mock_plugin = FakeAndroidPlugin.new()
 
 	# configure what should be emitted upon show_cellular_data_confirmation() call
-	var handler = FakeCellularConfirmationHandler.new(true, PlayAssetPackManager.CellularDataConfirmationResult.RESULT_OK, {})
+	var handler = FakeCellularConfirmationInfo.new(true, PlayAssetPackManager.CellularDataConfirmationResult.RESULT_OK, {})
 	mock_plugin.set_fake_cellular_confirmation_handler(handler)
 	
 	var test_object = create_play_asset_pack_manager(mock_plugin)
@@ -321,7 +321,7 @@ func test_show_cellular_data_confirmation_error():
 	var mock_plugin = FakeAndroidPlugin.new()
 	
 	# configure what should be emitted upon show_cellular_data_confirmation() call
-	var handler = FakeCellularConfirmationHandler.new(false, \
+	var handler = FakeCellularConfirmationInfo.new(false, \
 		PlayAssetPackManager.CellularDataConfirmationResult.RESULT_UNDEFINED, \
 		create_mock_asset_pack_java_lang_exception_dict())
 	mock_plugin.set_fake_cellular_confirmation_handler(handler)
@@ -354,7 +354,7 @@ func test_remove_pack_success():
 	var mock_plugin = FakeAndroidPlugin.new()
 
 	# configure what should be emitted upon remove_pack() call
-	var handler = FakeRemovePackHandler.new(true, {})
+	var handler = FakeRemovePackInfo.new(true, {})
 	mock_plugin.set_fake_remove_pack_handler(handler)
 	var test_object = create_play_asset_pack_manager(mock_plugin)
 	
@@ -383,7 +383,7 @@ func test_remove_pack_error():
 	var mock_plugin = FakeAndroidPlugin.new()
 
 	# configure what should be emitted upon remove_pack() call
-	var handler = FakeRemovePackHandler.new(false, create_mock_asset_pack_java_lang_exception_dict())
+	var handler = FakeRemovePackInfo.new(false, create_mock_asset_pack_java_lang_exception_dict())
 	mock_plugin.set_fake_remove_pack_handler(handler)
 	var test_object = create_play_asset_pack_manager(mock_plugin)
 	

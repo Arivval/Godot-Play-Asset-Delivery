@@ -40,9 +40,9 @@ var _asset_pack_location_store : Dictionary
 
 var _asset_pack_states_store : Dictionary
 
-var _fake_get_pack_states_handler : FakeGetPackStatesHandler
-var _fake_cellular_confirmation_handler : FakeCellularConfirmationHandler
-var _fake_remove_pack_handler : FakeRemovePackHandler
+var _fake_get_pack_states_handler : FakeGetPackStatesInfo
+var _fake_cellular_confirmation_handler : FakeCellularConfirmationInfo
+var _fake_remove_pack_handler : FakeRemovePackInfo
 
 func _init():
 	_asset_location_store = Dictionary()
@@ -100,13 +100,13 @@ func remove_asset_pack_state(pack_name : String):
 		_asset_pack_states_store[PlayAssetPackStates._TOTAL_BYTES_KEY] -= pack_size
 		_asset_pack_states_store[PlayAssetPackStates._PACK_STATES_KEY].erase(pack_name)
 
-func set_fake_get_pack_states_handler(handler : FakeGetPackStatesHandler):
+func set_fake_get_pack_states_handler(handler : FakeGetPackStatesInfo):
 	_fake_get_pack_states_handler = handler
 
-func set_fake_cellular_confirmation_handler(handler : FakeCellularConfirmationHandler):
+func set_fake_cellular_confirmation_handler(handler : FakeCellularConfirmationInfo):
 	_fake_cellular_confirmation_handler = handler
 
-func set_fake_remove_pack_handler(handler : FakeRemovePackHandler):
+func set_fake_remove_pack_handler(handler : FakeRemovePackInfo):
 	_fake_remove_pack_handler = handler
 
 # -----------------------------------------------------------------------------

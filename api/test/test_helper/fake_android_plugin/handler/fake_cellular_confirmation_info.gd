@@ -21,7 +21,7 @@
 # a CellularDataConfirmationResult enum.
 #
 # ##############################################################################
-class_name FakeCellularConfirmationHandler
+class_name FakeCellularConfirmationInfo
 extends Object
 
 var thread : Thread
