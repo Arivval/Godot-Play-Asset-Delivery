@@ -27,6 +27,8 @@ class_name FakeAndroidPlugin
 extends Object
 
 signal assetPackStateUpdated(resultDictionary)
+signal fetchSuccess(resultDictionary, signalID)
+signal fetchError(exceptionDictionary, signalID)
 signal getPackStatesSuccess(resultDictionary, signalID)
 signal getPackStatesError(exceptionDictionary, signalID)
 signal removePackSuccess(signalID)
@@ -41,7 +43,8 @@ var _asset_pack_location_store : Dictionary
 
 var _asset_pack_states_store : Dictionary
 
-var _fake_get_pack_states_info : FakeGetPackStatesInfo
+var _fake_fetch_info : FakePackStatesInfo
+var _fake_get_pack_states_info : FakePackStatesInfo
 var _fake_cellular_confirmation_info : FakeCellularConfirmationInfo
 var _fake_remove_pack_info : FakeRemovePackInfo
 
@@ -101,7 +104,10 @@ func remove_asset_pack_state(pack_name : String):
 		_asset_pack_states_store[PlayAssetPackStates._TOTAL_BYTES_KEY] -= pack_size
 		_asset_pack_states_store[PlayAssetPackStates._PACK_STATES_KEY].erase(pack_name)
 
-func set_fake_get_pack_states_info(signal_info : FakeGetPackStatesInfo):
+func set_fake_fetch_info(signal_info : FakePackStatesInfo):
+	_fake_fetch_info = signal_info
+
+func set_fake_get_pack_states_info(signal_info : FakePackStatesInfo):
 	_fake_get_pack_states_info = signal_info
 
 func set_fake_cellular_confirmation_info(signal_info : FakeCellularConfirmationInfo):
@@ -149,6 +155,19 @@ func getPackLocation(pack_name : String):
 
 func getPackLocations():
 	return _asset_pack_location_store
+
+# -----------------------------------------------------------------------------
+# Simulates the fetch() function in PlayAssetDelivery Android plugin. 
+# Emits signal with arguments configured using set_fake_fetch_info().
+# -----------------------------------------------------------------------------
+func fetch(pack_names : Array, signal_id : int):
+	_fake_fetch_info.thread = Thread.new()
+	if _fake_fetch_info.success:
+		var thread_args = ["getPackStatesSuccess", _fake_fetch_info.result, signal_id]
+		_fake_fetch_info.thread.start(self, _EMIT_DELAYED_SIGNAL_FUNCTION, thread_args)
+	else:
+		var thread_args = ["getPackStatesError", _fake_fetch_info.error, signal_id]
+		_fake_fetch_info.thread.start(self, _EMIT_DELAYED_SIGNAL_FUNCTION, thread_args)
 
 # -----------------------------------------------------------------------------
 # Simulates the getPackStates() function in PlayAssetDelivery Android plugin. 

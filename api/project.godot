@@ -25,9 +25,9 @@ _global_script_classes=[ {
 "path": "res://test/test_helper/fake_android_plugin/signal_info/fake_cellular_confirmation_info.gd"
 }, {
 "base": "Object",
-"class": "FakeGetPackStatesInfo",
+"class": "FakePackStatesInfo",
 "language": "GDScript",
-"path": "res://test/test_helper/fake_android_plugin/signal_info/fake_get_pack_states_info.gd"
+"path": "res://test/test_helper/fake_android_plugin/signal_info/fake_pack_states_info.gd"
 }, {
 "base": "Object",
 "class": "FakeRemovePackInfo",
@@ -93,7 +93,7 @@ _global_script_class_icons={
 "FakeAndroidPlugin": "",
 "FakeAssetPackStateUpdatedInfo": "",
 "FakeCellularConfirmationInfo": "",
-"FakeGetPackStatesInfo": "",
+"FakePackStatesInfo": "",
 "FakeRemovePackInfo": "",
 "PlayAssetDeliveryRequest": "",
 "PlayAssetDeliveryRequestTracker": "",

@@ -184,7 +184,7 @@ func test_get_asset_pack_state_success():
 	
 	# the plugin call will return an AssetPackStates dictionary enclosing the given test_asset_pack_state
 	var test_asset_pack_states = create_mock_asset_pack_states_with_single_state_dict(test_asset_pack_state)
-	var signal_info = FakeGetPackStatesInfo.new(true, \
+	var signal_info = FakePackStatesInfo.new(true, \
 		test_asset_pack_states, {})
 	mock_plugin.set_fake_get_pack_states_info(signal_info)
 	
@@ -221,7 +221,7 @@ func assert_get_asset_pack_state_signal_is_success(did_succeed : bool, pack_name
 func test_get_asset_pack_state_error():
 	var mock_plugin = FakeAndroidPlugin.new()
 	
-	var signal_info = FakeGetPackStatesInfo.new(false, {}, \
+	var signal_info = FakePackStatesInfo.new(false, {}, \
 		create_mock_asset_pack_java_lang_exception_dict())
 	mock_plugin.set_fake_get_pack_states_info(signal_info)
 	
@@ -263,7 +263,7 @@ func test_get_asset_pack_state_non_existent_pack():
 	
 	# the plugin call will return an AssetPackStates dictionary enclosing the given test_asset_pack_state
 	var test_asset_pack_states = create_mock_asset_pack_states_with_single_state_dict(test_asset_pack_state)
-	var signal_info = FakeGetPackStatesInfo.new(true, \
+	var signal_info = FakePackStatesInfo.new(true, \
 		test_asset_pack_states, {})
 	mock_plugin.set_fake_get_pack_states_info(signal_info)
 	
