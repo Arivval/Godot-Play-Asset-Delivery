@@ -84,6 +84,12 @@ func get_error() -> PlayAssetPackException:
 	return _error
 
 # -----------------------------------------------------------------------------
+# Cancels this fetch request, true if success. 
+# -----------------------------------------------------------------------------
+func cancel_request() -> bool:
+	return PlayAssetPackManager.cancel_asset_pack_request(_pack_name)
+
+# -----------------------------------------------------------------------------
 # Callback functions handling signals emitted from the plugin.
 # -----------------------------------------------------------------------------
 func _on_fetch_success(result: Dictionary):
@@ -105,5 +111,5 @@ func _on_state_updated(result: Dictionary):
 	_state = PlayAssetPackState.new(result)
 	# Since this method is always called on main thread by PlayAssetPackManager, call_deferred is
 	# not needed.
-	emit_signal("state_updated", _state)
+	emit_signal("state_updated", _pack_name, _state)
 
