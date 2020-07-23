@@ -249,7 +249,7 @@ func test_get_asset_pack_state_non_existent_pack():
 	var test_asset_pack_state = create_mock_asset_pack_state_dict()
 	var test_pack_name = test_asset_pack_state[PlayAssetPackState._NAME_KEY]
 	
-	# the plugin call will return an AssetPackStates dictionary enclose the given test_asset_pack_state
+	# the plugin call will return an AssetPackStates dictionary enclosing the given test_asset_pack_state
 	var test_asset_pack_states = create_mock_asset_pack_states_with_single_state_dict(test_asset_pack_state)
 	var handler = FakeGetPackStatesHandler.new(true, \
 		test_asset_pack_states, {})
@@ -258,7 +258,7 @@ func test_get_asset_pack_state_non_existent_pack():
 	var test_object = create_play_asset_pack_manager(mock_plugin)
 	
 	# AssetPackStates dictionary returned by plugin should not contain this pack_name
-	var non_existent_pack_name = test_pack_name + "non-existent suffix"
+	var non_existent_pack_name = "non_existent_pack"
 	var request_object = test_object.get_asset_pack_state(non_existent_pack_name)
 	
 	# connect to helper function, simulating the workflow of connecting callback to signal
@@ -280,9 +280,8 @@ func test_get_asset_pack_state_non_existent_pack():
 func assert_get_asset_pack_state_signal_non_existent_pack(did_succeed : bool, pack_name : String, \
 	result : PlayAssetPackState, exception : PlayAssetPackException):
 	# assert using callback, simulating the workflow of connecting callback to signal
-	var non_existent_pack_name = create_mock_asset_pack_state_dict()[PlayAssetPackState._NAME_KEY] + "non-existent suffix"
 	assert_true(not did_succeed)
-	assert_eq(pack_name, non_existent_pack_name)
+	assert_eq(pack_name, "non_existent_pack")
 	assert_eq(result, null)
 	assert_eq(exception, null)
 
