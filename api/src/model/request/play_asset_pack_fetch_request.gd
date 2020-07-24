@@ -107,6 +107,11 @@ func _on_fetch_success(result: Dictionary):
 		_did_succeed = false
 		call_deferred("emit_signal", "request_completed", _did_succeed, _pack_name, null, null)	
 
+func _on_fetch_error(error: Dictionary):
+	_did_succeed = false
+	_error = PlayAssetPackException.new(error)
+	call_deferred("emit_signal", "request_completed", _did_succeed, _pack_name, null, _error)	
+
 func _on_state_updated(result: Dictionary):
 	_state = PlayAssetPackState.new(result)
 	# Since this method is always called on main thread by PlayAssetPackManager, call_deferred is

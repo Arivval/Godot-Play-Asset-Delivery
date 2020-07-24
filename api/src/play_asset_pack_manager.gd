@@ -89,8 +89,9 @@ func _initialize():
 # -----------------------------------------------------------------------------
 func _connect_plugin_signals():
 	if _plugin_singleton != null:
-		_plugin_singleton.connect("assetPackStateUpdated", self, "_asset_pack_state_updated")
 		_plugin_singleton.connect("getPackStatesSuccess", self, "_forward_get_pack_states_success")
+		_plugin_singleton.connect("fetchSuccess", self, "_forward_fetch_success")
+		_plugin_singleton.connect("fetchError", self, "_forward_fetch_error")
 		_plugin_singleton.connect("getPackStatesError", self, "_forward_get_pack_states_error")
 		_plugin_singleton.connect("removePackSuccess", self, "_forward_remove_pack_success")
 		_plugin_singleton.connect("removePackError", self, "_forward_remove_pack_error")
@@ -140,6 +141,16 @@ func _remove_fetch_request_reference(object : PlayAssetPackFetchRequest):
 # -----------------------------------------------------------------------------
 # Helper functions that forward signals emitted from the plugin
 # -----------------------------------------------------------------------------
+func _forward_fetch_success(result : Dictionary, signal_id : int):
+	var target_request : PlayAssetPackFetchRequest = _request_tracker.lookup_request(signal_id)
+	target_request._on_fetch_success(result)
+	_request_tracker.unregister_request(signal_id)
+
+func _forward_fetch_error(error : Dictionary, signal_id : int):
+	var target_request : PlayAssetPackFetchRequest = _request_tracker.lookup_request(signal_id)
+	target_request._on_fetch_error(error)
+	_request_tracker.unregister_request(signal_id)
+
 func _forward_get_pack_states_success(result : Dictionary, signal_id : int):
 	var target_request : PlayAssetPackStateRequest = _request_tracker.lookup_request(signal_id)
 	target_request._on_get_asset_pack_state_success(result)
@@ -227,9 +238,9 @@ func fetch_asset_pack(pack_name: String) -> PlayAssetPackFetchRequest:
 	# Update mapping of pack_name to request object, so that assetStateUpdated global signal
 	# can be correctly routed to this request object.
 	if _asset_pack_to_request_map.has(pack_name):
-		_asset_pack_to_request_map[pack_name] = [return_request]
-	else:
 		_asset_pack_to_request_map[pack_name].append(return_request)
+	else:
+		_asset_pack_to_request_map[pack_name] = [return_request]
 	
 	_plugin_singleton.fetch([pack_name], signal_id)
 	return return_request

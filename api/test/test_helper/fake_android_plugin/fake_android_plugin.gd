@@ -163,10 +163,10 @@ func getPackLocations():
 func fetch(pack_names : Array, signal_id : int):
 	_fake_fetch_info.thread = Thread.new()
 	if _fake_fetch_info.success:
-		var thread_args = ["getPackStatesSuccess", _fake_fetch_info.result, signal_id]
+		var thread_args = ["fetchSuccess", _fake_fetch_info.result, signal_id]
 		_fake_fetch_info.thread.start(self, _EMIT_DELAYED_SIGNAL_FUNCTION, thread_args)
 	else:
-		var thread_args = ["getPackStatesError", _fake_fetch_info.error, signal_id]
+		var thread_args = ["fetchError", _fake_fetch_info.error, signal_id]
 		_fake_fetch_info.thread.start(self, _EMIT_DELAYED_SIGNAL_FUNCTION, thread_args)
 
 # -----------------------------------------------------------------------------
