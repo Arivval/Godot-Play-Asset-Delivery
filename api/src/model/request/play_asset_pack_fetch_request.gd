@@ -44,8 +44,6 @@ extends PlayAssetDeliveryRequest
 signal request_completed(did_succeed, pack_name, result, exception)
 signal state_updated(pack_name, result)
 
-var _asset_pack_manager = null
-
 var _pack_name : String
 var _did_succeed : bool
 var _state : PlayAssetPackState
@@ -84,15 +82,6 @@ func get_state() -> PlayAssetPackState:
 # -----------------------------------------------------------------------------
 func get_error() -> PlayAssetPackException:
 	return _error
-
-# -----------------------------------------------------------------------------
-# Cancels this fetch request, true if success. 
-# -----------------------------------------------------------------------------
-func cancel_request() -> bool:
-	if _asset_pack_manager == null:
-		return PlayAssetPackManager.cancel_asset_pack_request(_pack_name)
-	else:
-		return _asset_pack_manager.cancel_asset_pack_request(_pack_name)
 
 # -----------------------------------------------------------------------------
 # Callback functions handling signals emitted from the plugin.
