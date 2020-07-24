@@ -114,7 +114,7 @@ func _initialize_plugin() -> Object:
 		return null
 
 # -----------------------------------------------------------------------------
-# Helper function that synchronizes relevant request object's states in 
+# Helper function that synchronizes relevant request object's states 
 # upon receiving assetPackStateUpdated signal.
 # -----------------------------------------------------------------------------
 func route_asset_pack_state_updated(result : Dictionary):
