@@ -53,14 +53,6 @@ func _init(pack_name):
 	_pack_name = pack_name
 
 # -----------------------------------------------------------------------------
-# Release the reference of this Request object in PlayAssetPackManager 
-# singleton, then calls free() in superclass.
-# -----------------------------------------------------------------------------
-func free():
-	PlayAssetPackManager._remove_fetch_request_reference(self)
-	.free()
-
-# -----------------------------------------------------------------------------
 # Returns the requested asset pack's name.
 # -----------------------------------------------------------------------------
 func get_pack_name() -> String:
@@ -90,7 +82,7 @@ func _on_fetch_success(result: Dictionary):
 	# Since fetch() in plugin returns a PlayAssetPackStates Dictionary, we need to extract
 	# the PlayAssetPackState within.
 	var fetch_asset_pack_states_dict = PlayAssetPackStates.new(result).get_pack_states()
-	if fetch_asset_pack_states_dict.size() == 1 and fetch_asset_pack_states_dict.has(_pack_name):
+	if fetch_asset_pack_states_dict.has(_pack_name):
 		_did_succeed = true
 		_state = fetch_asset_pack_states_dict[_pack_name]
 		call_deferred("emit_signal", "request_completed", _did_succeed, _pack_name, _state, null)

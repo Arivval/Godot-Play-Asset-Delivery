@@ -31,6 +31,8 @@ var _request_tracker : PlayAssetDeliveryRequestTracker
 var _asset_pack_to_request_map : Dictionary
 var _asset_pack_to_request_map_mutex : Mutex
 
+var _PACK_TERMINAL_STATES = [AssetPackStatus.CANCELED, AssetPackStatus.COMPLETED, AssetPackStatus.FAILED]
+
 # -----------------------------------------------------------------------------
 # Enums
 # -----------------------------------------------------------------------------
@@ -120,6 +122,7 @@ func _initialize_plugin() -> Object:
 func _route_asset_pack_state_updated(result : Dictionary):
 	var updated_state : PlayAssetPackState = PlayAssetPackState.new(result)
 	var pack_name = updated_state.get_name()
+	var updated_status = updated_state.get_status()
 	_asset_pack_to_request_map_mutex.lock()
 	# update all related request object's states
 	if _asset_pack_to_request_map.has(pack_name):
@@ -128,18 +131,11 @@ func _route_asset_pack_state_updated(result : Dictionary):
 			# since devs might read request's state while we are updating it, we need to call this
 			# function from main thread
 			request.call_deferred("_on_state_updated", result)
-	_asset_pack_to_request_map_mutex.unlock()
-
-# -----------------------------------------------------------------------------
-# Helper function that releases the reference of PlayAssetPackFetchRequest
-# object in _asset_pack_to_request_map. Called upon free() for given
-# PlayAssetPackFetchRequest object to avoid memroy leaks.
-# -----------------------------------------------------------------------------
-func _remove_fetch_request_reference(object : PlayAssetPackFetchRequest):
-	var pack_name = object.get_pack_name()
-	_asset_pack_to_request_map_mutex.lock()
-	if _asset_pack_to_request_map.has(pack_name):
-		_asset_pack_to_request_map[pack_name].erase(object)
+	
+		# if reached terminal state, release references
+		if updated_status in _PACK_TERMINAL_STATES:
+			_asset_pack_to_request_map.erase(pack_name)
+		
 	_asset_pack_to_request_map_mutex.unlock()
 
 # -----------------------------------------------------------------------------
