@@ -250,6 +250,7 @@ func fetch_asset_pack(pack_name: String) -> PlayAssetPackFetchRequest:
 	
 	_plugin_singleton.fetch([pack_name], signal_id)
 	return return_request
+
 # -----------------------------------------------------------------------------
 # Cancels an asset pack request specified by pack_name, true if success. 
 # 

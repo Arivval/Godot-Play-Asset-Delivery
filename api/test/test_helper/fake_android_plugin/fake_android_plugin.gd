@@ -90,7 +90,7 @@ func set_asset_pack_states_store(asset_pack_states_dict : Dictionary):
 func clear_asset_pack_states_store():
 	_asset_pack_states_store = _create_empty_asset_pack_states()
 
-func add_asset_pack_state(asset_pack_state_dict : Dictionary):
+func update_asset_pack_state(asset_pack_state_dict : Dictionary):
 	_asset_pack_states_store[PlayAssetPackStates._TOTAL_BYTES_KEY] += \
 		asset_pack_state_dict[PlayAssetPackState._TOTAL_BYTES_TO_DOWNLOAD_KEY]
 	var pack_name = asset_pack_state_dict[PlayAssetPackState._NAME_KEY]
@@ -163,6 +163,12 @@ func getPackLocations():
 func fetch(pack_names : Array, signal_id : int):
 	_fake_fetch_info.thread = Thread.new()
 	if _fake_fetch_info.success:
+		# update _asset_pack_states_store if pack_name is valid, so that cancel() can work correctly
+		var pack_states = _fake_fetch_info.result[PlayAssetPackStates._PACK_STATES_KEY]
+		if pack_states.has(pack_names[0]):
+			var asset_pack_state = pack_states[pack_names[0]]
+			update_asset_pack_state(asset_pack_state)
+		
 		var thread_args = ["fetchSuccess", _fake_fetch_info.result, signal_id]
 		_fake_fetch_info.thread.start(self, _EMIT_DELAYED_SIGNAL_FUNCTION, thread_args)
 	else:
@@ -200,7 +206,10 @@ func cancel(pack_names : Array):
 			if current_asset_pack_status == PlayAssetPackManager.AssetPackStatus.DOWNLOADING:
 				current_asset_pack_dict[PlayAssetPackState._STATUS_KEY] = \
 					PlayAssetPackManager.AssetPackStatus.CANCELED
-			
+				# emit asset_pack_state_updated signal
+				var signal_info = FakePackStateInfo.new(current_asset_pack_dict)
+				trigger_asset_pack_state_updated_signal(signal_info)
+				
 			# append resulting state to return_asset_pack_states
 			var current_asset_pack_size = current_asset_pack_dict[PlayAssetPackState._TOTAL_BYTES_TO_DOWNLOAD_KEY]
 			return_asset_pack_states[PlayAssetPackStates._TOTAL_BYTES_KEY] += current_asset_pack_size
