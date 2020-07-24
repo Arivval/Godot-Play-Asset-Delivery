@@ -328,9 +328,6 @@ func assert_get_asset_pack_state_signal_non_existent_pack(did_succeed : bool, pa
 	assert_eq(result, null)
 	assert_eq(exception, null)
 
-func test_fetch_asset_pack_cancel():
-	pass
-
 func test_get_asset_pack_state_success():
 	var mock_plugin = FakeAndroidPlugin.new()
 
