@@ -114,8 +114,8 @@ func _initialize_plugin() -> Object:
 		return null
 
 # -----------------------------------------------------------------------------
-# Helper function that synchronizes request object's states in 
-# _asset_pack_to_request_map upon receiving assetPackStateUpdated signal.
+# Helper function that synchronizes relevant request object's states in 
+# upon receiving assetPackStateUpdated signal.
 # -----------------------------------------------------------------------------
 func route_asset_pack_state_updated(result : Dictionary):
 	var updated_state : PlayAssetPackState = PlayAssetPackState.new(result)
@@ -233,7 +233,7 @@ func get_asset_pack_state(pack_name: String) -> PlayAssetPackStateRequest:
 	return return_request
 
 # -----------------------------------------------------------------------------
-# Requests to download the specified asset packs.
+# Requests to download the specified asset pack.
 # -----------------------------------------------------------------------------
 func fetch_asset_pack(pack_name: String) -> PlayAssetPackFetchRequest:
 	var return_request = PlayAssetPackFetchRequest.new(pack_name)

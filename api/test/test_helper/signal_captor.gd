@@ -16,8 +16,7 @@
 #
 # ##############################################################################
 #
-# Object used to capture data emitted by a stream of signals. Stream of 
-# arguments collected in received_params_store.
+# Object used to capture data emitted by a stream of signals.
 #
 # ##############################################################################
 class_name SignalCaptor

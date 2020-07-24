@@ -313,7 +313,7 @@ func test_fetch_asset_pack_non_existent_pack():
 	var request_object = test_object.fetch_asset_pack(non_existent_pack_name)
 	
 	# connect to helper function, simulating the workflow of connecting callback to signal
-	request_object.connect("request_completed", self, "assert_get_asset_pack_state_signal_non_existent_pack")
+	request_object.connect("request_completed", self, "assert_fetch_signal_non_existent_pack")
 	
 	# yield to the request_completed signal for no longer than 1 seconds and assert for signal emitted
 	yield(yield_to(request_object, "request_completed", 1), YIELD)
@@ -328,7 +328,7 @@ func test_fetch_asset_pack_non_existent_pack():
 	# join instantiated thread
 	signal_info.thread.wait_to_finish()
 
-func assert_get_asset_pack_state_signal_non_existent_pack(did_succeed : bool, pack_name : String, \
+func assert_fetch_signal_non_existent_pack(did_succeed : bool, pack_name : String, \
 	result : PlayAssetPackState, exception : PlayAssetPackException):
 	# assert using callback, simulating the workflow of connecting callback to signal
 	assert_true(not did_succeed)
@@ -435,7 +435,7 @@ func test_get_asset_pack_state_non_existent_pack():
 	var request_object = test_object.get_asset_pack_state(non_existent_pack_name)
 	
 	# connect to helper function, simulating the workflow of connecting callback to signal
-	request_object.connect("request_completed", self, "assert_fetch_signal_non_existent_pack")
+	request_object.connect("request_completed", self, "assert_get_asset_pack_state_signal_non_existent_pack")
 	
 	# yield to the request_completed signal for no longer than 1 seconds and assert for signal emitted
 	yield(yield_to(request_object, "request_completed", 1), YIELD)
@@ -450,7 +450,7 @@ func test_get_asset_pack_state_non_existent_pack():
 	# join instantiated thread
 	signal_info.thread.wait_to_finish()
 
-func assert_fetch_signal_non_existent_pack(did_succeed : bool, pack_name : String, \
+func assert_get_asset_pack_state_signal_non_existent_pack(did_succeed : bool, pack_name : String, \
 	result : PlayAssetPackState, exception : PlayAssetPackException):
 	# assert using callback, simulating the workflow of connecting callback to signal
 	assert_true(not did_succeed)
