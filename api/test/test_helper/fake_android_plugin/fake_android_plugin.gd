@@ -135,6 +135,7 @@ func emit_delayed_signal(args : Array):
 # specified by fake_asset_pack_state_updated_info.
 # -----------------------------------------------------------------------------
 func trigger_asset_pack_state_updated_signal(fake_asset_pack_state_updated_info : FakePackStateInfo):
+	# update _asset_pack_states_store with updated state
 	update_asset_pack_state(fake_asset_pack_state_updated_info.result)
 	fake_asset_pack_state_updated_info.thread = Thread.new()
 	var thread_args = ["assetPackStateUpdated", fake_asset_pack_state_updated_info.result]
