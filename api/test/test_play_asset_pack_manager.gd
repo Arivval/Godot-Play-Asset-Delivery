@@ -196,7 +196,8 @@ func test_fetch_asset_pack_success():
 	assert_asset_pack_state_eq_dict(request_object.get_state(), test_asset_pack_state)
 	
 	# Watch our request object and assert for multiple state_updated signals
-	var signal_captor = SignalCaptor.new(2)
+	var signal_argument_count = 2
+	var signal_captor = SignalCaptor.new(signal_argument_count)
 	request_object.connect("state_updated", signal_captor, "signal_call_back")
 	
 	# Emit a stream of state_updated signal
