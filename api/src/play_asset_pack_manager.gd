@@ -90,7 +90,7 @@ func _initialize():
 # -----------------------------------------------------------------------------
 func _connect_plugin_signals():
 	if _plugin_singleton != null:
-		_plugin_singleton.connect("assetPackStateUpdated", self, "route_asset_pack_state_updated")
+		_plugin_singleton.connect("assetPackStateUpdated", self, "_route_asset_pack_state_updated")
 		_plugin_singleton.connect("fetchSuccess", self, "_forward_fetch_success")
 		_plugin_singleton.connect("fetchError", self, "_forward_fetch_error")
 		_plugin_singleton.connect("getPackStatesSuccess", self, "_forward_get_pack_states_success")
@@ -117,7 +117,7 @@ func _initialize_plugin() -> Object:
 # Helper function that synchronizes relevant request object's state upon 
 # receiving assetPackStateUpdated signal.
 # -----------------------------------------------------------------------------
-func route_asset_pack_state_updated(result : Dictionary):
+func _route_asset_pack_state_updated(result : Dictionary):
 	var updated_state : PlayAssetPackState = PlayAssetPackState.new(result)
 	var pack_name = updated_state.get_name()
 	_asset_pack_to_request_map_mutex.lock()
