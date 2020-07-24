@@ -170,7 +170,7 @@ func test_fetch_asset_pack_success():
 	var test_pack_name = "testPack"
 	
 	var test_asset_pack_state = create_mock_asset_pack_state_with_status_and_progress_dict(test_pack_name, \
-		PlayAssetPackManager.AssetPackStatus.DOWNLOADING, 8, 4096)
+		PlayAssetPackManager.AssetPackStatus.PENDING, 0, 4096)
 	
 	# the plugin call will return an AssetPackStates dictionary enclosing the given test_asset_pack_state
 	var test_asset_pack_states = create_mock_asset_pack_states_with_single_state_dict(test_asset_pack_state)
@@ -251,7 +251,7 @@ func assert_fetch_signal_is_success(did_succeed : bool, pack_name : String, \
 	# assert using callback, simulating the workflow of connecting callback to signal
 	var expected_pack_name = "testPack"
 	var expected_pack_state_dict = create_mock_asset_pack_state_with_status_and_progress_dict(expected_pack_name, \
-		PlayAssetPackManager.AssetPackStatus.DOWNLOADING, 8, 4096)
+		PlayAssetPackManager.AssetPackStatus.PENDING, 0, 4096)
 	assert_true(did_succeed)
 	assert_eq(pack_name, expected_pack_name)
 	assert_asset_pack_state_eq_dict(result, expected_pack_state_dict)
@@ -357,7 +357,7 @@ func test_fetch_asset_pack_cancel():
 	var test_pack_name = "testPack"
 	
 	var test_asset_pack_state = create_mock_asset_pack_state_with_status_and_progress_dict(test_pack_name, \
-		PlayAssetPackManager.AssetPackStatus.DOWNLOADING, 8, 4096)
+		PlayAssetPackManager.AssetPackStatus.PENDING, 0, 4096)
 	
 	# the plugin call will return an AssetPackStates dictionary enclosing the given test_asset_pack_state
 	var test_asset_pack_states = create_mock_asset_pack_states_with_single_state_dict(test_asset_pack_state)
@@ -392,20 +392,33 @@ func test_fetch_asset_pack_cancel():
 	var signal_captor = SignalCaptor.new(signal_argument_count)
 	request_object.connect("state_updated", signal_captor, "signal_call_back")
 	
+	# download started
+	var updated_state1 = create_mock_asset_pack_state_with_status_and_progress_dict(test_pack_name, \
+		PlayAssetPackManager.AssetPackStatus.DOWNLOADING, 256, 4096)
+	var updated_signal_info1 = FakePackStateInfo.new(updated_state1)
+	mock_plugin.trigger_asset_pack_state_updated_signal(updated_signal_info1)
+	yield(yield_to(request_object, "state_updated", 1), YIELD)
+	updated_signal_info1.thread.wait_to_finish()
+	
+	# try cancel
 	var cancel_statues = request_object.cancel_request()
 	yield(yield_to(request_object, "state_updated", 1), YIELD)
 	assert_true(cancel_statues)
 	
 	# assert signal_captor is as expected
 	var result_params_store = signal_captor.received_params_store
-	var expect_pack_state = create_mock_asset_pack_state_with_status_and_progress_dict(test_pack_name, \
-		PlayAssetPackManager.AssetPackStatus.CANCELED, 8, 4096)
+	var expect_pack_state1 = create_mock_asset_pack_state_with_status_and_progress_dict(test_pack_name, \
+		PlayAssetPackManager.AssetPackStatus.DOWNLOADING, 256, 4096)
+	var expect_pack_state2 = create_mock_asset_pack_state_with_status_and_progress_dict(test_pack_name, \
+		PlayAssetPackManager.AssetPackStatus.CANCELED, 256, 4096)
 	
-	assert_eq(result_params_store.size(), 1)
+	assert_eq(result_params_store.size(), 2)
 	assert_eq(result_params_store[0].size(), 2)
 	assert_eq(result_params_store[0][0], test_pack_name)
-	assert_asset_pack_state_eq_dict(result_params_store[0][1], expect_pack_state)
-	
+	assert_asset_pack_state_eq_dict(result_params_store[0][1], expect_pack_state1)
+	assert_eq(result_params_store[1][0], test_pack_name)
+	assert_asset_pack_state_eq_dict(result_params_store[1][1], expect_pack_state2)
+
 	# releases reference
 	request_object.free()
 	# assert reference is freed

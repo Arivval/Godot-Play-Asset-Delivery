@@ -135,6 +135,7 @@ func emit_delayed_signal(args : Array):
 # specified by fake_asset_pack_state_updated_info.
 # -----------------------------------------------------------------------------
 func trigger_asset_pack_state_updated_signal(fake_asset_pack_state_updated_info : FakePackStateInfo):
+	update_asset_pack_state(fake_asset_pack_state_updated_info.result)
 	fake_asset_pack_state_updated_info.thread = Thread.new()
 	var thread_args = ["assetPackStateUpdated", fake_asset_pack_state_updated_info.result]
 	fake_asset_pack_state_updated_info.thread.start(self, _EMIT_DELAYED_SIGNAL_FUNCTION, thread_args)
@@ -203,6 +204,7 @@ func cancel(pack_names : Array):
 			# Only active downloads can be canceled
 			var current_asset_pack_dict = current_asset_pack_states_dict[pack_name]
 			var current_asset_pack_status = current_asset_pack_dict[PlayAssetPackState._STATUS_KEY]
+			
 			if current_asset_pack_status == PlayAssetPackManager.AssetPackStatus.DOWNLOADING:
 				current_asset_pack_dict[PlayAssetPackState._STATUS_KEY] = \
 					PlayAssetPackManager.AssetPackStatus.CANCELED
