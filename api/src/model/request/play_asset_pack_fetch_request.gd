@@ -91,3 +91,6 @@ func _on_fetch_error(error: Dictionary):
 	_did_succeed = false
 	_error = PlayAssetPackException.new(error)
 	call_deferred("emit_signal", "request_completed", _did_succeed, _pack_name, null, _error)	
+
+func _on_state_updated(result: Dictionary):	
+	_state = PlayAssetPackState.new(result)	

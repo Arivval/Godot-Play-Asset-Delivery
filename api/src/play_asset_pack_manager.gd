@@ -35,6 +35,10 @@ signal state_updated(pack_name, state)
 var _plugin_singleton : Object
 var _request_tracker : PlayAssetDeliveryRequestTracker
 
+# Dictionary that stores the mapping of pack_name to relevant Request objects	
+var _asset_pack_to_request_map : Dictionary	
+var _asset_pack_to_request_map_mutex : Mutex	
+
 var _PACK_TERMINAL_STATES = [AssetPackStatus.CANCELED, AssetPackStatus.COMPLETED, AssetPackStatus.FAILED]
 
 # -----------------------------------------------------------------------------
@@ -88,6 +92,7 @@ func _initialize():
 	_plugin_singleton = _initialize_plugin()
 	_connect_plugin_signals()
 	_request_tracker = PlayAssetDeliveryRequestTracker.new()
+	_asset_pack_to_request_map_mutex = Mutex.new()
 
 # -----------------------------------------------------------------------------
 # Connect signals, allowing signals emitted from the plugin to be correctly
@@ -126,7 +131,24 @@ func _route_asset_pack_state_updated(result : Dictionary):
 	var updated_state : PlayAssetPackState = PlayAssetPackState.new(result)
 	var pack_name = updated_state.get_name()
 	var updated_status = updated_state.get_status()
+	
+	_asset_pack_to_request_map_mutex.lock()	
+	# update all related request object's states	
+	if _asset_pack_to_request_map.has(pack_name):	
+		var request_list = _asset_pack_to_request_map[pack_name]	
+		for request in request_list:	
+			# since devs might read request's state while we are updating it, we need to call this	
+			# function from main thread	
+			request.call_deferred("_on_state_updated", result)	
 
+		# if reached terminal state, release references	
+		if updated_status in _PACK_TERMINAL_STATES:	
+			_asset_pack_to_request_map.erase(pack_name)	
+
+	_asset_pack_to_request_map_mutex.unlock()
+	
+	# emit signal on main thread
+	call_deferred("emit_signal", "state_updated", pack_name, updated_state)
 
 # -----------------------------------------------------------------------------
 # Helper functions that forward signals emitted from the plugin
@@ -224,6 +246,15 @@ func get_asset_pack_state(pack_name: String) -> PlayAssetPackStateRequest:
 func fetch_asset_pack(pack_name: String) -> PlayAssetPackFetchRequest:
 	var return_request = PlayAssetPackFetchRequest.new(pack_name)
 	var signal_id = _request_tracker.register_request(return_request)
+	
+	# Update mapping of pack_name to request object, so that assetStateUpdated global signal	
+	# can be correctly routed to this request object.	
+	_asset_pack_to_request_map_mutex.lock()	
+	if _asset_pack_to_request_map.has(pack_name):	
+		_asset_pack_to_request_map[pack_name].append(return_request)	
+	else:	
+		_asset_pack_to_request_map[pack_name] = [return_request]	
+	_asset_pack_to_request_map_mutex.unlock()
 	
 	_plugin_singleton.fetch([pack_name], signal_id)
 	return return_request
