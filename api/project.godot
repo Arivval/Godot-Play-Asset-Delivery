@@ -15,14 +15,14 @@ _global_script_classes=[ {
 "path": "res://test/test_helper/fake_android_plugin/fake_android_plugin.gd"
 }, {
 "base": "Object",
-"class": "FakeAssetPackStateUpdatedInfo",
-"language": "GDScript",
-"path": "res://test/test_helper/fake_android_plugin/signal_info/fake_asset_pack_state_updated_info.gd"
-}, {
-"base": "Object",
 "class": "FakeCellularConfirmationInfo",
 "language": "GDScript",
 "path": "res://test/test_helper/fake_android_plugin/signal_info/fake_cellular_confirmation_info.gd"
+}, {
+"base": "Object",
+"class": "FakePackStateInfo",
+"language": "GDScript",
+"path": "res://test/test_helper/fake_android_plugin/signal_info/fake_pack_state_info.gd"
 }, {
 "base": "Object",
 "class": "FakePackStatesInfo",
@@ -88,11 +88,16 @@ _global_script_classes=[ {
 "class": "PlayCellularDataConfirmationRequest",
 "language": "GDScript",
 "path": "res://src/model/request/play_cellular_data_confirmation_request.gd"
+}, {
+"base": "Object",
+"class": "SignalCaptor",
+"language": "GDScript",
+"path": "res://test/test_helper/signal_captor.gd"
 } ]
 _global_script_class_icons={
 "FakeAndroidPlugin": "",
-"FakeAssetPackStateUpdatedInfo": "",
 "FakeCellularConfirmationInfo": "",
+"FakePackStateInfo": "",
 "FakePackStatesInfo": "",
 "FakeRemovePackInfo": "",
 "PlayAssetDeliveryRequest": "",
@@ -105,7 +110,8 @@ _global_script_class_icons={
 "PlayAssetPackState": "",
 "PlayAssetPackStateRequest": "",
 "PlayAssetPackStates": "",
-"PlayCellularDataConfirmationRequest": ""
+"PlayCellularDataConfirmationRequest": "",
+"SignalCaptor": ""
 }
 
 [application]

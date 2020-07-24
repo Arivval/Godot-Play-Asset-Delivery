@@ -82,6 +82,7 @@ func _initialize():
 	_plugin_singleton = _initialize_plugin()
 	_connect_plugin_signals()
 	_request_tracker = PlayAssetDeliveryRequestTracker.new()
+	_asset_pack_to_request_map_mutex = Mutex.new()
 
 # -----------------------------------------------------------------------------
 # Connect signals, allowing signals emitted from the plugin to be correctly
@@ -89,9 +90,10 @@ func _initialize():
 # -----------------------------------------------------------------------------
 func _connect_plugin_signals():
 	if _plugin_singleton != null:
-		_plugin_singleton.connect("getPackStatesSuccess", self, "_forward_get_pack_states_success")
+		_plugin_singleton.connect("assetPackStateUpdated", self, "_asset_pack_state_updated")
 		_plugin_singleton.connect("fetchSuccess", self, "_forward_fetch_success")
 		_plugin_singleton.connect("fetchError", self, "_forward_fetch_error")
+		_plugin_singleton.connect("getPackStatesSuccess", self, "_forward_get_pack_states_success")
 		_plugin_singleton.connect("getPackStatesError", self, "_forward_get_pack_states_error")
 		_plugin_singleton.connect("removePackSuccess", self, "_forward_remove_pack_success")
 		_plugin_singleton.connect("removePackError", self, "_forward_remove_pack_error")
@@ -237,10 +239,12 @@ func fetch_asset_pack(pack_name: String) -> PlayAssetPackFetchRequest:
 	
 	# Update mapping of pack_name to request object, so that assetStateUpdated global signal
 	# can be correctly routed to this request object.
+	_asset_pack_to_request_map_mutex.lock()
 	if _asset_pack_to_request_map.has(pack_name):
 		_asset_pack_to_request_map[pack_name].append(return_request)
 	else:
 		_asset_pack_to_request_map[pack_name] = [return_request]
+	_asset_pack_to_request_map_mutex.unlock()
 	
 	_plugin_singleton.fetch([pack_name], signal_id)
 	return return_request

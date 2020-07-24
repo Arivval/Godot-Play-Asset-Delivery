@@ -167,8 +167,10 @@ func test_fetch_asset_pack_success():
 	var mock_plugin = FakeAndroidPlugin.new()
 
 	# configure what should be emitted upon fetch_asset_pack() call
-	var test_asset_pack_state = create_mock_asset_pack_state_dict()
-	var test_pack_name = test_asset_pack_state[PlayAssetPackState._NAME_KEY]
+	var test_pack_name = "testPack"
+	
+	var test_asset_pack_state = create_mock_asset_pack_state_with_status_and_progress_dict(test_pack_name, \
+		PlayAssetPackManager.AssetPackStatus.DOWNLOADING, 8, 4096)
 	
 	# the plugin call will return an AssetPackStates dictionary enclosing the given test_asset_pack_state
 	var test_asset_pack_states = create_mock_asset_pack_states_with_single_state_dict(test_asset_pack_state)
@@ -192,12 +194,56 @@ func test_fetch_asset_pack_success():
 	assert_eq(request_object.get_pack_name(), test_pack_name)
 	assert_eq(request_object.get_error(), null)
 	assert_asset_pack_state_eq_dict(request_object.get_state(), test_asset_pack_state)
+	
+	# Watch our request object and assert for multiple state_updated signals
+	var signal_captor = SignalCaptor.new(2)
+	request_object.connect("state_updated", signal_captor, "signal_call_back")
+	
+	# Emit a stream of state_updated signal
+	var updated_state1 = create_mock_asset_pack_state_with_status_and_progress_dict(test_pack_name, \
+		PlayAssetPackManager.AssetPackStatus.DOWNLOADING, 256, 4096)
+	var updated_signal_info1 = FakePackStateInfo.new(updated_state1)
+	mock_plugin.trigger_asset_pack_state_updated_signal(updated_signal_info1)
+	yield(yield_to(request_object, "state_updated", 1), YIELD)
+	updated_signal_info1.thread.wait_to_finish()
+	
+	var updated_state2 = create_mock_asset_pack_state_with_status_and_progress_dict(test_pack_name, \
+		PlayAssetPackManager.AssetPackStatus.WAITING_FOR_WIFI, 256, 4096)
+	var updated_signal_info2 = FakePackStateInfo.new(updated_state2)
+	mock_plugin.trigger_asset_pack_state_updated_signal(updated_signal_info2)
+	yield(yield_to(request_object, "state_updated", 1), YIELD)
+	updated_signal_info2.thread.wait_to_finish()
+	
+	var updated_state3 = create_mock_asset_pack_state_with_status_and_progress_dict(test_pack_name, \
+		PlayAssetPackManager.AssetPackStatus.DOWNLOADING, 2048, 4096)
+	var updated_signal_info3 = FakePackStateInfo.new(updated_state3)
+	mock_plugin.trigger_asset_pack_state_updated_signal(updated_signal_info3)
+	yield(yield_to(request_object, "state_updated", 1), YIELD)
+	updated_signal_info3.thread.wait_to_finish()
+	
+	var updated_state4 = create_mock_asset_pack_state_with_status_and_progress_dict(test_pack_name, \
+		PlayAssetPackManager.AssetPackStatus.COMPLETED, 4096, 4096)
+	var updated_signal_info4 = FakePackStateInfo.new(updated_state4)
+	mock_plugin.trigger_asset_pack_state_updated_signal(updated_signal_info4)
+	yield(yield_to(request_object, "state_updated", 1), YIELD)
+	updated_signal_info4.thread.wait_to_finish()
+	
+	# assert signal_captor is as expected
+	var result_params_store = signal_captor.received_params_store
+	var expected_state_list = [updated_state1, updated_state2, updated_state3, updated_state4]
+	assert_eq(result_params_store.size(), 4)
+	# assert all entries in result_params_store
+	for i in range(4):
+		assert_eq(result_params_store[i].size(), 2)
+		assert_eq(result_params_store[i][0], test_pack_name)
+		assert_asset_pack_state_eq_dict(result_params_store[i][1], expected_state_list[i])
 
 func assert_fetch_signal_is_success(did_succeed : bool, pack_name : String, \
 	result : PlayAssetPackState, exception : PlayAssetPackException):
 	# assert using callback, simulating the workflow of connecting callback to signal
-	var expected_pack_state_dict = create_mock_asset_pack_state_dict()
-	var expected_pack_name = expected_pack_state_dict[PlayAssetPackState._NAME_KEY]
+	var expected_pack_name = "testPack"
+	var expected_pack_state_dict = create_mock_asset_pack_state_with_status_and_progress_dict(expected_pack_name, \
+		PlayAssetPackManager.AssetPackStatus.DOWNLOADING, 8, 4096)
 	assert_true(did_succeed)
 	assert_eq(pack_name, expected_pack_name)
 	assert_asset_pack_state_eq_dict(result, expected_pack_state_dict)

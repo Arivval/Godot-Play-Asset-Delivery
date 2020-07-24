@@ -128,6 +128,17 @@ func create_mock_asset_pack_state_with_status_dict(pack_name : String, status : 
 		PlayAssetPackState._TRANSFER_PROGRESS_PERCENTAGE_KEY: 0
 	}
 
+func create_mock_asset_pack_state_with_status_and_progress_dict(pack_name : String, status : int, \
+	bytes_downloaded : int, total_bytes_to_download : int):
+	return {
+		PlayAssetPackState._NAME_KEY: pack_name, 
+		PlayAssetPackState._STATUS_KEY: status, 
+		PlayAssetPackState._ERROR_CODE_KEY: PlayAssetPackManager.AssetPackErrorCode.NO_ERROR,
+		PlayAssetPackState._BYTES_DOWNLOADED_KEY: bytes_downloaded,
+		PlayAssetPackState._TOTAL_BYTES_TO_DOWNLOAD_KEY: total_bytes_to_download,
+		PlayAssetPackState._TRANSFER_PROGRESS_PERCENTAGE_KEY: int(bytes_downloaded / total_bytes_to_download)
+	}
+
 func create_mock_asset_pack_state_dict():
 	return {
 		PlayAssetPackState._NAME_KEY: "packName", 

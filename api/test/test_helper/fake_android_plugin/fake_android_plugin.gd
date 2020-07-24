@@ -134,7 +134,7 @@ func emit_delayed_signal(args : Array):
 # Helper function that emits a mocked assetPackStateUpdated signal, with result
 # specified by fake_asset_pack_state_updated_info.
 # -----------------------------------------------------------------------------
-func trigger_asset_pack_state_updated_signal(fake_asset_pack_state_updated_info : FakeAssetPackStateUpdatedInfo):
+func trigger_asset_pack_state_updated_signal(fake_asset_pack_state_updated_info : FakePackStateInfo):
 	fake_asset_pack_state_updated_info.thread = Thread.new()
 	var thread_args = ["assetPackStateUpdated", fake_asset_pack_state_updated_info.result]
 	fake_asset_pack_state_updated_info.thread.start(self, _EMIT_DELAYED_SIGNAL_FUNCTION, thread_args)

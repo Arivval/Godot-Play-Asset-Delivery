@@ -16,15 +16,24 @@
 #
 # ##############################################################################
 #
-# Object used to define the expected behavior of assetPackStateUpdated signal in 
-# FakeAndroidPlugin. The result field will be an AssetPackState Dictionary.
+# Object used to capture data emitted by a stream of signals. Collect this 
+# stream of arguments in received_params_store.
 #
 # ##############################################################################
-class_name FakeAssetPackStateUpdatedInfo
+class_name SignalCaptor
 extends Object
 
-var thread : Thread
-var result : Dictionary
+# 2d list storing each argument emitted by each signal
+var received_params_store = []
+var _arg_count : int
 
-func _init(result : Dictionary):
-	self.result = result
+func _init(arg_count : int):
+	_arg_count = arg_count
+
+func signal_call_back(arg1, arg2 = null, arg3 = null, arg4 = null):
+	# Arguments are defaulted to null since this function can accept 1 to 4 arguments.
+	# varargs feature is not supported in GDScript, so this is as close as we can get.
+	var args = [arg1, arg2, arg3, arg4]
+	received_params_store.append(args.slice(0, _arg_count - 1))
+		
+	
