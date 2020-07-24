@@ -176,7 +176,7 @@ func test_fetch_asset_pack_success():
 	var test_asset_pack_states = create_mock_asset_pack_states_with_single_state_dict(test_asset_pack_state)
 	var signal_info = FakePackStatesInfo.new(true, \
 		test_asset_pack_states, {})
-	mock_plugin.set_fake_fetch_info(signal_info)
+	mock_plugin.set_fetch_info(signal_info)
 	
 	var test_object = create_play_asset_pack_manager(mock_plugin)
 	
@@ -262,7 +262,7 @@ func test_fetch_asset_pack_error():
 	
 	var signal_info = FakePackStatesInfo.new(false, {}, \
 		create_mock_asset_pack_java_lang_exception_dict())
-	mock_plugin.set_fake_fetch_info(signal_info)
+	mock_plugin.set_fetch_info(signal_info)
 	
 	var test_object = create_play_asset_pack_manager(mock_plugin)
 	
@@ -311,7 +311,7 @@ func test_fetch_asset_pack_non_existent_pack():
 	var test_asset_pack_states = create_mock_asset_pack_states_with_single_state_dict(test_asset_pack_state)
 	var signal_info = FakePackStatesInfo.new(true, \
 		test_asset_pack_states, {})
-	mock_plugin.set_fake_fetch_info(signal_info)
+	mock_plugin.set_fetch_info(signal_info)
 	
 	var test_object = create_play_asset_pack_manager(mock_plugin)
 	
@@ -361,7 +361,7 @@ func test_get_asset_pack_state_success():
 	var test_asset_pack_states = create_mock_asset_pack_states_with_single_state_dict(test_asset_pack_state)
 	var signal_info = FakePackStatesInfo.new(true, \
 		test_asset_pack_states, {})
-	mock_plugin.set_fake_get_pack_states_info(signal_info)
+	mock_plugin.set_get_pack_states_info(signal_info)
 	
 	var test_object = create_play_asset_pack_manager(mock_plugin)
 	
@@ -398,7 +398,7 @@ func test_get_asset_pack_state_error():
 	
 	var signal_info = FakePackStatesInfo.new(false, {}, \
 		create_mock_asset_pack_java_lang_exception_dict())
-	mock_plugin.set_fake_get_pack_states_info(signal_info)
+	mock_plugin.set_get_pack_states_info(signal_info)
 	
 	var test_object = create_play_asset_pack_manager(mock_plugin)
 	
@@ -440,7 +440,7 @@ func test_get_asset_pack_state_non_existent_pack():
 	var test_asset_pack_states = create_mock_asset_pack_states_with_single_state_dict(test_asset_pack_state)
 	var signal_info = FakePackStatesInfo.new(true, \
 		test_asset_pack_states, {})
-	mock_plugin.set_fake_get_pack_states_info(signal_info)
+	mock_plugin.set_get_pack_states_info(signal_info)
 	
 	var test_object = create_play_asset_pack_manager(mock_plugin)
 	
@@ -477,7 +477,7 @@ func test_show_cellular_data_confirmation_success():
 
 	# configure what should be emitted upon show_cellular_data_confirmation() call
 	var signal_info = FakeCellularConfirmationInfo.new(true, PlayAssetPackManager.CellularDataConfirmationResult.RESULT_OK, {})
-	mock_plugin.set_fake_cellular_confirmation_info(signal_info)
+	mock_plugin.set_cellular_confirmation_info(signal_info)
 	
 	var test_object = create_play_asset_pack_manager(mock_plugin)
 	
@@ -511,7 +511,7 @@ func test_show_cellular_data_confirmation_error():
 	var signal_info = FakeCellularConfirmationInfo.new(false, \
 		PlayAssetPackManager.CellularDataConfirmationResult.RESULT_UNDEFINED, \
 		create_mock_asset_pack_java_lang_exception_dict())
-	mock_plugin.set_fake_cellular_confirmation_info(signal_info)
+	mock_plugin.set_cellular_confirmation_info(signal_info)
 	var test_object = create_play_asset_pack_manager(mock_plugin)
 	
 	var request_object = test_object.show_cellular_data_confirmation()
@@ -542,7 +542,7 @@ func test_remove_pack_success():
 
 	# configure what should be emitted upon remove_pack() call
 	var signal_info = FakeRemovePackInfo.new(true, {})
-	mock_plugin.set_fake_remove_pack_info(signal_info)
+	mock_plugin.set_remove_pack_info(signal_info)
 	var test_object = create_play_asset_pack_manager(mock_plugin)
 	
 	var request_object = test_object.remove_pack("packName")
@@ -571,7 +571,7 @@ func test_remove_pack_error():
 
 	# configure what should be emitted upon remove_pack() call
 	var signal_info = FakeRemovePackInfo.new(false, create_mock_asset_pack_java_lang_exception_dict())
-	mock_plugin.set_fake_remove_pack_info(signal_info)
+	mock_plugin.set_remove_pack_info(signal_info)
 	var test_object = create_play_asset_pack_manager(mock_plugin)
 	
 	var request_object = test_object.remove_pack("packName")
