@@ -37,7 +37,7 @@ extends PlayAssetDeliveryRequest
 # did_succeed will be false and both result and exception will be null.
 # 
 # Emits state_updated(pack_name, result) signal upon fetched pack's state 
-# updated. Only available if request completed success status.
+# updated. Only available if request completed with success status.
 # 	pack_name: String, name of the requested asset pack
 # 	result: most up-to-date PlayAssetPackState object
 # -----------------------------------------------------------------------------
@@ -114,7 +114,7 @@ func _on_fetch_error(error: Dictionary):
 
 func _on_state_updated(result: Dictionary):
 	_state = PlayAssetPackState.new(result)
-	# Since this method is always called on main thread by PlayAssetPackManager, call_deferred is
-	# not needed.
+	# Since this method is always called on main thread by route_asset_pack_state_updated(), 
+	# call_deferred is not needed.
 	emit_signal("state_updated", _pack_name, _state)
 

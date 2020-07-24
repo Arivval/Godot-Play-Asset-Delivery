@@ -90,7 +90,7 @@ func _initialize():
 # -----------------------------------------------------------------------------
 func _connect_plugin_signals():
 	if _plugin_singleton != null:
-		_plugin_singleton.connect("assetPackStateUpdated", self, "_asset_pack_state_updated")
+		_plugin_singleton.connect("assetPackStateUpdated", self, "route_asset_pack_state_updated")
 		_plugin_singleton.connect("fetchSuccess", self, "_forward_fetch_success")
 		_plugin_singleton.connect("fetchError", self, "_forward_fetch_error")
 		_plugin_singleton.connect("getPackStatesSuccess", self, "_forward_get_pack_states_success")
@@ -115,16 +115,18 @@ func _initialize_plugin() -> Object:
 
 # -----------------------------------------------------------------------------
 # Helper function that synchronizes request object's states in 
-# _asset_pack_to_request_map when receiving assetPackStateUpdated signal.
+# _asset_pack_to_request_map upon receiving assetPackStateUpdated signal.
 # -----------------------------------------------------------------------------
-func _asset_pack_state_updated(result : Dictionary):
+func route_asset_pack_state_updated(result : Dictionary):
 	var updated_state : PlayAssetPackState = PlayAssetPackState.new(result)
 	var pack_name = updated_state.get_name()
 	_asset_pack_to_request_map_mutex.lock()
+	# update all related request object's states
 	if _asset_pack_to_request_map.has(pack_name):
 		var request_list = _asset_pack_to_request_map[pack_name]
 		for request in request_list:
-			# since devs might read request's state when updating, we need to call from main thread
+			# since devs might read request's state while we are updating it, we need to call this
+			# function from main thread
 			request.call_deferred("_on_state_updated", result)
 	_asset_pack_to_request_map_mutex.unlock()
 

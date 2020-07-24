@@ -181,6 +181,8 @@ func test_fetch_asset_pack_success():
 	var test_object = create_play_asset_pack_manager(mock_plugin)
 	
 	var request_object = test_object.fetch_asset_pack(test_pack_name)
+	# weakref used to test for memory leak
+	var request_object_reference = weakref(request_object)
 	
 	# connect to helper function, simulating the workflow of connecting callback to signal
 	request_object.connect("request_completed", self, "assert_fetch_signal_is_success")
@@ -238,6 +240,11 @@ func test_fetch_asset_pack_success():
 		assert_eq(result_params_store[i].size(), 2)
 		assert_eq(result_params_store[i][0], test_pack_name)
 		assert_asset_pack_state_eq_dict(result_params_store[i][1], expected_state_list[i])
+	
+	# releases reference
+	request_object.free()
+	# assert reference is freed
+	assert_true(not request_object_reference.get_ref())
 
 func assert_fetch_signal_is_success(did_succeed : bool, pack_name : String, \
 	result : PlayAssetPackState, exception : PlayAssetPackException):
