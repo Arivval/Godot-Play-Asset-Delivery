@@ -35,14 +35,8 @@ extends PlayAssetDeliveryRequest
 #
 # Note: when calling fetch_asset_pack() on a non-existent pack_name, 
 # did_succeed will be false and both result and exception will be null.
-# 
-# Emits state_updated(pack_name, result) signal upon fetched pack's state 
-# updated. Only available if request completed with success status.
-# 	pack_name: String, name of the requested asset pack
-# 	result: most up-to-date PlayAssetPackState object
 # -----------------------------------------------------------------------------
 signal request_completed(did_succeed, pack_name, result, exception)
-signal state_updated(pack_name, result)
 
 var _pack_name : String
 var _did_succeed : bool
@@ -97,10 +91,3 @@ func _on_fetch_error(error: Dictionary):
 	_did_succeed = false
 	_error = PlayAssetPackException.new(error)
 	call_deferred("emit_signal", "request_completed", _did_succeed, _pack_name, null, _error)	
-
-func _on_state_updated(result: Dictionary):
-	_state = PlayAssetPackState.new(result)
-	# Since this method is always called on main thread by route_asset_pack_state_updated(), 
-	# call_deferred is not needed.
-	emit_signal("state_updated", _pack_name, _state)
-
