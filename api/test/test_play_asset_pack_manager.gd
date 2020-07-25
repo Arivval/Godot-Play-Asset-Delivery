@@ -456,3 +456,56 @@ func assert_fetch_signal_is_error(did_succeed : bool, pack_name : String, \
 	assert_eq(pack_name, "random pack name")
 	assert_asset_pack_exception_eq_dict(exception, create_mock_asset_pack_java_lang_exception_dict())
 	assert_asset_pack_state_eq_dict(result, create_default_error_asset_pack_state_dict(pack_name))
+
+func test_fetch_asset_pack_non_existent_pack():
+	var mock_plugin = FakeAndroidPlugin.new()
+
+	# configure what should be emitted upon get_asset_pack_state() call
+	var test_asset_pack_state = create_mock_asset_pack_state_dict()
+	var test_pack_name = test_asset_pack_state[PlayAssetPackState._NAME_KEY]
+	
+	# the plugin call will return an AssetPackStates dictionary enclosing the given test_asset_pack_state
+	var test_asset_pack_states = create_mock_asset_pack_states_with_single_state_dict(test_asset_pack_state)
+	var signal_info = FakePackStatesInfo.new(true, \
+		test_asset_pack_states, {})
+	mock_plugin.set_fetch_info(signal_info)
+	
+	var test_object = create_play_asset_pack_manager(mock_plugin)
+	
+	# AssetPackStates dictionary returned by plugin should not contain this pack_name
+	var non_existent_pack_name = "non_existent_pack"
+	var request_object = test_object.fetch_asset_pack(non_existent_pack_name)
+	# weakref used to test for memory leak
+	var request_object_reference = weakref(request_object)
+	
+	# connect to helper function, simulating the workflow of connecting callback to signal
+	request_object.connect("request_completed", self, "assert_fetch_signal_non_existent_pack")
+	
+	# yield to the request_completed signal for no longer than 1 seconds and assert for signal emitted
+	yield(yield_to(request_object, "request_completed", 1), YIELD)
+	assert_signal_emitted(request_object, "request_completed", "signal should have emitted")
+	
+	# assert using getters, simulating the workflow of yielding the signals
+	assert_true(not request_object.get_did_succeed())
+	assert_eq(request_object.get_pack_name(), non_existent_pack_name)
+	assert_eq(request_object.get_error(), null)
+	assert_asset_pack_state_eq_dict(request_object.get_state(), \
+		create_default_invalid_request_asset_pack_state_dict(non_existent_pack_name))
+	
+	# join instantiated thread
+	signal_info.thread.wait_to_finish()
+	
+	# releases reference
+	request_object.free()
+	# assert reference is freed
+	assert_true(not request_object_reference.get_ref())
+
+func assert_fetch_signal_non_existent_pack(did_succeed : bool, pack_name : String, \
+	result : PlayAssetPackState, exception : PlayAssetPackException):
+	# assert using callback, simulating the workflow of connecting callback to signal
+	var non_existent_pack_name = "non_existent_pack"
+	assert_true(not did_succeed)
+	assert_eq(pack_name, non_existent_pack_name)
+	assert_asset_pack_state_eq_dict(result, \
+		create_default_invalid_request_asset_pack_state_dict(non_existent_pack_name))
+	assert_eq(exception, null)
