@@ -105,7 +105,8 @@ func _on_fetch_error(error: Dictionary):
 	emit_signal("request_completed", _did_succeed, _pack_name, _state, _error)
 	PlayAssetPackManager._forward_high_level_state_updated_signal(_pack_name, _state.to_dict())
 
-func _on_state_updated(result: Dictionary):	
+func _on_state_updated(result: Dictionary):
+	_did_succeed = true
 	_state = PlayAssetPackState.new(result)
 	if _state.get_status() in PlayAssetPackManager._PACK_TERMINAL_STATES:
 		# reached a terminal state, emit request_completed signal

@@ -85,7 +85,7 @@ func set_asset_pack_locations(asset_pack_locations_dict : Dictionary):
 	_asset_pack_location_store = asset_pack_locations_dict
 
 func set_asset_pack_states_store(asset_pack_states_dict : Dictionary):
-	_asset_pack_states_store = asset_pack_states_dict
+	_asset_pack_states_store = asset_pack_states_dict.duplicate()
 
 func clear_asset_pack_states_store():
 	_asset_pack_states_store = _create_empty_asset_pack_states()
@@ -94,7 +94,7 @@ func update_asset_pack_state(asset_pack_state_dict : Dictionary):
 	_asset_pack_states_store[PlayAssetPackStates._TOTAL_BYTES_KEY] += \
 		asset_pack_state_dict[PlayAssetPackState._TOTAL_BYTES_TO_DOWNLOAD_KEY]
 	var pack_name = asset_pack_state_dict[PlayAssetPackState._NAME_KEY]
-	_asset_pack_states_store[PlayAssetPackStates._PACK_STATES_KEY][pack_name] = asset_pack_state_dict
+	_asset_pack_states_store[PlayAssetPackStates._PACK_STATES_KEY][pack_name] = asset_pack_state_dict.duplicate()
 
 func remove_asset_pack_state(pack_name : String):
 	if pack_name in _asset_pack_states_store[PlayAssetPackStates._PACK_STATES_KEY]:
@@ -169,7 +169,9 @@ func fetch(pack_names : Array, signal_id : int):
 		var pack_states = _fetch_info.result[PlayAssetPackStates._PACK_STATES_KEY]
 		if pack_states.has(pack_names[0]):
 			var asset_pack_state = pack_states[pack_names[0]]
-			update_asset_pack_state(asset_pack_state)
+			
+			var pack_state_info = FakePackStateInfo.new(asset_pack_state)
+			trigger_asset_pack_state_updated_signal(pack_state_info)
 		
 		var thread_args = ["fetchSuccess", _fetch_info.result, signal_id]
 		_fetch_info.thread.start(self, _EMIT_DELAYED_SIGNAL_FUNCTION, thread_args)

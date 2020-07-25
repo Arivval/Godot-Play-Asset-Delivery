@@ -410,8 +410,93 @@ func assert_remove_pack_signal_is_error(did_succeed : bool, exception : PlayAsse
 	assert_asset_pack_exception_eq_dict(exception, \
 		create_mock_asset_pack_java_lang_exception_dict())
 
+func test_fetch_asset_pack_success():
+	var mock_plugin = FakeAndroidPlugin.new()
 
+	# configure what should be emitted upon fetch_asset_pack() call
+	var test_pack_name = "testPack"
+	
+	var test_asset_pack_state = create_mock_asset_pack_state_with_status_and_progress_dict(test_pack_name, \
+		PlayAssetPackManager.AssetPackStatus.PENDING, 0, 4096)
+	
+	# the plugin call will return an AssetPackStates dictionary enclosing the given test_asset_pack_state
+	var test_asset_pack_states = create_mock_asset_pack_states_with_single_state_dict(test_asset_pack_state)
+	var signal_info = FakePackStatesInfo.new(true, \
+		test_asset_pack_states, {})
+	mock_plugin.set_fetch_info(signal_info)
+	
+	var test_object = create_play_asset_pack_manager(mock_plugin)
+	
+	var request_object = test_object.fetch_asset_pack(test_pack_name)
+	# weakref used to test for memory leak
+	var request_object_reference = weakref(request_object)
+	
+	request_object.connect("request_completed", self, "assert_fetch_signal_is_completed")
+	
+	# Watch our request object and assert for multiple state_updated signals
+	var signal_argument_count = 2
+	var signal_captor = SignalCaptor.new(signal_argument_count)
+	test_object.connect("state_updated", signal_captor, "signal_call_back")
+	
+	# Assert first state_updated signal
+	yield(yield_to(test_object, "state_updated", 1), YIELD)
+	assert_asset_pack_state_eq_dict(request_object.get_state(), test_asset_pack_state)
+	
+	# Emit and assert a stream of state_updated signal
+	var updated_state1 = create_mock_asset_pack_state_with_status_and_progress_dict(test_pack_name, \
+		PlayAssetPackManager.AssetPackStatus.DOWNLOADING, 256, 4096)
+	var updated_signal_info1 = FakePackStateInfo.new(updated_state1)
+	mock_plugin.trigger_asset_pack_state_updated_signal(updated_signal_info1)
+	yield(yield_to(test_object, "state_updated", 1), YIELD)
+	updated_signal_info1.thread.wait_to_finish()
+	
+	var updated_state2 = create_mock_asset_pack_state_with_status_and_progress_dict(test_pack_name, \
+		PlayAssetPackManager.AssetPackStatus.WAITING_FOR_WIFI, 256, 4096)
+	var updated_signal_info2 = FakePackStateInfo.new(updated_state2)
+	mock_plugin.trigger_asset_pack_state_updated_signal(updated_signal_info2)
+	yield(yield_to(test_object, "state_updated", 1), YIELD)
+	updated_signal_info2.thread.wait_to_finish()
+	
+	var updated_state3 = create_mock_asset_pack_state_with_status_and_progress_dict(test_pack_name, \
+		PlayAssetPackManager.AssetPackStatus.DOWNLOADING, 2048, 4096)
+	var updated_signal_info3 = FakePackStateInfo.new(updated_state3)
+	mock_plugin.trigger_asset_pack_state_updated_signal(updated_signal_info3)
+	yield(yield_to(test_object, "state_updated", 1), YIELD)
+	updated_signal_info3.thread.wait_to_finish()
+	
+	var updated_state4 = create_mock_asset_pack_state_with_status_and_progress_dict(test_pack_name, \
+		PlayAssetPackManager.AssetPackStatus.COMPLETED, 4096, 4096)
+	var updated_signal_info4 = FakePackStateInfo.new(updated_state4)
+	mock_plugin.trigger_asset_pack_state_updated_signal(updated_signal_info4)
+	yield(yield_to(request_object, "state_updated", 1), YIELD)
+	updated_signal_info4.thread.wait_to_finish()
+	
+	# assert signal_captor is as expected
+	var result_params_store = signal_captor.received_params_store
+	var expected_state_list = [test_asset_pack_state, updated_state1, updated_state2, \
+		updated_state3, updated_state4]
+	assert_eq(result_params_store.size(), 5)
+	# assert all entries in result_params_store
+	for i in range(5):
+		assert_eq(result_params_store[i].size(), 2)
+		assert_eq(result_params_store[i][0], test_pack_name)
+		assert_asset_pack_state_eq_dict(result_params_store[i][1], expected_state_list[i])
+	
+	# releases reference
+	request_object.free()
+	# assert reference is freed
+	assert_true(not request_object_reference.get_ref())
 
+func assert_fetch_signal_is_completed(did_succeed : bool, pack_name : String, \
+	result : PlayAssetPackState, exception : PlayAssetPackException):
+	# assert using callback, simulating the workflow of connecting callback to signal
+	var expected_pack_name = "testPack"
+	var expected_pack_state_dict = create_mock_asset_pack_state_with_status_and_progress_dict(\
+		expected_pack_name, PlayAssetPackManager.AssetPackStatus.COMPLETED, 4096, 4096)
+	assert_true(did_succeed)
+	assert_eq(pack_name, expected_pack_name)
+	assert_asset_pack_state_eq_dict(result, expected_pack_state_dict)
+	assert_eq(exception, null)
 
 func test_fetch_asset_pack_error():
 	var mock_plugin = FakeAndroidPlugin.new()
@@ -508,4 +593,92 @@ func assert_fetch_signal_non_existent_pack(did_succeed : bool, pack_name : Strin
 	assert_eq(pack_name, non_existent_pack_name)
 	assert_asset_pack_state_eq_dict(result, \
 		create_default_invalid_request_asset_pack_state_dict(non_existent_pack_name))
+	assert_eq(exception, null)
+
+func test_fetch_asset_pack_cancel():
+	var mock_plugin = FakeAndroidPlugin.new()
+
+	# configure what should be emitted upon fetch_asset_pack() call
+	var test_pack_name = "testPack"
+	
+	var test_asset_pack_state = create_mock_asset_pack_state_with_status_and_progress_dict(test_pack_name, \
+		PlayAssetPackManager.AssetPackStatus.PENDING, 0, 4096)
+	
+	# the plugin call will return an AssetPackStates dictionary enclosing the given test_asset_pack_state
+	var test_asset_pack_states = create_mock_asset_pack_states_with_single_state_dict(test_asset_pack_state)
+	var signal_info = FakePackStatesInfo.new(true, \
+		test_asset_pack_states, {})
+	mock_plugin.set_fetch_info(signal_info)
+	
+	var test_object = create_play_asset_pack_manager(mock_plugin)
+	
+	var request_object = test_object.fetch_asset_pack(test_pack_name)
+	# weakref used to test for memory leak
+	var request_object_reference = weakref(request_object)
+	
+	request_object.connect("request_completed", self, "assert_fetch_signal_is_canceled")
+	
+	# Watch our request object and assert for multiple state_updated signals
+	var signal_argument_count = 2
+	var signal_captor = SignalCaptor.new(signal_argument_count)
+	test_object.connect("state_updated", signal_captor, "signal_call_back")
+	
+	# Assert first state_updated signal
+	yield(yield_to(test_object, "state_updated", 1), YIELD)
+	assert_asset_pack_state_eq_dict(request_object.get_state(), test_asset_pack_state)
+	
+	# Emit and assert a stream of state_updated signal
+	var updated_state1 = create_mock_asset_pack_state_with_status_and_progress_dict(test_pack_name, \
+		PlayAssetPackManager.AssetPackStatus.DOWNLOADING, 256, 4096)
+	var updated_signal_info1 = FakePackStateInfo.new(updated_state1)
+	mock_plugin.trigger_asset_pack_state_updated_signal(updated_signal_info1)
+	yield(yield_to(test_object, "state_updated", 1), YIELD)
+	updated_signal_info1.thread.wait_to_finish()
+	
+	var updated_state2 = create_mock_asset_pack_state_with_status_and_progress_dict(test_pack_name, \
+		PlayAssetPackManager.AssetPackStatus.WAITING_FOR_WIFI, 256, 4096)
+	var updated_signal_info2 = FakePackStateInfo.new(updated_state2)
+	mock_plugin.trigger_asset_pack_state_updated_signal(updated_signal_info2)
+	yield(yield_to(test_object, "state_updated", 1), YIELD)
+	updated_signal_info2.thread.wait_to_finish()
+	
+	var updated_state3 = create_mock_asset_pack_state_with_status_and_progress_dict(test_pack_name, \
+		PlayAssetPackManager.AssetPackStatus.DOWNLOADING, 2048, 4096)
+	var updated_signal_info3 = FakePackStateInfo.new(updated_state3)
+	mock_plugin.trigger_asset_pack_state_updated_signal(updated_signal_info3)
+	yield(yield_to(test_object, "state_updated", 1), YIELD)
+	updated_signal_info3.thread.wait_to_finish()
+	
+	test_object.cancel_asset_pack_request(test_pack_name)
+	var expected_state4 = create_mock_asset_pack_state_with_status_and_progress_dict(test_pack_name, \
+		PlayAssetPackManager.AssetPackStatus.CANCELED, 2048, 4096)
+	
+	yield(yield_to(test_object, "state_updated", 1), YIELD)
+	updated_signal_info3.thread.wait_to_finish()
+	
+	# assert signal_captor is as expected
+	var result_params_store = signal_captor.received_params_store
+	var expected_state_list = [test_asset_pack_state, updated_state1, updated_state2, \
+		updated_state3, expected_state4]
+	assert_eq(result_params_store.size(), 5)
+	# assert all entries in result_params_store
+	for i in range(5):
+		assert_eq(result_params_store[i].size(), 2)
+		assert_eq(result_params_store[i][0], test_pack_name)
+		assert_asset_pack_state_eq_dict(result_params_store[i][1], expected_state_list[i])
+	
+	# releases reference
+	request_object.free()
+	# assert reference is freed
+	assert_true(not request_object_reference.get_ref())
+
+func assert_fetch_signal_is_canceled(did_succeed : bool, pack_name : String, \
+	result : PlayAssetPackState, exception : PlayAssetPackException):
+	# assert using callback, simulating the workflow of connecting callback to signal
+	var expected_pack_name = "testPack"
+	var expected_pack_state_dict = create_mock_asset_pack_state_with_status_and_progress_dict(\
+		expected_pack_name, PlayAssetPackManager.AssetPackStatus.CANCELED, 2048, 4096)
+	assert_true(did_succeed)
+	assert_eq(pack_name, expected_pack_name)
+	assert_asset_pack_state_eq_dict(result, expected_pack_state_dict)
 	assert_eq(exception, null)
