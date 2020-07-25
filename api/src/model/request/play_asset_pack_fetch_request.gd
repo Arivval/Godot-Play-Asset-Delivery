@@ -27,14 +27,14 @@ extends PlayAssetDeliveryRequest
 
 # -----------------------------------------------------------------------------
 # Emits request_completed(did_succeed, pack_name, result, exception) signal 
-# upon request succeeds/fails.
+# upon request succeeds(reaching CANCELED or COMPLETED)/fails.
 # 	did_succeed : boolean indicating request succeeded/failed
 # 	pack_name: String, name of the requested asset pack
-# 	result : PlayAssetPackState object if request succeeded, otherwise null
+# 	result : PlayAssetPackState object
 #	exception: PlayAssetPackException object if request failed, otherwise null
 #
 # Note: when calling fetch_asset_pack() on a non-existent pack_name, 
-# did_succeed will be false and both result and exception will be null.
+# did_succeed will be false and state's status will be INVALID_REQUEST
 # -----------------------------------------------------------------------------
 signal request_completed(did_succeed, pack_name, result, exception)
 
@@ -45,6 +45,18 @@ var _error : PlayAssetPackException
 
 func _init(pack_name):
 	_pack_name = pack_name
+	
+	# _state will be defaulted with status of UNKNOWN
+	var default_pack_dict = {
+		PlayAssetPackState._NAME_KEY: pack_name, 
+		PlayAssetPackState._STATUS_KEY: PlayAssetPackManager.AssetPackStatus.UNKNOWN, 
+		PlayAssetPackState._ERROR_CODE_KEY: PlayAssetPackManager.AssetPackErrorCode.NO_ERROR,
+		PlayAssetPackState._BYTES_DOWNLOADED_KEY: 0,
+		PlayAssetPackState._TOTAL_BYTES_TO_DOWNLOAD_KEY: 0,
+		PlayAssetPackState._TRANSFER_PROGRESS_PERCENTAGE_KEY: 0
+	}
+	_state = PlayAssetPackState.new(default_pack_dict)
+	
 
 # -----------------------------------------------------------------------------
 # Returns the requested asset pack's name.
@@ -76,21 +88,24 @@ func _on_fetch_success(result: Dictionary):
 	# Since fetch() in plugin returns a PlayAssetPackStates Dictionary, we need to extract
 	# the PlayAssetPackState within.
 	var fetch_asset_pack_states_dict = PlayAssetPackStates.new(result).get_pack_states()
-	if fetch_asset_pack_states_dict.has(_pack_name):
-		_did_succeed = true
-		_state = fetch_asset_pack_states_dict[_pack_name]
-		call_deferred("emit_signal", "request_completed", _did_succeed, _pack_name, _state, null)
-	else:
+	if not fetch_asset_pack_states_dict.has(_pack_name):
 		# Although we received a fetchSuccess signal, the result field does not contain
-		# needed AssetPackState dictionary. Hence emit a failing signal where both state and error
-		# are null.
+		# needed AssetPackState dictionary. Hence update _state's error_code to INVALID_REQUEST
+		# and emit and request_completed signal
 		_did_succeed = false
-		call_deferred("emit_signal", "request_completed", _did_succeed, _pack_name, null, null)	
+		_state._error_code = PlayAssetPackManager.AssetPackErrorCode.INVALID_REQUEST
+		emit_signal("request_completed", _did_succeed, _pack_name, _state, null)
 
 func _on_fetch_error(error: Dictionary):
 	_did_succeed = false
+	# 
+	_state._status = PlayAssetPackManager.AssetPackStatus.FAILED
 	_error = PlayAssetPackException.new(error)
-	call_deferred("emit_signal", "request_completed", _did_succeed, _pack_name, null, _error)	
+	emit_signal("request_completed", _did_succeed, _pack_name, _state, _error)
+	PlayAssetPackManager._forward_high_level_state_updated_signal(_pack_name, _state.to_dict())
 
 func _on_state_updated(result: Dictionary):	
-	_state = PlayAssetPackState.new(result)	
+	_state = PlayAssetPackState.new(result)
+	if _state.get_status() in PlayAssetPackManager._PACK_TERMINAL_STATES:
+		# reached a terminal state, emit request_completed signal
+		emit_signal("request_completed", _did_succeed, _pack_name, _state, null)

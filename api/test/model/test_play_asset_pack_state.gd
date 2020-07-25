@@ -17,6 +17,18 @@
 # ##############################################################################
 extends "res://test/test_helper/base_test_class.gd"
 
+func test_play_asset_pack_state_to_dict():
+	var test_dict = {
+		PlayAssetPackState._NAME_KEY: "assetPack", 
+		PlayAssetPackState._STATUS_KEY: PlayAssetPackManager.AssetPackStatus.DOWNLOADING, 
+		PlayAssetPackState._ERROR_CODE_KEY: PlayAssetPackManager.AssetPackErrorCode.NO_ERROR,
+		PlayAssetPackState._BYTES_DOWNLOADED_KEY: 562,
+		PlayAssetPackState._TOTAL_BYTES_TO_DOWNLOAD_KEY: 1337,
+		PlayAssetPackState._TRANSFER_PROGRESS_PERCENTAGE_KEY: 42
+	}
+	var test_object = PlayAssetPackState.new(test_dict)
+	assert_eq(test_object.to_dict().hash(), test_dict.hash())
+
 func test_play_asset_pack_state_valid():
 	var test_dict = {
 		PlayAssetPackState._NAME_KEY: "assetPack", 

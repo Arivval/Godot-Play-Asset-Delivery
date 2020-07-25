@@ -49,6 +49,19 @@ func _init(init_dictionary : Dictionary):
 	_transfer_progress_percentage = init_dictionary[_TRANSFER_PROGRESS_PERCENTAGE_KEY]
 
 # -----------------------------------------------------------------------------
+# Serializes this object to Dictionary
+# -----------------------------------------------------------------------------
+func to_dict() -> Dictionary:
+	return {
+		_NAME_KEY: _name,
+		_STATUS_KEY: _status,
+		_ERROR_CODE_KEY: _error_code,
+		_BYTES_DOWNLOADED_KEY: _bytes_downloaded,
+		_TOTAL_BYTES_TO_DOWNLOAD_KEY: _total_bytes_to_download,
+		_TRANSFER_PROGRESS_PERCENTAGE_KEY: _transfer_progress_percentage
+	}
+	
+# -----------------------------------------------------------------------------
 # Returns the name of the pack.
 # -----------------------------------------------------------------------------
 func get_name() -> String:

@@ -147,15 +147,31 @@ func _route_asset_pack_state_updated(result : Dictionary):
 
 	_asset_pack_to_request_map_mutex.unlock()
 	
-	# emit signal on main thread
+	# emit state updated signal on main thread
 	call_deferred("emit_signal", "state_updated", pack_name, updated_state)
+
+# -----------------------------------------------------------------------------
+# Helper functions called by request objects to emit state_updated signal with
+# defaulted pack state.
+# -----------------------------------------------------------------------------
+func _forward_high_level_state_updated_signal(pack_name : String, state : Dictionary):
+	# emit state updated signal on main thread
+	call_deferred("emit_signal", "state_updated", pack_name, state)
 
 # -----------------------------------------------------------------------------
 # Helper functions that forward signals emitted from the plugin
 # -----------------------------------------------------------------------------
 func _forward_fetch_success(result : Dictionary, signal_id : int):
 	var target_request : PlayAssetPackFetchRequest = _request_tracker.lookup_request(signal_id)
-	target_request._on_fetch_success(result)
+	
+	# release reference if this fetched pack_name is invalid
+	var pack_states = result[PlayAssetPackStates._PACK_STATES_KEY]
+	if not pack_states.has(target_request.get_pack_name()):
+		_asset_pack_to_request_map_mutex.lock()	
+		_asset_pack_to_request_map.erase(target_request.get_pack_name())
+		_asset_pack_to_request_map_mutex.unlock()	
+	
+	target_request.call_deferred("_on_fetch_success", result)
 	_request_tracker.unregister_request(signal_id)
 
 func _forward_fetch_error(error : Dictionary, signal_id : int):
