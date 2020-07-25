@@ -100,6 +100,7 @@ func _on_fetch_error(error: Dictionary):
 	_did_succeed = false
 	# 
 	_state._status = PlayAssetPackManager.AssetPackStatus.FAILED
+	_state._error_code = PlayAssetPackManager.AssetPackErrorCode.INTERNAL_ERROR
 	_error = PlayAssetPackException.new(error)
 	emit_signal("request_completed", _did_succeed, _pack_name, _state, _error)
 	PlayAssetPackManager._forward_high_level_state_updated_signal(_pack_name, _state.to_dict())

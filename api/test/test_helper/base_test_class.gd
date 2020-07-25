@@ -168,3 +168,13 @@ func create_mock_asset_pack_java_lang_exception_dict():
 		PlayAssetPackException._MESSAGE_KEY: "Just a usual exception", 
 		PlayAssetPackException._ERROR_CODE_KEY: PlayAssetPackManager.AssetPackErrorCode.INTERNAL_ERROR
 	}
+
+func create_default_error_asset_pack_state_dict(pack_name : String):
+	return {
+		PlayAssetPackState._NAME_KEY: pack_name, 
+		PlayAssetPackState._STATUS_KEY: PlayAssetPackManager.AssetPackStatus.FAILED, 
+		PlayAssetPackState._ERROR_CODE_KEY: PlayAssetPackManager.AssetPackErrorCode.INTERNAL_ERROR,
+		PlayAssetPackState._BYTES_DOWNLOADED_KEY: 0,
+		PlayAssetPackState._TOTAL_BYTES_TO_DOWNLOAD_KEY: 0,
+		PlayAssetPackState._TRANSFER_PROGRESS_PERCENTAGE_KEY: 0
+	}
