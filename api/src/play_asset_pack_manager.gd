@@ -157,6 +157,7 @@ func _route_asset_pack_state_updated(result : Dictionary):
 				received_fetch_callback = request.get_state().get_status() != PlayAssetPackManager.AssetPackStatus.UNKNOWN and\
 					request.get_state().get_total_bytes_to_download() != 0
 				duplicate_state = request.get_state().to_dict().hash() == result.hash()
+			
 			if received_fetch_callback and not duplicate_state:
 				# Since devs might read request's state while we are updating it, we need to call this	
 				# function from main thread.
@@ -165,10 +166,8 @@ func _route_asset_pack_state_updated(result : Dictionary):
 		# if reached terminal state, release references	
 		if updated_status in _PACK_TERMINAL_STATES:	
 			_asset_pack_to_request_map.erase(pack_name)
-			
-	
+		
 	# only emit non-repeated state_updated signals after we encountered fetchSuccess/Error
-
 	if received_fetch_callback and not duplicate_state:
 		_asset_pack_state_cache[pack_name] = result
 		# emit state updated signal on main thread
