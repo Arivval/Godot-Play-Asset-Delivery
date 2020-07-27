@@ -445,6 +445,7 @@ func test_fetch_asset_pack_success():
 	# Assert first state_updated signal
 	yield(yield_to(test_object, "state_updated", 1), YIELD)
 	assert_signal_emitted(test_object, "state_updated")
+	assert_false(request_object.get_is_completed())
 	assert_asset_pack_state_eq_dict(request_object.get_state(), test_asset_pack_state)
 	
 	# Emit and assert a stream of state_updated signal
@@ -453,8 +454,10 @@ func test_fetch_asset_pack_success():
 	var updated_signal_info1 = FakePackStateInfo.new(updated_state1)
 	mock_plugin.trigger_asset_pack_state_updated_signal(updated_signal_info1)
 	yield(yield_to(test_object, "state_updated", 1), YIELD)
-	assert_signal_emitted(test_object, "state_updated")
 	updated_signal_info1.thread.wait_to_finish()
+	
+	assert_signal_emitted(test_object, "state_updated")
+	assert_false(request_object.get_is_completed())
 	assert_asset_pack_state_eq_dict(request_object.get_state(), updated_state1)
 	
 	var updated_state2 = create_mock_asset_pack_state_with_status_and_progress_dict(test_pack_name, \
@@ -462,8 +465,10 @@ func test_fetch_asset_pack_success():
 	var updated_signal_info2 = FakePackStateInfo.new(updated_state2)
 	mock_plugin.trigger_asset_pack_state_updated_signal(updated_signal_info2)
 	yield(yield_to(test_object, "state_updated", 1), YIELD)
-	assert_signal_emitted(test_object, "state_updated")
 	updated_signal_info2.thread.wait_to_finish()
+	
+	assert_signal_emitted(test_object, "state_updated")
+	assert_false(request_object.get_is_completed())
 	assert_asset_pack_state_eq_dict(request_object.get_state(), updated_state2)
 
 	var updated_state3 = create_mock_asset_pack_state_with_status_and_progress_dict(test_pack_name, \
@@ -471,8 +476,9 @@ func test_fetch_asset_pack_success():
 	var updated_signal_info3 = FakePackStateInfo.new(updated_state3)
 	mock_plugin.trigger_asset_pack_state_updated_signal(updated_signal_info3)
 	yield(yield_to(test_object, "state_updated", 1), YIELD)
-	assert_signal_emitted(test_object, "state_updated")
 	updated_signal_info3.thread.wait_to_finish()
+	assert_signal_emitted(test_object, "state_updated")
+	assert_false(request_object.get_is_completed())
 	assert_asset_pack_state_eq_dict(request_object.get_state(), updated_state3)
 	
 	var updated_state4 = create_mock_asset_pack_state_with_status_and_progress_dict(test_pack_name, \
@@ -480,8 +486,10 @@ func test_fetch_asset_pack_success():
 	var updated_signal_info4 = FakePackStateInfo.new(updated_state4)
 	mock_plugin.trigger_asset_pack_state_updated_signal(updated_signal_info4)
 	yield(yield_to(request_object, "state_updated", 1), YIELD)
-	assert_signal_emitted(test_object, "state_updated")
 	updated_signal_info4.thread.wait_to_finish()
+	
+	assert_signal_emitted(test_object, "state_updated")
+	assert_true(request_object.get_is_completed())
 	assert_asset_pack_state_eq_dict(request_object.get_state(), updated_state4)	
 	
 	# assert signal_captor is as expected
@@ -494,7 +502,7 @@ func test_fetch_asset_pack_success():
 		assert_eq(result_params_store[i].size(), 2)
 		assert_eq(result_params_store[i][0], test_pack_name)
 		assert_asset_pack_state_eq_dict(result_params_store[i][1], expected_state_list[i])
-	
+
 	# releases reference
 	request_object.free()
 	# assert reference is freed
@@ -529,6 +537,7 @@ func test_fetch_asset_pack_error():
 	request_object.connect("request_completed", self, "assert_fetch_signal_is_error")
 	
 	# assert that the initial default state is correct
+	assert_false(request_object.get_is_completed())
 	assert_asset_pack_state_eq_dict(request_object.get_state(), create_default_unknown_asset_pack_state_dict(test_pack_name))
 	
 	# yield to the request_completed signal for no longer than 1 seconds and assert for signal emitted
@@ -536,6 +545,7 @@ func test_fetch_asset_pack_error():
 	assert_signal_emitted(request_object, "request_completed", "signal should have emitted")
 	
 	# assert using getters, simulating the workflow of yielding the signals
+	assert_true(request_object.get_is_completed())
 	assert_eq(request_object.get_pack_name(), test_pack_name)
 	assert_asset_pack_exception_eq_dict(request_object.get_error(), create_mock_asset_pack_java_lang_exception_dict())
 	assert_asset_pack_state_eq_dict(request_object.get_state(), \
@@ -582,6 +592,7 @@ func test_fetch_asset_pack_non_existent_pack_exception():
 	request_object.connect("request_completed", self, "assert_fetch_signal_non_existent_pack")
 	
 	# assert that the initial default state is correct
+	assert_false(request_object.get_is_completed())
 	assert_asset_pack_state_eq_dict(request_object.get_state(), create_default_unknown_asset_pack_state_dict(non_existent_pack_name))
 	
 	# yield to the request_completed signal for no longer than 1 seconds and assert for signal emitted
@@ -589,6 +600,7 @@ func test_fetch_asset_pack_non_existent_pack_exception():
 	assert_signal_emitted(request_object, "request_completed", "signal should have emitted")
 	
 	# assert using getters, simulating the workflow of yielding the signals
+	assert_true(request_object.get_is_completed())
 	assert_eq(request_object.get_pack_name(), non_existent_pack_name)
 	assert_eq(request_object.get_error(), null)
 	assert_asset_pack_state_eq_dict(request_object.get_state(), \
@@ -641,11 +653,13 @@ func test_fetch_asset_pack_cancel():
 	test_object.connect("state_updated", signal_captor, "signal_call_back")
 	
 	# assert that the initial default state is correct
+	assert_false(request_object.get_is_completed())
 	assert_asset_pack_state_eq_dict(request_object.get_state(), create_default_unknown_asset_pack_state_dict(test_pack_name))
 	
 	# Assert first state_updated signal
 	yield(yield_to(test_object, "state_updated", 1), YIELD)
 	assert_signal_emitted(test_object, "state_updated")
+	assert_false(request_object.get_is_completed())
 	assert_asset_pack_state_eq_dict(request_object.get_state(), test_asset_pack_state)
 	
 	# Emit and assert a stream of state_updated signal
@@ -654,8 +668,10 @@ func test_fetch_asset_pack_cancel():
 	var updated_signal_info1 = FakePackStateInfo.new(updated_state1)
 	mock_plugin.trigger_asset_pack_state_updated_signal(updated_signal_info1)
 	yield(yield_to(test_object, "state_updated", 1), YIELD)
-	assert_signal_emitted(test_object, "state_updated")
 	updated_signal_info1.thread.wait_to_finish()
+	
+	assert_signal_emitted(test_object, "state_updated")
+	assert_false(request_object.get_is_completed())
 	assert_asset_pack_state_eq_dict(request_object.get_state(), updated_state1)	
 	
 	var updated_state2 = create_mock_asset_pack_state_with_status_and_progress_dict(test_pack_name, \
@@ -663,8 +679,10 @@ func test_fetch_asset_pack_cancel():
 	var updated_signal_info2 = FakePackStateInfo.new(updated_state2)
 	mock_plugin.trigger_asset_pack_state_updated_signal(updated_signal_info2)
 	yield(yield_to(test_object, "state_updated", 1), YIELD)
-	assert_signal_emitted(test_object, "state_updated")
 	updated_signal_info2.thread.wait_to_finish()
+	
+	assert_signal_emitted(test_object, "state_updated")
+	assert_false(request_object.get_is_completed())
 	assert_asset_pack_state_eq_dict(request_object.get_state(), updated_state2)	
 	
 	var updated_state3 = create_mock_asset_pack_state_with_status_and_progress_dict(test_pack_name, \
@@ -672,17 +690,19 @@ func test_fetch_asset_pack_cancel():
 	var updated_signal_info3 = FakePackStateInfo.new(updated_state3)
 	mock_plugin.trigger_asset_pack_state_updated_signal(updated_signal_info3)
 	yield(yield_to(test_object, "state_updated", 1), YIELD)
-	assert_signal_emitted(test_object, "state_updated")
 	updated_signal_info3.thread.wait_to_finish()
+	
+	assert_signal_emitted(test_object, "state_updated")
+	assert_false(request_object.get_is_completed())
 	assert_asset_pack_state_eq_dict(request_object.get_state(), updated_state3)	
 	
 	test_object.cancel_asset_pack_request(test_pack_name)
 	var expected_state4 = create_mock_asset_pack_state_with_status_and_progress_dict(test_pack_name, \
 		PlayAssetPackManager.AssetPackStatus.CANCELED, 2048, 4096)
-	
 	yield(yield_to(test_object, "state_updated", 1), YIELD)
+	
 	assert_signal_emitted(test_object, "state_updated")
-	updated_signal_info3.thread.wait_to_finish()
+	assert_true(request_object.get_is_completed())
 	assert_asset_pack_state_eq_dict(request_object.get_state(), expected_state4)
 	
 	# assert signal_captor is as expected

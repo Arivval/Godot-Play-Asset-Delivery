@@ -36,6 +36,7 @@ extends PlayAssetDeliveryRequest
 signal request_completed(pack_name, result, exception)
 
 var _pack_name : String
+var _is_completed : bool
 var _state : PlayAssetPackState
 var _error : PlayAssetPackException
 
@@ -44,6 +45,7 @@ var _stub_play_asset_pack_manager
 
 func _init(pack_name):
 	_pack_name = pack_name
+	_is_completed = false
 	
 	# _state will be defaulted with status of UNKNOWN
 	var default_pack_dict = {
@@ -61,6 +63,12 @@ func _init(pack_name):
 # -----------------------------------------------------------------------------
 func get_pack_name() -> String:
 	return _pack_name
+
+# -----------------------------------------------------------------------------
+# Returns whether this request is completed or not.
+# -----------------------------------------------------------------------------
+func get_is_completed() -> bool:
+	return _is_completed
 
 # -----------------------------------------------------------------------------
 # Returns the most up-to-date PlayAssetPackState object.
@@ -93,12 +101,14 @@ func _on_fetch_success(result: Dictionary):
 		# Although we received a fetchSuccess signal, the result field does not contain
 		# needed AssetPackState dictionary. Hence update _state's error_code to INTERNAL_ERROR
 		# and emit and request_completed signal.
+		_is_completed = true
 		_state._error_code = PlayAssetPackManager.AssetPackErrorCode.INTERNAL_ERROR
 		# release reference
 		PlayAssetPackManager._remove_request_reference_from_map(_pack_name)
 		emit_signal("request_completed", _pack_name, _state, null)
 
 func _on_fetch_error(error: Dictionary):
+	_is_completed = true
 	_state._status = PlayAssetPackManager.AssetPackStatus.FAILED
 	_state._error_code = PlayAssetPackManager.AssetPackErrorCode.INTERNAL_ERROR
 	_error = PlayAssetPackException.new(error)
@@ -112,6 +122,7 @@ func _on_fetch_error(error: Dictionary):
 func _on_state_updated(result: Dictionary):
 	_state = PlayAssetPackState.new(result)
 	if _state.get_status() in PlayAssetPackManager._PACK_TERMINAL_STATES:
-		# reached a terminal state, emit request_completed s
+		# reached a terminal state, emit request_completed signal
+		_is_completed = true
 		emit_signal("request_completed", _pack_name, _state, null)
 		
