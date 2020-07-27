@@ -178,7 +178,6 @@ func fetch(pack_names : Array, signal_id : int):
 		var pack_states = _fetch_info.result[PlayAssetPackStates._PACK_STATES_KEY]
 		if pack_states.has(pack_names[0]):
 			var asset_pack_state = pack_states[pack_names[0]]
-			
 			var pack_state_info = FakePackStateInfo.new(asset_pack_state)
 			trigger_asset_pack_state_updated_signal(pack_state_info)
 		

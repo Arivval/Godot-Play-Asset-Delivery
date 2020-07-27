@@ -99,7 +99,6 @@ func _on_fetch_success(result: Dictionary):
 			PlayAssetPackManager._forward_high_level_state_updated_signal(_pack_name, _state.to_dict())
 		else:
 			_stub_play_asset_pack_manager._forward_high_level_state_updated_signal(_pack_name, _state.to_dict())	
-
 	else:
 		# Although we received a fetchSuccess signal, the result field does not contain
 		# needed AssetPackState dictionary. Hence update _state's error_code to INVALID_REQUEST
