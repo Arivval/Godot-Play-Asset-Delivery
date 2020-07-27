@@ -143,6 +143,9 @@ func _route_asset_pack_state_updated(result : Dictionary):
 	var updated_status = updated_state.get_status()
 	
 	_play_asset_pack_manager_mutex.lock()	
+	
+	var received_fetch_callback
+	var duplicate_state
 	# update all related request object's states	
 	if _asset_pack_to_request_map.has(pack_name):	
 		var request_list = _asset_pack_to_request_map[pack_name]	
@@ -150,9 +153,10 @@ func _route_asset_pack_state_updated(result : Dictionary):
 			# Since assetPackStateUpdated and fetchSuccess/Error might contain duplicate updates,
 			# we will only route non-duplicate updates to request object after we already received 
 			# fetchSuccess/Error signal.
-			var received_fetch_callback = request.get_state().get_status() != PlayAssetPackManager.AssetPackStatus.UNKNOWN and\
-				request.get_state().get_total_bytes_to_download() != 0
-			var duplicate_state = request.get_state().to_dict().hash() == result.hash()
+			if received_fetch_callback == null:
+				received_fetch_callback = request.get_state().get_status() != PlayAssetPackManager.AssetPackStatus.UNKNOWN and\
+					request.get_state().get_total_bytes_to_download() != 0
+				duplicate_state = request.get_state().to_dict().hash() == result.hash()
 			if received_fetch_callback and not duplicate_state:
 				# Since devs might read request's state while we are updating it, we need to call this	
 				# function from main thread.
@@ -161,9 +165,11 @@ func _route_asset_pack_state_updated(result : Dictionary):
 		# if reached terminal state, release references	
 		if updated_status in _PACK_TERMINAL_STATES:	
 			_asset_pack_to_request_map.erase(pack_name)
+			
 	
-	# only emit non-repeated state_updated signals
-	if _asset_pack_state_cache.has(pack_name) and _asset_pack_state_cache[pack_name].hash() != result.hash():
+	# only emit non-repeated state_updated signals after we encountered fetchSuccess/Error
+
+	if received_fetch_callback and not duplicate_state:
 		_asset_pack_state_cache[pack_name] = result
 		# emit state updated signal on main thread
 		call_deferred("emit_signal", "state_updated", pack_name, updated_state)
