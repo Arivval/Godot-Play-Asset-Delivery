@@ -19,7 +19,7 @@
 # Request object that handles asynchronous logic related to fetch_asset_pack().
 #
 # This object provides relevant getters so that it is possible to retrieve
-# the updated states from this object once the request completes.
+# the updated states from this object upon every state update.
 #
 # ##############################################################################
 class_name PlayAssetPackFetchRequest
