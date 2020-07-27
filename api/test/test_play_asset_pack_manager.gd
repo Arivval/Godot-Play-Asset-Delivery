@@ -428,6 +428,7 @@ func test_fetch_asset_pack_success():
 	var test_object = create_play_asset_pack_manager(mock_plugin)
 	
 	var request_object = test_object.fetch_asset_pack(test_pack_name)
+	request_object._stub_play_asset_pack_manager = test_object
 	# weakref used to test for memory leak
 	var request_object_reference = weakref(request_object)
 	
@@ -454,6 +455,7 @@ func test_fetch_asset_pack_success():
 	yield(yield_to(test_object, "state_updated", 1), YIELD)
 	assert_signal_emitted(test_object, "state_updated")
 	updated_signal_info1.thread.wait_to_finish()
+	assert_asset_pack_state_eq_dict(request_object.get_state(), updated_state1)
 	
 	var updated_state2 = create_mock_asset_pack_state_with_status_and_progress_dict(test_pack_name, \
 		PlayAssetPackManager.AssetPackStatus.WAITING_FOR_WIFI, 256, 4096)
@@ -462,7 +464,8 @@ func test_fetch_asset_pack_success():
 	yield(yield_to(test_object, "state_updated", 1), YIELD)
 	assert_signal_emitted(test_object, "state_updated")
 	updated_signal_info2.thread.wait_to_finish()
-	
+	assert_asset_pack_state_eq_dict(request_object.get_state(), updated_state2)
+
 	var updated_state3 = create_mock_asset_pack_state_with_status_and_progress_dict(test_pack_name, \
 		PlayAssetPackManager.AssetPackStatus.DOWNLOADING, 2048, 4096)
 	var updated_signal_info3 = FakePackStateInfo.new(updated_state3)
@@ -470,6 +473,7 @@ func test_fetch_asset_pack_success():
 	yield(yield_to(test_object, "state_updated", 1), YIELD)
 	assert_signal_emitted(test_object, "state_updated")
 	updated_signal_info3.thread.wait_to_finish()
+	assert_asset_pack_state_eq_dict(request_object.get_state(), updated_state3)
 	
 	var updated_state4 = create_mock_asset_pack_state_with_status_and_progress_dict(test_pack_name, \
 		PlayAssetPackManager.AssetPackStatus.COMPLETED, 4096, 4096)
@@ -478,6 +482,7 @@ func test_fetch_asset_pack_success():
 	yield(yield_to(request_object, "state_updated", 1), YIELD)
 	assert_signal_emitted(test_object, "state_updated")
 	updated_signal_info4.thread.wait_to_finish()
+	assert_asset_pack_state_eq_dict(request_object.get_state(), updated_state4)	
 	
 	# assert signal_captor is as expected
 	var result_params_store = signal_captor.received_params_store
@@ -517,6 +522,7 @@ func test_fetch_asset_pack_error():
 	
 	var test_pack_name = "random pack name"
 	var request_object = test_object.fetch_asset_pack(test_pack_name)
+	request_object._stub_play_asset_pack_manager = test_object
 	# weakref used to test for memory leak
 	var request_object_reference = weakref(request_object)
 	
@@ -571,6 +577,7 @@ func test_fetch_asset_pack_non_existent_pack_exception():
 	# AssetPackStates dictionary returned by plugin should not contain this pack_name
 	var non_existent_pack_name = "non_existent_pack"
 	var request_object = test_object.fetch_asset_pack(non_existent_pack_name)
+	request_object._stub_play_asset_pack_manager = test_object
 	# weakref used to test for memory leak
 	var request_object_reference = weakref(request_object)
 	
@@ -627,6 +634,7 @@ func test_fetch_asset_pack_cancel():
 	var test_object = create_play_asset_pack_manager(mock_plugin)
 	
 	var request_object = test_object.fetch_asset_pack(test_pack_name)
+	request_object._stub_play_asset_pack_manager = test_object
 	# weakref used to test for memory leak
 	var request_object_reference = weakref(request_object)
 	
@@ -653,6 +661,7 @@ func test_fetch_asset_pack_cancel():
 	yield(yield_to(test_object, "state_updated", 1), YIELD)
 	assert_signal_emitted(test_object, "state_updated")
 	updated_signal_info1.thread.wait_to_finish()
+	assert_asset_pack_state_eq_dict(request_object.get_state(), updated_state1)	
 	
 	var updated_state2 = create_mock_asset_pack_state_with_status_and_progress_dict(test_pack_name, \
 		PlayAssetPackManager.AssetPackStatus.WAITING_FOR_WIFI, 256, 4096)
@@ -661,6 +670,7 @@ func test_fetch_asset_pack_cancel():
 	yield(yield_to(test_object, "state_updated", 1), YIELD)
 	assert_signal_emitted(test_object, "state_updated")
 	updated_signal_info2.thread.wait_to_finish()
+	assert_asset_pack_state_eq_dict(request_object.get_state(), updated_state2)	
 	
 	var updated_state3 = create_mock_asset_pack_state_with_status_and_progress_dict(test_pack_name, \
 		PlayAssetPackManager.AssetPackStatus.DOWNLOADING, 2048, 4096)
@@ -669,6 +679,7 @@ func test_fetch_asset_pack_cancel():
 	yield(yield_to(test_object, "state_updated", 1), YIELD)
 	assert_signal_emitted(test_object, "state_updated")
 	updated_signal_info3.thread.wait_to_finish()
+	assert_asset_pack_state_eq_dict(request_object.get_state(), updated_state3)	
 	
 	test_object.cancel_asset_pack_request(test_pack_name)
 	var expected_state4 = create_mock_asset_pack_state_with_status_and_progress_dict(test_pack_name, \
@@ -677,6 +688,7 @@ func test_fetch_asset_pack_cancel():
 	yield(yield_to(test_object, "state_updated", 1), YIELD)
 	assert_signal_emitted(test_object, "state_updated")
 	updated_signal_info3.thread.wait_to_finish()
+	assert_asset_pack_state_eq_dict(request_object.get_state(), expected_state4)
 	
 	# assert signal_captor is as expected
 	var result_params_store = signal_captor.received_params_store

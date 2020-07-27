@@ -38,6 +38,7 @@ var _request_tracker : PlayAssetDeliveryRequestTracker
 # Dictionary that stores the mapping of pack_name to relevant Request objects	
 var _asset_pack_to_request_map : Dictionary	
 var _asset_pack_to_request_map_mutex : Mutex	
+var _asset_pack_state_cache : Dictionary
 
 var _PACK_TERMINAL_STATES = [AssetPackStatus.CANCELED, AssetPackStatus.COMPLETED, AssetPackStatus.FAILED]
 
@@ -160,19 +161,28 @@ func _route_asset_pack_state_updated(result : Dictionary):
 		# if reached terminal state, release references	
 		if updated_status in _PACK_TERMINAL_STATES:	
 			_asset_pack_to_request_map.erase(pack_name)
-
+		else:
+			_asset_pack_state_cache[pack_name] = updated_state
+			# Only emit global signal if it is non-terminal state
+			# terminal global signal will be trigger by _forward_high_level_state_updated_signal()
+			# from individual request objects
+			call_deferred("emit_signal", "state_updated", pack_name, updated_state)
 	_asset_pack_to_request_map_mutex.unlock()
-	
-	# emit state updated signal on main thread
-	call_deferred("emit_signal", "state_updated", pack_name, updated_state)
 
 # -----------------------------------------------------------------------------
 # Helper functions called by request objects to emit state_updated signal with
 # given pack_name and state.
 # -----------------------------------------------------------------------------
 func _forward_high_level_state_updated_signal(pack_name : String, state : Dictionary):
-	# emit state updated signal on main thread
-	call_deferred("emit_signal", "state_updated", pack_name, state)
+	# update cache, since this function can be called by multiple request objects with same packName
+	_asset_pack_to_request_map_mutex.lock()
+	#if not _asset_pack_state_cache.has(pack_name) or _asset_pack_state_cache[pack_name].hash() != state.hash():
+	if true:
+		_asset_pack_state_cache[pack_name] = state
+		# emit state updated signal on main thread
+		var state_object : PlayAssetPackState = PlayAssetPackState.new(state)
+		call_deferred("emit_signal", "state_updated", pack_name, state_object)
+	_asset_pack_to_request_map_mutex.unlock()
 
 # -----------------------------------------------------------------------------
 # Helper functions that forward signals emitted from the plugin

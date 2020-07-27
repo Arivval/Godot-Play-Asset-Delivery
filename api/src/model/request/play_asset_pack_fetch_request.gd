@@ -41,6 +41,9 @@ var _did_succeed : bool
 var _state : PlayAssetPackState
 var _error : PlayAssetPackException
 
+# used for unit testing
+var _stub_play_asset_pack_manager
+
 func _init(pack_name):
 	_pack_name = pack_name
 	
@@ -105,12 +108,20 @@ func _on_fetch_error(error: Dictionary):
 	_state._error_code = PlayAssetPackManager.AssetPackErrorCode.INTERNAL_ERROR
 	_error = PlayAssetPackException.new(error)
 	emit_signal("request_completed", _did_succeed, _pack_name, _state, _error)
-	PlayAssetPackManager._forward_high_level_state_updated_signal(_pack_name, _state.to_dict())
+	if _stub_play_asset_pack_manager == null:
+		PlayAssetPackManager._forward_high_level_state_updated_signal(_pack_name, _state.to_dict())
+	else:
+		_stub_play_asset_pack_manager._forward_high_level_state_updated_signal(_pack_name, _state.to_dict())
 
 func _on_state_updated(result: Dictionary):
 	_did_succeed = true
 	_state = PlayAssetPackState.new(result)
 	if _state.get_status() in PlayAssetPackManager._PACK_TERMINAL_STATES:
 		_did_succeed = _state.get_status() != PlayAssetPackManager.AssetPackStatus.FAILED
-		# reached a terminal state, emit request_completed signal
+		# reached a terminal state, emit request_completed s
 		emit_signal("request_completed", _did_succeed, _pack_name, _state, null)
+		if _stub_play_asset_pack_manager == null:
+			PlayAssetPackManager._forward_high_level_state_updated_signal(_pack_name, _state.to_dict())
+		else:
+			_stub_play_asset_pack_manager._forward_high_level_state_updated_signal(_pack_name, _state.to_dict())	
+	
