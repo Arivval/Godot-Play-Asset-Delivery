@@ -182,8 +182,7 @@ func _route_asset_pack_state_updated(result : Dictionary):
 	_play_asset_pack_manager_mutex.unlock()
 
 # -----------------------------------------------------------------------------
-# Helper functions called by used to emit state_updated signal with, able to 
-# filter out duplicate state_updated signals.
+# Helper functions called by request objects, to emit artifical state_updated signals.
 # -----------------------------------------------------------------------------
 func _forward_high_level_state_updated_signal(pack_name : String, state : Dictionary):
 	# update cache, since this function can be called by multiple request objects with same packName
