@@ -90,8 +90,19 @@ func _on_fetch_success(result: Dictionary):
 	# Since fetch() in plugin returns a PlayAssetPackStates Dictionary, we need to extract
 	# the PlayAssetPackState within.
 	var fetch_asset_pack_states_dict = PlayAssetPackStates.new(result).get_pack_states()
+	
+	# emit first state_updated signal
+	if _stub_play_asset_pack_manager == null:
+		PlayAssetPackManager._forward_high_level_state_updated_signal(_pack_name, _state.to_dict())
+	else:
+		_stub_play_asset_pack_manager._forward_high_level_state_updated_signal(_pack_name, _state.to_dict())	
+	
 	if fetch_asset_pack_states_dict.has(_pack_name):
-		_on_state_updated(fetch_asset_pack_states_dict[_pack_name].to_dict())
+		_state = PlayAssetPackState.new(result)
+		if _state.get_status() in PlayAssetPackManager._PACK_TERMINAL_STATES:
+			_did_succeed = _state.get_status() != PlayAssetPackManager.AssetPackStatus.FAILED
+			# reached a terminal state, emit request_completed signal
+			emit_signal("request_completed", _did_succeed, _pack_name, _state, null)
 	else:
 		# Although we received a fetchSuccess signal, the result field does not contain
 		# needed AssetPackState dictionary. Hence update _state's error_code to INVALID_REQUEST
@@ -102,11 +113,6 @@ func _on_fetch_success(result: Dictionary):
 		PlayAssetPackManager._remove_request_reference_from_map(_pack_name)
 		emit_signal("request_completed", _did_succeed, _pack_name, _state, null)
 		# emit non-duplicating state_updated signal
-		if _stub_play_asset_pack_manager == null:
-			PlayAssetPackManager._forward_high_level_state_updated_signal(_pack_name, _state.to_dict())
-		else:
-			_stub_play_asset_pack_manager._forward_high_level_state_updated_signal(_pack_name, _state.to_dict())	
-	
 
 func _on_fetch_error(error: Dictionary):
 	_did_succeed = false
@@ -121,7 +127,6 @@ func _on_fetch_error(error: Dictionary):
 		_stub_play_asset_pack_manager._forward_high_level_state_updated_signal(_pack_name, _state.to_dict())
 
 func _on_state_updated(result: Dictionary):
-	_did_succeed = true
 	_state = PlayAssetPackState.new(result)
 	if _state.get_status() in PlayAssetPackManager._PACK_TERMINAL_STATES:
 		_did_succeed = _state.get_status() != PlayAssetPackManager.AssetPackStatus.FAILED

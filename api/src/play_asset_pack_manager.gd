@@ -141,6 +141,7 @@ func _route_asset_pack_state_updated(result : Dictionary):
 	var updated_state : PlayAssetPackState = PlayAssetPackState.new(result)
 	var pack_name = updated_state.get_name()
 	var updated_status = updated_state.get_status()
+	print("start!")
 	
 	_asset_pack_to_request_map_mutex.lock()	
 	# update all related request object's states	
@@ -162,8 +163,14 @@ func _route_asset_pack_state_updated(result : Dictionary):
 		if updated_status in _PACK_TERMINAL_STATES:	
 			_asset_pack_to_request_map.erase(pack_name)
 	
-	# only emit non-repeated state_updated signals
-	if not _asset_pack_state_cache.has(pack_name) or _asset_pack_state_cache[pack_name].hash() != result.hash():
+	print("afer!!")
+	# The first duplicate state_updated signal will be called by on_fetch_success/error callbacks
+	# in request objects. Only propagate non-repeating state_updated signals after we received
+	# on_fetch_success/error
+	print("???", _asset_pack_state_cache.has(pack_name))
+	print(result)
+	print("here!", _asset_pack_state_cache[pack_name], result)
+	if _asset_pack_state_cache.has(pack_name) and _asset_pack_state_cache[pack_name].hash() != result.hash():
 		_asset_pack_state_cache[pack_name] = result
 		# emit state updated signal on main thread
 		call_deferred("emit_signal", "state_updated", pack_name, updated_state)
