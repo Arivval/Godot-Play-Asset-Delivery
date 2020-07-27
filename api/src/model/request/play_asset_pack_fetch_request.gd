@@ -71,7 +71,7 @@ func get_did_succeed() -> bool:
 	return _did_succeed
 
 # -----------------------------------------------------------------------------
-# Returns the most up-to-date PlayAssetPackState object, null if Request failed.
+# Returns the most up-to-date PlayAssetPackState object.
 # -----------------------------------------------------------------------------
 func get_state() -> PlayAssetPackState:
 	return _state

@@ -144,33 +144,29 @@ func _route_asset_pack_state_updated(result : Dictionary):
 	
 	_play_asset_pack_manager_mutex.lock()	
 	
-	var pack_name_exist_in_request_map = _asset_pack_to_request_map.has(pack_name)
+	var pack_name_exists_in_request_map = _asset_pack_to_request_map.has(pack_name)
 	var received_fetch_callback
 	var duplicate_state
-	if pack_name_exist_in_request_map:
-		var request = _asset_pack_to_request_map[pack_name][0]
+	if pack_name_exists_in_request_map:
+		var request = _asset_pack_to_request_map[pack_name]
 		received_fetch_callback = request.get_state().get_status() != PlayAssetPackManager.AssetPackStatus.UNKNOWN and\
 			request.get_state().get_total_bytes_to_download() != 0
 		duplicate_state = request.get_state().to_dict().hash() == result.hash()
-	
-	# update all related request object's states	
-	if pack_name_exist_in_request_map:	
-		var request_list = _asset_pack_to_request_map[pack_name]	
-		for request in request_list:	
-			# Since assetPackStateUpdated and fetchSuccess/Error might contain duplicate updates,
-			# we will only route non-duplicate updates to request object after we already received 
-			# fetchSuccess/Error signal.
-			if received_fetch_callback and not duplicate_state:
-				# Since devs might read request's state while we are updating it, we need to call this	
-				# function from main thread.
-				request.call_deferred("_on_state_updated", result)	
-
+		
+		# Since assetPackStateUpdated and fetchSuccess/Error might contain duplicate updates,
+		# we will only route non-duplicate updates to request object after we already received 
+		# fetchSuccess/Error signal.
+		if received_fetch_callback and not duplicate_state:
+			# Since devs might read request's state while we are updating it, we need to call this	
+			# function from main thread.
+			request.call_deferred("_on_state_updated", result)		
+		
 		# if reached terminal state, release references	
 		if updated_status in _PACK_TERMINAL_STATES:	
 			_asset_pack_to_request_map.erase(pack_name)
 		
 	# only emit non-repeated state_updated signals after we encountered fetchSuccess/Error
-	if pack_name_exist_in_request_map:
+	if pack_name_exists_in_request_map:
 		if received_fetch_callback and not duplicate_state:
 			_asset_pack_state_cache[pack_name] = result
 			# emit state updated signal on main thread
@@ -288,19 +284,20 @@ func get_asset_pack_state(pack_name: String) -> PlayAssetPackStateRequest:
 # Requests to download the specified asset pack.
 # -----------------------------------------------------------------------------
 func fetch_asset_pack(pack_name: String) -> PlayAssetPackFetchRequest:
-	var return_request = PlayAssetPackFetchRequest.new(pack_name)
-	var signal_id = _request_tracker.register_request(return_request)
-	
 	# Update mapping of pack_name to request object, so that assetStateUpdated global signal	
-	# can be correctly routed to this request object.	
-	_play_asset_pack_manager_mutex.lock()	
-	if _asset_pack_to_request_map.has(pack_name):	
-		_asset_pack_to_request_map[pack_name].append(return_request)	
-	else:	
-		_asset_pack_to_request_map[pack_name] = [return_request]	
-	_play_asset_pack_manager_mutex.unlock()
+	# can be correctly routed to this request object.
+	var return_request : PlayAssetPackFetchRequest
 	
-	_plugin_singleton.fetch([pack_name], signal_id)
+	_play_asset_pack_manager_mutex.lock()
+	if _asset_pack_to_request_map.has(pack_name):	
+		return_request = _asset_pack_to_request_map[pack_name]
+	else:
+		return_request = PlayAssetPackFetchRequest.new(pack_name)
+		var signal_id = _request_tracker.register_request(return_request)
+		_plugin_singleton.fetch([pack_name], signal_id)
+		_asset_pack_to_request_map[pack_name] = return_request
+	_play_asset_pack_manager_mutex.unlock()
+
 	return return_request
 
 # -----------------------------------------------------------------------------
