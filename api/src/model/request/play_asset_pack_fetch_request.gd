@@ -87,14 +87,12 @@ func get_error() -> PlayAssetPackException:
 # Callback functions handling signals emitted from the plugin.
 # -----------------------------------------------------------------------------
 func _on_fetch_success(result: Dictionary):
-	# We only need to handle the logic for handling non-existing pack request here. Other cases 
-	# will be handled by the assetPackStateUpdated global callback (since they will contain they
-	# same result field).
-	#
 	# Since fetch() in plugin returns a PlayAssetPackStates Dictionary, we need to extract
 	# the PlayAssetPackState within.
 	var fetch_asset_pack_states_dict = PlayAssetPackStates.new(result).get_pack_states()
-	if not fetch_asset_pack_states_dict.has(_pack_name):
+	if fetch_asset_pack_states_dict.has(_pack_name):
+		_on_state_updated(fetch_asset_pack_states_dict[_pack_name].to_dict())
+	else:
 		# Although we received a fetchSuccess signal, the result field does not contain
 		# needed AssetPackState dictionary. Hence update _state's error_code to INVALID_REQUEST
 		# and emit and request_completed signal.

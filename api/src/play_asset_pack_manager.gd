@@ -146,9 +146,16 @@ func _route_asset_pack_state_updated(result : Dictionary):
 	if _asset_pack_to_request_map.has(pack_name):	
 		var request_list = _asset_pack_to_request_map[pack_name]	
 		for request in request_list:	
-			# since devs might read request's state while we are updating it, we need to call this	
-			# function from main thread	
-			request.call_deferred("_on_state_updated", result)	
+			# Since assetPackStateUpdated and fetchSuccess/Error might contain duplicate updates,
+			# we will only route non-duplicate updates to request object after we already received 
+			# fetchSuccess/Error signal.
+			var received_fetch_callback = request.get_state().get_status() != PlayAssetPackManager.AssetPackStatus.UNKNOWN and\
+				request.get_state().get_total_bytes_to_download() != 0
+			var duplicate_state = request.get_state().to_dict().hash() == result.hash()
+			if received_fetch_callback and not duplicate_state:
+				# Since devs might read request's state while we are updating it, we need to call this	
+				# function from main thread.
+				request.call_deferred("_on_state_updated", result)	
 
 		# if reached terminal state, release references	
 		if updated_status in _PACK_TERMINAL_STATES:	
@@ -161,7 +168,7 @@ func _route_asset_pack_state_updated(result : Dictionary):
 
 # -----------------------------------------------------------------------------
 # Helper functions called by request objects to emit state_updated signal with
-# defaulted pack state.
+# given pack_name and state.
 # -----------------------------------------------------------------------------
 func _forward_high_level_state_updated_signal(pack_name : String, state : Dictionary):
 	# emit state updated signal on main thread
