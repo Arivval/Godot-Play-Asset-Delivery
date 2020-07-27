@@ -63,7 +63,7 @@ func get_pack_name() -> String:
 	return _pack_name
 
 # -----------------------------------------------------------------------------
-# Returns whether this request is completed or not
+# Returns whether this request is completed or not.
 # -----------------------------------------------------------------------------
 func get_is_completed() -> bool:
 	var is_non_existing_pack_exception = _state.get_status() == PlayAssetPackManager.AssetPackStatus.UNKNOWN \
