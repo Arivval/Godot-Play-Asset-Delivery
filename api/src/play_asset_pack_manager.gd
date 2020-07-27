@@ -159,7 +159,7 @@ func _route_asset_pack_state_updated(result : Dictionary):
 
 		# if reached terminal state, release references	
 		if updated_status in _PACK_TERMINAL_STATES:	
-			_remove_request_reference_from_map(pack_name)
+			_asset_pack_to_request_map.erase(pack_name)
 
 	_asset_pack_to_request_map_mutex.unlock()
 	
