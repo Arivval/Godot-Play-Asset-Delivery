@@ -125,8 +125,8 @@ func _initialize_plugin() -> Object:
 		return null
 
 # -----------------------------------------------------------------------------
-# Helper function used to release reference of request objects from pack_name
-# to request map.
+# Helper function used to release reference of request objects in 
+# _asset_pack_to_request_map.
 # -----------------------------------------------------------------------------
 func _remove_request_reference_from_map(pack_name : String):
 	_play_asset_pack_manager_mutex.lock()	
