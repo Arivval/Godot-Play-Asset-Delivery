@@ -58,7 +58,6 @@ func _init(pack_name):
 	}
 	_state = PlayAssetPackState.new(default_pack_dict)
 	
-
 # -----------------------------------------------------------------------------
 # Returns the requested asset pack's name.
 # -----------------------------------------------------------------------------
@@ -93,7 +92,6 @@ func _on_fetch_success(result: Dictionary):
 	
 	if fetch_asset_pack_states_dict.has(_pack_name):
 		_on_state_updated(fetch_asset_pack_states_dict[_pack_name].to_dict())
-		
 		# emit non-duplicating state_updated signal
 		if _stub_play_asset_pack_manager == null:
 			PlayAssetPackManager._forward_high_level_state_updated_signal(_pack_name, _state.to_dict())
