@@ -37,7 +37,7 @@ var _request_tracker : PlayAssetDeliveryRequestTracker
 
 # Dictionary that stores the mapping of pack_name to relevant Request objects	
 var _asset_pack_to_request_map : Dictionary	
-var _asset_pack_to_request_map_mutex : Mutex	
+var _play_asset_pack_manager_mutex : Mutex	
 var _asset_pack_state_cache : Dictionary
 
 var _PACK_TERMINAL_STATES = [AssetPackStatus.CANCELED, AssetPackStatus.COMPLETED, AssetPackStatus.FAILED]
@@ -93,7 +93,7 @@ func _initialize():
 	_plugin_singleton = _initialize_plugin()
 	_connect_plugin_signals()
 	_request_tracker = PlayAssetDeliveryRequestTracker.new()
-	_asset_pack_to_request_map_mutex = Mutex.new()
+	_play_asset_pack_manager_mutex = Mutex.new()
 
 # -----------------------------------------------------------------------------
 # Connect signals, allowing signals emitted from the plugin to be correctly
@@ -129,9 +129,9 @@ func _initialize_plugin() -> Object:
 # to request map.
 # -----------------------------------------------------------------------------
 func _remove_request_reference_from_map(pack_name : String):
-	_asset_pack_to_request_map_mutex.lock()	
+	_play_asset_pack_manager_mutex.lock()	
 	_asset_pack_to_request_map.erase(pack_name)
-	_asset_pack_to_request_map_mutex.unlock()	
+	_play_asset_pack_manager_mutex.unlock()	
 
 # -----------------------------------------------------------------------------
 # Helper function that synchronizes relevant request object's state upon 
@@ -142,7 +142,7 @@ func _route_asset_pack_state_updated(result : Dictionary):
 	var pack_name = updated_state.get_name()
 	var updated_status = updated_state.get_status()
 	
-	_asset_pack_to_request_map_mutex.lock()	
+	_play_asset_pack_manager_mutex.lock()	
 	# update all related request object's states	
 	if _asset_pack_to_request_map.has(pack_name):	
 		var request_list = _asset_pack_to_request_map[pack_name]	
@@ -163,12 +163,12 @@ func _route_asset_pack_state_updated(result : Dictionary):
 			_asset_pack_to_request_map.erase(pack_name)
 	
 	# only emit non-repeated state_updated signals
-	if not _asset_pack_state_cache.has(pack_name) or _asset_pack_state_cache[pack_name].hash() != result.hash():
+	if _asset_pack_state_cache.has(pack_name) and _asset_pack_state_cache[pack_name].hash() != result.hash():
 		_asset_pack_state_cache[pack_name] = result
 		# emit state updated signal on main thread
 		call_deferred("emit_signal", "state_updated", pack_name, updated_state)
 	
-	_asset_pack_to_request_map_mutex.unlock()
+	_play_asset_pack_manager_mutex.unlock()
 
 # -----------------------------------------------------------------------------
 # Helper functions called by used to emit state_updated signal with, able to 
@@ -176,13 +176,13 @@ func _route_asset_pack_state_updated(result : Dictionary):
 # -----------------------------------------------------------------------------
 func _forward_high_level_state_updated_signal(pack_name : String, state : Dictionary):
 	# update cache, since this function can be called by multiple request objects with same packName
-	_asset_pack_to_request_map_mutex.lock()
+	_play_asset_pack_manager_mutex.lock()
 	if not _asset_pack_state_cache.has(pack_name) or _asset_pack_state_cache[pack_name].hash() != state.hash():
 		_asset_pack_state_cache[pack_name] = state
 		# emit state updated signal on main thread
 		var state_object : PlayAssetPackState = PlayAssetPackState.new(state)
 		call_deferred("emit_signal", "state_updated", pack_name, state_object)
-	_asset_pack_to_request_map_mutex.unlock()
+	_play_asset_pack_manager_mutex.unlock()
 
 # -----------------------------------------------------------------------------
 # Helper functions that forward signals emitted from the plugin
@@ -283,12 +283,12 @@ func fetch_asset_pack(pack_name: String) -> PlayAssetPackFetchRequest:
 	
 	# Update mapping of pack_name to request object, so that assetStateUpdated global signal	
 	# can be correctly routed to this request object.	
-	_asset_pack_to_request_map_mutex.lock()	
+	_play_asset_pack_manager_mutex.lock()	
 	if _asset_pack_to_request_map.has(pack_name):	
 		_asset_pack_to_request_map[pack_name].append(return_request)	
 	else:	
 		_asset_pack_to_request_map[pack_name] = [return_request]	
-	_asset_pack_to_request_map_mutex.unlock()
+	_play_asset_pack_manager_mutex.unlock()
 	
 	_plugin_singleton.fetch([pack_name], signal_id)
 	return return_request
