@@ -91,9 +91,10 @@ func _on_fetch_success(result: Dictionary):
 	if not fetch_asset_pack_states_dict.has(_pack_name):
 		# Although we received a fetchSuccess signal, the result field does not contain
 		# needed AssetPackState dictionary. Hence update _state's error_code to INVALID_REQUEST
-		# and emit and request_completed signal
+		# and emit and request_completed signal.
 		_did_succeed = false
 		_state._error_code = PlayAssetPackManager.AssetPackErrorCode.INVALID_REQUEST
+		PlayAssetPackManager.remove_request_reference_from_map(_pack_name)
 		emit_signal("request_completed", _did_succeed, _pack_name, _state, null)
 
 func _on_fetch_error(error: Dictionary):
