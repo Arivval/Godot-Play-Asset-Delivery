@@ -36,7 +36,6 @@ extends PlayAssetDeliveryRequest
 signal request_completed(pack_name, result, exception)
 
 var _pack_name : String
-var _is_completed : bool
 var _state : PlayAssetPackState
 var _error : PlayAssetPackException
 
@@ -45,7 +44,6 @@ var _stub_play_asset_pack_manager
 
 func _init(pack_name):
 	_pack_name = pack_name
-	_is_completed = false
 	
 	# _state will be defaulted with status of UNKNOWN
 	var default_pack_dict = {
