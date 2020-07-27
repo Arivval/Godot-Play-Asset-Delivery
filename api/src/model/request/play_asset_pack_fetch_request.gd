@@ -99,10 +99,10 @@ func _on_fetch_success(result: Dictionary):
 			_stub_play_asset_pack_manager._forward_high_level_state_updated_signal(_pack_name, _state.to_dict())	
 	else:
 		# Although we received a fetchSuccess signal, the result field does not contain
-		# needed AssetPackState dictionary. Hence update _state's error_code to INVALID_REQUEST
+		# needed AssetPackState dictionary. Hence update _state's error_code to INTERNAL_ERROR
 		# and emit and request_completed signal.
 		_did_succeed = false
-		_state._error_code = PlayAssetPackManager.AssetPackErrorCode.INVALID_REQUEST
+		_state._error_code = PlayAssetPackManager.AssetPackErrorCode.INTERNAL_ERROR
 		# release reference
 		PlayAssetPackManager._remove_request_reference_from_map(_pack_name)
 		emit_signal("request_completed", _did_succeed, _pack_name, _state, null)

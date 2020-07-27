@@ -193,7 +193,7 @@ func create_default_non_existing_request_asset_pack_state_dict(pack_name : Strin
 	return {
 		PlayAssetPackState._NAME_KEY: pack_name, 
 		PlayAssetPackState._STATUS_KEY: PlayAssetPackManager.AssetPackStatus.UNKNOWN, 
-		PlayAssetPackState._ERROR_CODE_KEY: PlayAssetPackManager.AssetPackErrorCode.INVALID_REQUEST,
+		PlayAssetPackState._ERROR_CODE_KEY: PlayAssetPackManager.AssetPackErrorCode.INTERNAL_ERROR,
 		PlayAssetPackState._BYTES_DOWNLOADED_KEY: 0,
 		PlayAssetPackState._TOTAL_BYTES_TO_DOWNLOAD_KEY: 0,
 		PlayAssetPackState._TRANSFER_PROGRESS_PERCENTAGE_KEY: 0
