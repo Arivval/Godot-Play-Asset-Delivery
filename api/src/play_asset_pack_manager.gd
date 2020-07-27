@@ -144,20 +144,22 @@ func _route_asset_pack_state_updated(result : Dictionary):
 	
 	_play_asset_pack_manager_mutex.lock()	
 	
+	var pack_name_exist_in_request_map = _asset_pack_to_request_map.has(pack_name)
 	var received_fetch_callback
 	var duplicate_state
+	if pack_name_exist_in_request_map:
+		var request = _asset_pack_to_request_map[pack_name][0]
+		received_fetch_callback = request.get_state().get_status() != PlayAssetPackManager.AssetPackStatus.UNKNOWN and\
+			request.get_state().get_total_bytes_to_download() != 0
+		duplicate_state = request.get_state().to_dict().hash() == result.hash()
+	
 	# update all related request object's states	
-	if _asset_pack_to_request_map.has(pack_name):	
+	if pack_name_exist_in_request_map:	
 		var request_list = _asset_pack_to_request_map[pack_name]	
 		for request in request_list:	
 			# Since assetPackStateUpdated and fetchSuccess/Error might contain duplicate updates,
 			# we will only route non-duplicate updates to request object after we already received 
 			# fetchSuccess/Error signal.
-			if received_fetch_callback == null:
-				received_fetch_callback = request.get_state().get_status() != PlayAssetPackManager.AssetPackStatus.UNKNOWN and\
-					request.get_state().get_total_bytes_to_download() != 0
-				duplicate_state = request.get_state().to_dict().hash() == result.hash()
-			
 			if received_fetch_callback and not duplicate_state:
 				# Since devs might read request's state while we are updating it, we need to call this	
 				# function from main thread.
@@ -168,10 +170,14 @@ func _route_asset_pack_state_updated(result : Dictionary):
 			_asset_pack_to_request_map.erase(pack_name)
 		
 	# only emit non-repeated state_updated signals after we encountered fetchSuccess/Error
-	if received_fetch_callback and not duplicate_state:
+	if pack_name_exist_in_request_map:
+		if received_fetch_callback and not duplicate_state:
+			_asset_pack_state_cache[pack_name] = result
+			# emit state updated signal on main thread
+			call_deferred("emit_signal", "state_updated", pack_name, updated_state)
+	else:
 		_asset_pack_state_cache[pack_name] = result
-		# emit state updated signal on main thread
-		call_deferred("emit_signal", "state_updated", pack_name, updated_state)
+		call_deferred("emit_signal", "state_updated", pack_name, updated_state)	
 	
 	_play_asset_pack_manager_mutex.unlock()
 
