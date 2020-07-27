@@ -127,7 +127,7 @@ func _initialize_plugin() -> Object:
 # Helper function used to release reference of request objects from pack_name
 # to request map.
 # -----------------------------------------------------------------------------
-func remove_request_reference_from_map(pack_name : String):
+func _remove_request_reference_from_map(pack_name : String):
 	_asset_pack_to_request_map_mutex.lock()	
 	_asset_pack_to_request_map.erase(pack_name)
 	_asset_pack_to_request_map_mutex.unlock()	
@@ -152,7 +152,7 @@ func _route_asset_pack_state_updated(result : Dictionary):
 
 		# if reached terminal state, release references	
 		if updated_status in _PACK_TERMINAL_STATES:	
-			remove_request_reference_from_map(pack_name)
+			_remove_request_reference_from_map(pack_name)
 
 	_asset_pack_to_request_map_mutex.unlock()
 	
@@ -177,7 +177,7 @@ func _forward_fetch_success(result : Dictionary, signal_id : int):
 
 func _forward_fetch_error(error : Dictionary, signal_id : int):
 	var target_request : PlayAssetPackFetchRequest = _request_tracker.lookup_request(signal_id)
-	target_request._on_fetch_error(error)
+	target_request.call_deferred("_on_fetch_error", error)
 	_request_tracker.unregister_request(signal_id)
 
 func _forward_get_pack_states_success(result : Dictionary, signal_id : int):

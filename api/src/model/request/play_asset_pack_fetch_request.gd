@@ -27,11 +27,12 @@ extends PlayAssetDeliveryRequest
 
 # -----------------------------------------------------------------------------
 # Emits request_completed(did_succeed, pack_name, result, exception) signal 
-# upon request succeeds(reaching CANCELED or COMPLETED)/fails.
+# upon request succeeds(reaching CANCELED/COMPLETED)/fails(reaching FAILED).
 # 	did_succeed : boolean indicating request succeeded/failed
 # 	pack_name: String, name of the requested asset pack
 # 	result : PlayAssetPackState object
-#	exception: PlayAssetPackException object if request failed, otherwise null
+#	exception: PlayAssetPackException object if Plugin encountered an exception
+# while handling this request
 #
 # Note: when calling fetch_asset_pack() on a non-existent pack_name, 
 # did_succeed will be false and state's status will be INVALID_REQUEST
@@ -75,6 +76,7 @@ func get_did_succeed() -> bool:
 # -----------------------------------------------------------------------------
 func get_state() -> PlayAssetPackState:
 	return _state
+
 # -----------------------------------------------------------------------------
 # Returns a PlayAssetPackException if exception occurred.
 # -----------------------------------------------------------------------------
@@ -85,6 +87,10 @@ func get_error() -> PlayAssetPackException:
 # Callback functions handling signals emitted from the plugin.
 # -----------------------------------------------------------------------------
 func _on_fetch_success(result: Dictionary):
+	# We only need to handle the logic for handling non-existing pack request here. Other cases 
+	# will be handled by the assetPackStateUpdated global callback (since they will contain they
+	# same result field).
+	#
 	# Since fetch() in plugin returns a PlayAssetPackStates Dictionary, we need to extract
 	# the PlayAssetPackState within.
 	var fetch_asset_pack_states_dict = PlayAssetPackStates.new(result).get_pack_states()
@@ -94,12 +100,12 @@ func _on_fetch_success(result: Dictionary):
 		# and emit and request_completed signal.
 		_did_succeed = false
 		_state._error_code = PlayAssetPackManager.AssetPackErrorCode.INVALID_REQUEST
-		PlayAssetPackManager.remove_request_reference_from_map(_pack_name)
+		# release reference
+		PlayAssetPackManager._remove_request_reference_from_map(_pack_name)
 		emit_signal("request_completed", _did_succeed, _pack_name, _state, null)
 
 func _on_fetch_error(error: Dictionary):
 	_did_succeed = false
-	# 
 	_state._status = PlayAssetPackManager.AssetPackStatus.FAILED
 	_state._error_code = PlayAssetPackManager.AssetPackErrorCode.INTERNAL_ERROR
 	_error = PlayAssetPackException.new(error)
