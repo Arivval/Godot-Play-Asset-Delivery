@@ -68,7 +68,11 @@ func get_pack_name() -> String:
 # Returns whether this request is completed or not.
 # -----------------------------------------------------------------------------
 func get_is_completed() -> bool:
-	return _is_completed
+	var is_non_existing_pack_exception = _state.get_status() == PlayAssetPackManager.AssetPackStatus.UNKNOWN \
+		and _state.get_error_code() == PlayAssetPackManager.AssetPackErrorCode.INTERNAL_ERROR
+	var is_terminal_state = _state.get_status() in PlayAssetPackManager._PACK_TERMINAL_STATES
+	
+	return is_terminal_state or is_non_existing_pack_exception
 
 # -----------------------------------------------------------------------------
 # Returns the most up-to-date PlayAssetPackState object.
@@ -101,14 +105,12 @@ func _on_fetch_success(result: Dictionary):
 		# Although we received a fetchSuccess signal, the result field does not contain
 		# needed AssetPackState dictionary. Hence update _state's error_code to INTERNAL_ERROR
 		# and emit and request_completed signal.
-		_is_completed = true
 		_state._error_code = PlayAssetPackManager.AssetPackErrorCode.INTERNAL_ERROR
 		# release reference
 		PlayAssetPackManager._remove_request_reference_from_map(_pack_name)
 		emit_signal("request_completed", _pack_name, _state, null)
 
 func _on_fetch_error(error: Dictionary):
-	_is_completed = true
 	_state._status = PlayAssetPackManager.AssetPackStatus.FAILED
 	_state._error_code = PlayAssetPackManager.AssetPackErrorCode.INTERNAL_ERROR
 	_error = PlayAssetPackException.new(error)
@@ -123,6 +125,5 @@ func _on_state_updated(result: Dictionary):
 	_state = PlayAssetPackState.new(result)
 	if _state.get_status() in PlayAssetPackManager._PACK_TERMINAL_STATES:
 		# reached a terminal state, emit request_completed signal
-		_is_completed = true
 		emit_signal("request_completed", _pack_name, _state, null)
 		
