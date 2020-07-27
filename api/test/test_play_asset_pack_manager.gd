@@ -500,13 +500,12 @@ func test_fetch_asset_pack_success():
 	# assert reference is freed
 	assert_true(not request_object_reference.get_ref())
 
-func assert_fetch_signal_is_completed(did_succeed : bool, pack_name : String, \
+func assert_fetch_signal_is_completed(pack_name : String, \
 	result : PlayAssetPackState, exception : PlayAssetPackException):
 	# assert using callback, simulating the workflow of connecting callback to signal
 	var expected_pack_name = "testPack"
 	var expected_pack_state_dict = create_mock_asset_pack_state_with_status_and_progress_dict(\
 		expected_pack_name, PlayAssetPackManager.AssetPackStatus.COMPLETED, 4096, 4096)
-	assert_true(did_succeed)
 	assert_eq(pack_name, expected_pack_name)
 	assert_asset_pack_state_eq_dict(result, expected_pack_state_dict)
 	assert_eq(exception, null)
@@ -537,7 +536,6 @@ func test_fetch_asset_pack_error():
 	assert_signal_emitted(request_object, "request_completed", "signal should have emitted")
 	
 	# assert using getters, simulating the workflow of yielding the signals
-	assert_true(not request_object.get_did_succeed())
 	assert_eq(request_object.get_pack_name(), test_pack_name)
 	assert_asset_pack_exception_eq_dict(request_object.get_error(), create_mock_asset_pack_java_lang_exception_dict())
 	assert_asset_pack_state_eq_dict(request_object.get_state(), \
@@ -551,10 +549,9 @@ func test_fetch_asset_pack_error():
 	# assert reference is freed
 	assert_true(not request_object_reference.get_ref())
 
-func assert_fetch_signal_is_error(did_succeed : bool, pack_name : String, \
+func assert_fetch_signal_is_error(pack_name : String, \
 	result : PlayAssetPackState, exception : PlayAssetPackException):
 	# assert using callback, simulating the workflow of connecting callback to signal
-	assert_true(not did_succeed)
 	assert_eq(pack_name, "random pack name")
 	assert_asset_pack_exception_eq_dict(exception, create_mock_asset_pack_java_lang_exception_dict())
 	assert_asset_pack_state_eq_dict(result, create_default_error_asset_pack_state_dict(pack_name))
@@ -592,7 +589,6 @@ func test_fetch_asset_pack_non_existent_pack_exception():
 	assert_signal_emitted(request_object, "request_completed", "signal should have emitted")
 	
 	# assert using getters, simulating the workflow of yielding the signals
-	assert_true(not request_object.get_did_succeed())
 	assert_eq(request_object.get_pack_name(), non_existent_pack_name)
 	assert_eq(request_object.get_error(), null)
 	assert_asset_pack_state_eq_dict(request_object.get_state(), \
@@ -606,11 +602,10 @@ func test_fetch_asset_pack_non_existent_pack_exception():
 	# assert reference is freed
 	assert_true(not request_object_reference.get_ref())
 
-func assert_fetch_signal_non_existent_pack(did_succeed : bool, pack_name : String, \
+func assert_fetch_signal_non_existent_pack(pack_name : String, \
 	result : PlayAssetPackState, exception : PlayAssetPackException):
 	# assert using callback, simulating the workflow of connecting callback to signal
 	var non_existent_pack_name = "non_existent_pack"
-	assert_true(not did_succeed)
 	assert_eq(pack_name, non_existent_pack_name)
 	assert_asset_pack_state_eq_dict(result, \
 		create_default_non_existing_request_asset_pack_state_dict(non_existent_pack_name))
@@ -706,13 +701,12 @@ func test_fetch_asset_pack_cancel():
 	# assert reference is freed
 	assert_true(not request_object_reference.get_ref())
 
-func assert_fetch_signal_is_canceled(did_succeed : bool, pack_name : String, \
+func assert_fetch_signal_is_canceled(pack_name : String, \
 	result : PlayAssetPackState, exception : PlayAssetPackException):
 	# assert using callback, simulating the workflow of connecting callback to signal
 	var expected_pack_name = "testPack"
 	var expected_pack_state_dict = create_mock_asset_pack_state_with_status_and_progress_dict(\
 		expected_pack_name, PlayAssetPackManager.AssetPackStatus.CANCELED, 2048, 4096)
-	assert_true(did_succeed)
 	assert_eq(pack_name, expected_pack_name)
 	assert_asset_pack_state_eq_dict(result, expected_pack_state_dict)
 	assert_eq(exception, null)

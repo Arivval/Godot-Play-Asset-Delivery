@@ -332,7 +332,7 @@ func cancel_asset_pack_request(pack_name : String) -> bool:
 # instead.
 #
 # Returns a PlayAssetPackRemoveRequest object that can emit onComplete signal
-# once the remove request succeeded or failed.
+# once the remove request reached terminal state.
 # -----------------------------------------------------------------------------
 func remove_pack(pack_name: String):
 	var return_request = PlayAssetPackRemoveRequest.new()
