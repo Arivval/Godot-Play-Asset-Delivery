@@ -161,23 +161,23 @@ func _route_asset_pack_state_updated(result : Dictionary):
 		# if reached terminal state, release references	
 		if updated_status in _PACK_TERMINAL_STATES:	
 			_asset_pack_to_request_map.erase(pack_name)
-		else:
-			_asset_pack_state_cache[pack_name] = updated_state
-			# Only emit global signal if it is non-terminal state
-			# terminal global signal will be trigger by _forward_high_level_state_updated_signal()
-			# from individual request objects
-			call_deferred("emit_signal", "state_updated", pack_name, updated_state)
+	
+	# only emit non-repeated state_updated signals
+	if not _asset_pack_state_cache.has(pack_name) or _asset_pack_state_cache[pack_name].hash() != result.hash():
+		_asset_pack_state_cache[pack_name] = result
+		# emit state updated signal on main thread
+		call_deferred("emit_signal", "state_updated", pack_name, updated_state)
+	
 	_asset_pack_to_request_map_mutex.unlock()
 
 # -----------------------------------------------------------------------------
-# Helper functions called by request objects to emit state_updated signal with
-# given pack_name and state.
+# Helper functions called by used to emit state_updated signal with, able to 
+# filter out duplicate state_updated signals.
 # -----------------------------------------------------------------------------
 func _forward_high_level_state_updated_signal(pack_name : String, state : Dictionary):
 	# update cache, since this function can be called by multiple request objects with same packName
 	_asset_pack_to_request_map_mutex.lock()
-	#if not _asset_pack_state_cache.has(pack_name) or _asset_pack_state_cache[pack_name].hash() != state.hash():
-	if true:
+	if not _asset_pack_state_cache.has(pack_name) or _asset_pack_state_cache[pack_name].hash() != state.hash():
 		_asset_pack_state_cache[pack_name] = state
 		# emit state updated signal on main thread
 		var state_object : PlayAssetPackState = PlayAssetPackState.new(state)
