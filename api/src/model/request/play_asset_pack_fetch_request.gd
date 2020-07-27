@@ -114,5 +114,6 @@ func _on_state_updated(result: Dictionary):
 	_did_succeed = true
 	_state = PlayAssetPackState.new(result)
 	if _state.get_status() in PlayAssetPackManager._PACK_TERMINAL_STATES:
+		_did_succeed = _state.get_status() != PlayAssetPackManager.AssetPackStatus.FAILED
 		# reached a terminal state, emit request_completed signal
 		emit_signal("request_completed", _did_succeed, _pack_name, _state, null)

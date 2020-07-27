@@ -460,7 +460,7 @@ func test_fetch_asset_pack_success():
 	var updated_signal_info2 = FakePackStateInfo.new(updated_state2)
 	mock_plugin.trigger_asset_pack_state_updated_signal(updated_signal_info2)
 	yield(yield_to(test_object, "state_updated", 1), YIELD)
-
+	assert_signal_emitted(test_object, "state_updated")
 	updated_signal_info2.thread.wait_to_finish()
 	
 	var updated_state3 = create_mock_asset_pack_state_with_status_and_progress_dict(test_pack_name, \
@@ -468,6 +468,7 @@ func test_fetch_asset_pack_success():
 	var updated_signal_info3 = FakePackStateInfo.new(updated_state3)
 	mock_plugin.trigger_asset_pack_state_updated_signal(updated_signal_info3)
 	yield(yield_to(test_object, "state_updated", 1), YIELD)
+	assert_signal_emitted(test_object, "state_updated")
 	updated_signal_info3.thread.wait_to_finish()
 	
 	var updated_state4 = create_mock_asset_pack_state_with_status_and_progress_dict(test_pack_name, \
@@ -475,6 +476,7 @@ func test_fetch_asset_pack_success():
 	var updated_signal_info4 = FakePackStateInfo.new(updated_state4)
 	mock_plugin.trigger_asset_pack_state_updated_signal(updated_signal_info4)
 	yield(yield_to(request_object, "state_updated", 1), YIELD)
+	assert_signal_emitted(test_object, "state_updated")
 	updated_signal_info4.thread.wait_to_finish()
 	
 	# assert signal_captor is as expected
@@ -640,6 +642,7 @@ func test_fetch_asset_pack_cancel():
 	
 	# Assert first state_updated signal
 	yield(yield_to(test_object, "state_updated", 1), YIELD)
+	assert_signal_emitted(test_object, "state_updated")
 	assert_asset_pack_state_eq_dict(request_object.get_state(), test_asset_pack_state)
 	
 	# Emit and assert a stream of state_updated signal
@@ -648,6 +651,7 @@ func test_fetch_asset_pack_cancel():
 	var updated_signal_info1 = FakePackStateInfo.new(updated_state1)
 	mock_plugin.trigger_asset_pack_state_updated_signal(updated_signal_info1)
 	yield(yield_to(test_object, "state_updated", 1), YIELD)
+	assert_signal_emitted(test_object, "state_updated")
 	updated_signal_info1.thread.wait_to_finish()
 	
 	var updated_state2 = create_mock_asset_pack_state_with_status_and_progress_dict(test_pack_name, \
@@ -655,6 +659,7 @@ func test_fetch_asset_pack_cancel():
 	var updated_signal_info2 = FakePackStateInfo.new(updated_state2)
 	mock_plugin.trigger_asset_pack_state_updated_signal(updated_signal_info2)
 	yield(yield_to(test_object, "state_updated", 1), YIELD)
+	assert_signal_emitted(test_object, "state_updated")
 	updated_signal_info2.thread.wait_to_finish()
 	
 	var updated_state3 = create_mock_asset_pack_state_with_status_and_progress_dict(test_pack_name, \
@@ -662,6 +667,7 @@ func test_fetch_asset_pack_cancel():
 	var updated_signal_info3 = FakePackStateInfo.new(updated_state3)
 	mock_plugin.trigger_asset_pack_state_updated_signal(updated_signal_info3)
 	yield(yield_to(test_object, "state_updated", 1), YIELD)
+	assert_signal_emitted(test_object, "state_updated")
 	updated_signal_info3.thread.wait_to_finish()
 	
 	test_object.cancel_asset_pack_request(test_pack_name)
@@ -669,6 +675,7 @@ func test_fetch_asset_pack_cancel():
 		PlayAssetPackManager.AssetPackStatus.CANCELED, 2048, 4096)
 	
 	yield(yield_to(test_object, "state_updated", 1), YIELD)
+	assert_signal_emitted(test_object, "state_updated")
 	updated_signal_info3.thread.wait_to_finish()
 	
 	# assert signal_captor is as expected
