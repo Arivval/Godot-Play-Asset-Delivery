@@ -553,7 +553,7 @@ func assert_fetch_signal_is_error(did_succeed : bool, pack_name : String, \
 	assert_asset_pack_exception_eq_dict(exception, create_mock_asset_pack_java_lang_exception_dict())
 	assert_asset_pack_state_eq_dict(result, create_default_error_asset_pack_state_dict(pack_name))
 
-func test_fetch_asset_pack_non_existent_pack():
+func test_fetch_asset_pack_non_existent_pack_exception():
 	var mock_plugin = FakeAndroidPlugin.new()
 
 	# configure what should be emitted upon get_asset_pack_state() call
@@ -589,7 +589,7 @@ func test_fetch_asset_pack_non_existent_pack():
 	assert_eq(request_object.get_pack_name(), non_existent_pack_name)
 	assert_eq(request_object.get_error(), null)
 	assert_asset_pack_state_eq_dict(request_object.get_state(), \
-		create_default_invalid_request_asset_pack_state_dict(non_existent_pack_name))
+		create_default_non_existing_request_asset_pack_state_dict(non_existent_pack_name))
 	
 	# join instantiated thread
 	signal_info.thread.wait_to_finish()
@@ -606,7 +606,7 @@ func assert_fetch_signal_non_existent_pack(did_succeed : bool, pack_name : Strin
 	assert_true(not did_succeed)
 	assert_eq(pack_name, non_existent_pack_name)
 	assert_asset_pack_state_eq_dict(result, \
-		create_default_invalid_request_asset_pack_state_dict(non_existent_pack_name))
+		create_default_non_existing_request_asset_pack_state_dict(non_existent_pack_name))
 	assert_eq(exception, null)
 
 func test_fetch_asset_pack_cancel():

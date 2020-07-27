@@ -33,9 +33,6 @@ extends PlayAssetDeliveryRequest
 # 	result : PlayAssetPackState object
 #	exception: PlayAssetPackException object if Plugin encountered an exception
 # while handling this request
-#
-# Note: when calling fetch_asset_pack() on a non-existent pack_name, 
-# did_succeed will be false and state's status will be INVALID_REQUEST
 # -----------------------------------------------------------------------------
 signal request_completed(did_succeed, pack_name, result, exception)
 

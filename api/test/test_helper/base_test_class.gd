@@ -189,7 +189,7 @@ func create_default_error_asset_pack_state_dict(pack_name : String):
 		PlayAssetPackState._TRANSFER_PROGRESS_PERCENTAGE_KEY: 0
 	}
 
-func create_default_invalid_request_asset_pack_state_dict(pack_name : String):
+func create_default_non_existing_request_asset_pack_state_dict(pack_name : String):
 	return {
 		PlayAssetPackState._NAME_KEY: pack_name, 
 		PlayAssetPackState._STATUS_KEY: PlayAssetPackManager.AssetPackStatus.UNKNOWN, 

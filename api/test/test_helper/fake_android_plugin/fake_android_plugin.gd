@@ -48,11 +48,19 @@ var _get_pack_states_info : FakePackStatesInfo
 var _cellular_confirmation_info : FakeCellularConfirmationInfo
 var _remove_pack_info : FakeRemovePackInfo
 
+var _asset_pack_state_updated_thread_pool : Array
+
 func _init():
 	_asset_location_store = Dictionary()
 	_asset_pack_location_store = Dictionary()
 	
 	_asset_pack_states_store = _create_empty_asset_pack_states()
+
+func free():
+	# join instantiated threads
+	for thread in _asset_pack_state_updated_thread_pool:
+		thread.wait_to_finish()
+	.free()
 
 # -----------------------------------------------------------------------------
 # Utility Functions
@@ -138,6 +146,7 @@ func trigger_asset_pack_state_updated_signal(_asset_pack_state_updated_info : Fa
 	# update _asset_pack_states_store with updated state
 	update_asset_pack_state(_asset_pack_state_updated_info.result)
 	_asset_pack_state_updated_info.thread = Thread.new()
+	_asset_pack_state_updated_thread_pool.append(_asset_pack_state_updated_info.thread)
 	var thread_args = ["assetPackStateUpdated", _asset_pack_state_updated_info.result]
 	_asset_pack_state_updated_info.thread.start(self, _EMIT_DELAYED_SIGNAL_FUNCTION, thread_args)
 
