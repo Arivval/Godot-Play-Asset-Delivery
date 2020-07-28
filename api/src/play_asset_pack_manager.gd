@@ -129,9 +129,7 @@ func _initialize_plugin() -> Object:
 # _asset_pack_to_request_map.
 # -----------------------------------------------------------------------------
 func _remove_request_reference_from_map(pack_name : String):
-	_play_asset_pack_manager_mutex.lock()	
 	_asset_pack_to_request_map.erase(pack_name)
-	_play_asset_pack_manager_mutex.unlock()	
 
 # -----------------------------------------------------------------------------
 # Helper function that synchronizes relevant request object's state upon 
