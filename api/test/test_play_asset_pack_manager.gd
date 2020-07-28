@@ -440,7 +440,7 @@ func test_fetch_asset_pack_success():
 	test_object.connect("state_updated", signal_captor, "signal_call_back")
 	
 	# assert that the initial default state is correct
-	assert_asset_pack_state_eq_dict(request_object.get_state(), create_default_unknown_asset_pack_state_dict(test_pack_name))
+	assert_asset_pack_state_eq_dict(request_object.get_state(), create_default_error_asset_pack_state_dict(test_pack_name))
 	
 	# Assert first state_updated signal
 	yield(yield_to(test_object, "state_updated", 1), YIELD)
@@ -538,7 +538,7 @@ func test_fetch_asset_pack_error():
 	
 	# assert that the initial default state is correct
 	assert_false(request_object.get_is_completed())
-	assert_asset_pack_state_eq_dict(request_object.get_state(), create_default_unknown_asset_pack_state_dict(test_pack_name))
+	assert_asset_pack_state_eq_dict(request_object.get_state(), create_default_error_asset_pack_state_dict(test_pack_name))
 	
 	# yield to the request_completed signal for no longer than 1 seconds and assert for signal emitted
 	yield(yield_to(request_object, "request_completed", 1), YIELD)
@@ -593,7 +593,7 @@ func test_fetch_asset_pack_non_existent_pack_exception():
 	
 	# assert that the initial default state is correct
 	assert_false(request_object.get_is_completed())
-	assert_asset_pack_state_eq_dict(request_object.get_state(), create_default_unknown_asset_pack_state_dict(non_existent_pack_name))
+	assert_asset_pack_state_eq_dict(request_object.get_state(), create_default_error_asset_pack_state_dict(non_existent_pack_name))
 	
 	# yield to the request_completed signal for no longer than 1 seconds and assert for signal emitted
 	yield(yield_to(request_object, "request_completed", 1), YIELD)
@@ -654,7 +654,8 @@ func test_fetch_asset_pack_cancel():
 	
 	# assert that the initial default state is correct
 	assert_false(request_object.get_is_completed())
-	assert_asset_pack_state_eq_dict(request_object.get_state(), create_default_unknown_asset_pack_state_dict(test_pack_name))
+	print(request_object.get_state().to_dict())
+	assert_asset_pack_state_eq_dict(request_object.get_state(), create_default_error_asset_pack_state_dict(test_pack_name))
 	
 	# Assert first state_updated signal
 	yield(yield_to(test_object, "state_updated", 1), YIELD)
