@@ -428,7 +428,6 @@ func test_fetch_asset_pack_success():
 	var test_object = create_play_asset_pack_manager(mock_plugin)
 	
 	var request_object = test_object.fetch_asset_pack(test_pack_name)
-	request_object._stub_play_asset_pack_manager = test_object
 	# weakref used to test for memory leak
 	var request_object_reference = weakref(request_object)
 	
@@ -531,7 +530,6 @@ func test_fetch_asset_pack_error():
 	
 	var test_pack_name = "random pack name"
 	var request_object = test_object.fetch_asset_pack(test_pack_name)
-	request_object._stub_play_asset_pack_manager = test_object
 	# weakref used to test for memory leak
 	var request_object_reference = weakref(request_object)
 	
@@ -586,7 +584,6 @@ func test_fetch_asset_pack_non_existent_pack_exception():
 	# AssetPackStates dictionary returned by plugin should not contain this pack_name
 	var non_existent_pack_name = "non_existent_pack"
 	var request_object = test_object.fetch_asset_pack(non_existent_pack_name)
-	request_object._stub_play_asset_pack_manager = test_object
 	# weakref used to test for memory leak
 	var request_object_reference = weakref(request_object)
 	
@@ -643,7 +640,6 @@ func test_fetch_asset_pack_cancel():
 	var test_object = create_play_asset_pack_manager(mock_plugin)
 	
 	var request_object = test_object.fetch_asset_pack(test_pack_name)
-	request_object._stub_play_asset_pack_manager = test_object
 	# weakref used to test for memory leak
 	var request_object_reference = weakref(request_object)
 	

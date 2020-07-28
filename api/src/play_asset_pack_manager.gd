@@ -193,7 +193,7 @@ func _forward_high_level_state_updated_signal(pack_name : String, state : Dictio
 	_play_asset_pack_manager_mutex.unlock()
 
 # -----------------------------------------------------------------------------
-# Helper function used to unwrap pack_state from pack_states
+# Helper function used to unwrap pack_state from pack_states.
 # -----------------------------------------------------------------------------
 func _extract_pack_state_from_pack_states(result : Dictionary) -> PlayAssetPackState:
 	var pack_states_object = PlayAssetPackStates.new(result).get_pack_states()
@@ -206,14 +206,20 @@ func _forward_fetch_success(result : Dictionary, signal_id : int):
 	var target_request : PlayAssetPackFetchRequest = _request_tracker.lookup_request(signal_id)
 	target_request.call_deferred("_on_fetch_success", result)
 	_request_tracker.unregister_request(signal_id)
-	#var pack_state = _extract_pack_state_from_pack_states(result)
-	#if pack_state.get_status() in _PACK_TERMINAL_STATES:
-#		_forward_high_level_state_updated_signal(pack_state.get_name(), pack_state.to_dict())
+	var pack_state = _extract_pack_state_from_pack_states(result)
+	# emit status updated global signal
+	_forward_high_level_state_updated_signal(pack_state.get_name(), pack_state.to_dict())
 
 func _forward_fetch_error(error : Dictionary, signal_id : int):
 	var target_request : PlayAssetPackFetchRequest = _request_tracker.lookup_request(signal_id)
 	target_request.call_deferred("_on_fetch_error", error)
 	_request_tracker.unregister_request(signal_id)
+	# emit status updated global signal
+	var previous_state = target_request.get_state().to_dict()
+	var pack_name = target_request.get_pack_name()
+	previous_state[PlayAssetPackState._STATUS_KEY] = AssetPackStatus.FAILED
+	previous_state[PlayAssetPackState._ERROR_CODE_KEY] = error[PlayAssetPackException._ERROR_CODE_KEY]
+	_forward_high_level_state_updated_signal(pack_name, previous_state)
 
 func _forward_get_pack_states_success(result : Dictionary, signal_id : int):
 	var target_request : PlayAssetPackStateRequest = _request_tracker.lookup_request(signal_id)
