@@ -178,7 +178,7 @@ func _route_asset_pack_state_updated(result : Dictionary):
 	_play_asset_pack_manager_mutex.unlock()
 
 # -----------------------------------------------------------------------------
-# Helper functions called by request objects, to emit artifical state_updated signals.
+# Helper function called by request objects, to emit artifical state_updated signals.
 # -----------------------------------------------------------------------------
 func _forward_high_level_state_updated_signal(pack_name : String, state : Dictionary):
 	# update cache, since this function can be called by multiple request objects with same packName
@@ -193,12 +193,22 @@ func _forward_high_level_state_updated_signal(pack_name : String, state : Dictio
 	_play_asset_pack_manager_mutex.unlock()
 
 # -----------------------------------------------------------------------------
+# Helper function used to unwrap pack_state from pack_states
+# -----------------------------------------------------------------------------
+func _extract_pack_state_from_pack_states(result : Dictionary) -> PlayAssetPackState:
+	var pack_states_object = PlayAssetPackStates.new(result).get_pack_states()
+	return pack_states_object[pack_states_object.keys()[0]]
+
+# -----------------------------------------------------------------------------
 # Helper functions that forward signals emitted from the plugin
 # -----------------------------------------------------------------------------
 func _forward_fetch_success(result : Dictionary, signal_id : int):
 	var target_request : PlayAssetPackFetchRequest = _request_tracker.lookup_request(signal_id)
 	target_request.call_deferred("_on_fetch_success", result)
 	_request_tracker.unregister_request(signal_id)
+	#var pack_state = _extract_pack_state_from_pack_states(result)
+	#if pack_state.get_status() in _PACK_TERMINAL_STATES:
+#		_forward_high_level_state_updated_signal(pack_state.get_name(), pack_state.to_dict())
 
 func _forward_fetch_error(error : Dictionary, signal_id : int):
 	var target_request : PlayAssetPackFetchRequest = _request_tracker.lookup_request(signal_id)

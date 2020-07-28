@@ -48,7 +48,7 @@ var _get_pack_states_info : FakePackStatesInfo
 var _cellular_confirmation_info : FakeCellularConfirmationInfo
 var _remove_pack_info : FakeRemovePackInfo
 
-var _asset_pack_state_updated_thread_pool : Array
+var _asset_pack_state_updated_threads : Array
 
 func _init():
 	_asset_location_store = Dictionary()
@@ -58,7 +58,7 @@ func _init():
 
 func free():
 	# join instantiated threads
-	for thread in _asset_pack_state_updated_thread_pool:
+	for thread in _asset_pack_state_updated_threads:
 		thread.wait_to_finish()
 	.free()
 
@@ -142,11 +142,11 @@ func emit_delayed_signal(args : Array):
 # Helper function that emits a mocked assetPackStateUpdated signal, with result
 # specified by _asset_pack_state_updated_info.
 # -----------------------------------------------------------------------------
-func trigger_asset_pack_state_updated_signal(_asset_pack_state_updated_info : FakePackStateInfo):
+func _trigger_asset_pack_state_updated_signal(_asset_pack_state_updated_info : FakePackStateInfo):
 	# update _asset_pack_states_store with updated state
 	update_asset_pack_state(_asset_pack_state_updated_info.result)
 	_asset_pack_state_updated_info.thread = Thread.new()
-	_asset_pack_state_updated_thread_pool.append(_asset_pack_state_updated_info.thread)
+	_asset_pack_state_updated_threads.append(_asset_pack_state_updated_info.thread)
 	var thread_args = ["assetPackStateUpdated", _asset_pack_state_updated_info.result]
 	_asset_pack_state_updated_info.thread.start(self, _EMIT_DELAYED_SIGNAL_FUNCTION, thread_args)
 
@@ -179,7 +179,7 @@ func fetch(pack_names : Array, signal_id : int):
 		if pack_states.has(pack_names[0]):
 			var asset_pack_state = pack_states[pack_names[0]]
 			var pack_state_info = FakePackStateInfo.new(asset_pack_state)
-			trigger_asset_pack_state_updated_signal(pack_state_info)
+			_trigger_asset_pack_state_updated_signal(pack_state_info)
 		
 		var thread_args = ["fetchSuccess", _fetch_info.result, signal_id]
 		_fetch_info.thread.start(self, _EMIT_DELAYED_SIGNAL_FUNCTION, thread_args)
@@ -221,7 +221,7 @@ func cancel(pack_names : Array):
 					PlayAssetPackManager.AssetPackStatus.CANCELED
 				# emit asset_pack_state_updated signal
 				var signal_info = FakePackStateInfo.new(current_asset_pack_dict)
-				trigger_asset_pack_state_updated_signal(signal_info)
+				_trigger_asset_pack_state_updated_signal(signal_info)
 				
 			# append resulting state to return_asset_pack_states
 			var current_asset_pack_size = current_asset_pack_dict[PlayAssetPackState._TOTAL_BYTES_TO_DOWNLOAD_KEY]
