@@ -49,7 +49,7 @@ func _init(pack_name):
 	_pack_name = pack_name
 
 # -----------------------------------------------------------------------------
-# Returns the requested asset pack's name
+# Returns the requested asset pack's name.
 # -----------------------------------------------------------------------------
 func get_pack_name() -> String:
 	return _pack_name
@@ -80,7 +80,7 @@ func _on_get_asset_pack_state_success(result : Dictionary):
 	# Since getPackStates() in plugin returns a PlayAssetPackStates Dictionary, we need to extract
 	# the PlayAssetPackState within.
 	var updated_asset_pack_states_dict = PlayAssetPackStates.new(result).get_pack_states()
-	if updated_asset_pack_states_dict.size() == 1 and _pack_name in updated_asset_pack_states_dict.keys():
+	if updated_asset_pack_states_dict.has(_pack_name):
 		_did_succeed = true
 		_result = updated_asset_pack_states_dict[_pack_name]
 		call_deferred("emit_signal", "request_completed", _did_succeed, _pack_name, _result, null)
@@ -95,5 +95,4 @@ func _on_get_asset_pack_state_error(error: Dictionary):
 	_did_succeed = false
 	_error = PlayAssetPackException.new(error)
 	call_deferred("emit_signal", "request_completed", _did_succeed, _pack_name, null, _error)	
-
 

@@ -20,9 +20,14 @@ _global_script_classes=[ {
 "path": "res://test/test_helper/fake_android_plugin/signal_info/fake_cellular_confirmation_info.gd"
 }, {
 "base": "Object",
-"class": "FakeGetPackStatesInfo",
+"class": "FakePackStateInfo",
 "language": "GDScript",
-"path": "res://test/test_helper/fake_android_plugin/signal_info/fake_get_pack_states_info.gd"
+"path": "res://test/test_helper/fake_android_plugin/signal_info/fake_pack_state_info.gd"
+}, {
+"base": "Object",
+"class": "FakePackStatesInfo",
+"language": "GDScript",
+"path": "res://test/test_helper/fake_android_plugin/signal_info/fake_pack_states_info.gd"
 }, {
 "base": "Object",
 "class": "FakeRemovePackInfo",
@@ -48,6 +53,11 @@ _global_script_classes=[ {
 "class": "PlayAssetPackException",
 "language": "GDScript",
 "path": "res://src/model/play_asset_pack_exception.gd"
+}, {
+"base": "PlayAssetDeliveryRequest",
+"class": "PlayAssetPackFetchRequest",
+"language": "GDScript",
+"path": "res://src/model/request/play_asset_pack_fetch_request.gd"
 }, {
 "base": "Object",
 "class": "PlayAssetPackLocation",
@@ -78,22 +88,30 @@ _global_script_classes=[ {
 "class": "PlayCellularDataConfirmationRequest",
 "language": "GDScript",
 "path": "res://src/model/request/play_cellular_data_confirmation_request.gd"
+}, {
+"base": "Object",
+"class": "SignalCaptor",
+"language": "GDScript",
+"path": "res://test/test_helper/signal_captor.gd"
 } ]
 _global_script_class_icons={
 "FakeAndroidPlugin": "",
 "FakeCellularConfirmationInfo": "",
-"FakeGetPackStatesInfo": "",
+"FakePackStateInfo": "",
+"FakePackStatesInfo": "",
 "FakeRemovePackInfo": "",
 "PlayAssetDeliveryRequest": "",
 "PlayAssetDeliveryRequestTracker": "",
 "PlayAssetLocation": "",
 "PlayAssetPackException": "",
+"PlayAssetPackFetchRequest": "",
 "PlayAssetPackLocation": "",
 "PlayAssetPackRemoveRequest": "",
 "PlayAssetPackState": "",
 "PlayAssetPackStateRequest": "",
 "PlayAssetPackStates": "",
-"PlayCellularDataConfirmationRequest": ""
+"PlayCellularDataConfirmationRequest": "",
+"SignalCaptor": ""
 }
 
 [application]

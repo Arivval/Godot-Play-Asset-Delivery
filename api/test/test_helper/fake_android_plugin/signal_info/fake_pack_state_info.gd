@@ -16,19 +16,15 @@
 #
 # ##############################################################################
 #
-# Object used to define the expected behavior of calling getPackStates() in 
-# FakeAndroidPlugin. The result field will be an AssetPackStates Dictionary.
+# Object used to define the expected behavior of assetPackStateUpdated signal in 
+# FakeAndroidPlugin. The result field will be an AssetPackState Dictionary.
 #
 # ##############################################################################
-class_name FakeGetPackStatesInfo
+class_name FakePackStateInfo
 extends Object
 
 var thread : Thread
-var success : bool
 var result : Dictionary
-var error : Dictionary
 
-func _init(success : bool, result : Dictionary, error : Dictionary):
-	self.success = success
+func _init(result : Dictionary):
 	self.result = result
-	self.error = error
