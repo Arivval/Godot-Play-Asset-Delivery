@@ -81,11 +81,6 @@ func get_error() -> PlayAssetPackException:
 # -----------------------------------------------------------------------------
 # Callback functions handling signals emitted from the plugin.
 # -----------------------------------------------------------------------------
-func _on_fetch_success(result: Dictionary):
-	# Since fetchSuccess signal is always emitted after the global assetPackStateUpdated signal,
-	# the request's state would already be updated when we received this signal.
-	pass
-
 func _on_fetch_error(error: Dictionary):
 	_state._status = PlayAssetPackManager.AssetPackStatus.FAILED
 	_error = PlayAssetPackException.new(error)

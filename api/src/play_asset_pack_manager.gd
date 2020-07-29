@@ -169,8 +169,8 @@ func _extract_pack_state_from_pack_states(result : Dictionary) -> PlayAssetPackS
 # Helper functions that forward signals emitted from the plugin
 # -----------------------------------------------------------------------------
 func _forward_fetch_success(result : Dictionary, signal_id : int):
-	var target_request : PlayAssetPackFetchRequest = _request_tracker.lookup_request(signal_id)
-	target_request.call_deferred("_on_fetch_success", result)
+	# Since fetchSuccess signal is always emitted after the global assetPackStateUpdated signal, we
+	# don't need to call _on_fetch_success to update the state again.
 	_request_tracker.unregister_request(signal_id)
 
 func _forward_fetch_error(error : Dictionary, signal_id : int):
