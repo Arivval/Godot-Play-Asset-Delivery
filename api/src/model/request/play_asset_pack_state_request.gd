@@ -24,7 +24,8 @@
 # the updated state from this object once the request completes.
 #
 # ##############################################################################
-#warning-ignore:unused_signal
+# Suppress unused_signal warning since we are calling emit_signal() using call_deferred()
+# warning-ignore:unused_signal
 class_name PlayAssetPackStateRequest
 extends PlayAssetDeliveryRequest
 

@@ -23,6 +23,7 @@
 # the updated states from this object once the request completes.
 #
 # ##############################################################################
+# Suppress unused_signal warning since we are calling emit_signal() using call_deferred()
 # warning-ignore:unused_signal
 class_name PlayCellularDataConfirmationRequest
 extends PlayAssetDeliveryRequest

@@ -25,7 +25,6 @@
 # we need to handle all the critical sections.
 #
 # ##############################################################################
-# warning-ignore:return_value_discarded
 class_name PlayAssetDeliveryRequestTracker
 extends Object
 
@@ -63,6 +62,8 @@ func lookup_request(signal_id : int) -> PlayAssetDeliveryRequest:
 func unregister_request(signal_id : int) -> void:
 	_request_tracker_mutex.lock()
 	if signal_id in _signal_id_to_request_map:
-		_signal_id_to_request_map.erase(signal_id)
+		var erase_success = _signal_id_to_request_map.erase(signal_id)
+		if not erase_success:
+			push_error("Erase from _signal_id_to_request_map failed")
 	_request_tracker_mutex.unlock()
 
