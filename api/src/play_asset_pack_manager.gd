@@ -105,7 +105,7 @@ func _initialize():
 # -----------------------------------------------------------------------------
 func _connect_plugin_signal_helper(plugin_signal_name : String, callback_name : String):
 	var connect_error_code = _plugin_singleton.connect(plugin_signal_name, self, callback_name)
-	if connect_error_code != 0:
+	if connect_error_code != OK:
 		push_error("Connecting plugin signal to function failed, error_code = " + str(connect_error_code))
 
 # -----------------------------------------------------------------------------
