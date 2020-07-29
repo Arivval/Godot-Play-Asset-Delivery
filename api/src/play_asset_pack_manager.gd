@@ -22,6 +22,7 @@
 # Functions and signals provided by the Android plugin will use camelCasing as 
 # the naming convention, since the plugin is written in Java.
 # ##############################################################################
+# warnings-disable
 extends Node
 
 # -----------------------------------------------------------------------------

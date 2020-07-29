@@ -22,6 +22,7 @@
 # the updated states from this object once the request completes.
 #
 # ##############################################################################
+# warning-ignore:unused_signal
 class_name PlayAssetPackRemoveRequest
 extends PlayAssetDeliveryRequest
 
