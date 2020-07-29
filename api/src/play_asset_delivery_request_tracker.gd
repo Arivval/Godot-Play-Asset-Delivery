@@ -25,7 +25,6 @@
 # we need to handle all the critical sections.
 #
 # ##############################################################################
-# warning-ignore:return_value_discarded
 class_name PlayAssetDeliveryRequestTracker
 extends Object
 
