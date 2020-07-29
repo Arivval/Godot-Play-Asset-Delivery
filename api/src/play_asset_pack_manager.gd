@@ -101,12 +101,12 @@ func _initialize():
 
 # -----------------------------------------------------------------------------
 # Helper function that connects individual signals from the plugin to given
-# callback functions, logs errors while calling connect()
+# callback function, logs related error.
 # -----------------------------------------------------------------------------
 func _connect_plugin_signal_helper(plugin_signal_name : String, callback_name : String):
 	var connect_error_code = _plugin_singleton.connect(plugin_signal_name, self, callback_name)
 	if connect_error_code != 0:
-		push_error("Connecting plugin signal failed, error_code = " + str(connect_error_code))
+		push_error("Connecting plugin signal to function failed, error_code = " + str(connect_error_code))
 
 # -----------------------------------------------------------------------------
 # Connect signals, allowing signals emitted from the plugin to be correctly
