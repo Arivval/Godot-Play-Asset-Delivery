@@ -36,9 +36,12 @@ signal state_updated(pack_name, state)
 var _plugin_singleton : Object
 var _request_tracker : PlayAssetDeliveryRequestTracker
 
-# Dictionary that stores the mapping of pack_name to relevant Request objects	
+# Dictionary that stores the mapping of pack_name to relevant Request objects.
 var _asset_pack_to_request_map : Dictionary	
 var _play_asset_pack_manager_mutex : Mutex	
+# Dictionary that stores the most udpated mapping of pack_name to pack_state.
+# Do not use _asset_pack_to_request_map to get the most updated pack_state, since
+# request object's state is updated on main thread.
 var _asset_pack_state_cache : Dictionary
 
 var _PACK_TERMINAL_STATES = [AssetPackStatus.CANCELED, AssetPackStatus.COMPLETED, AssetPackStatus.FAILED]
@@ -130,9 +133,7 @@ func _initialize_plugin() -> Object:
 # _asset_pack_to_request_map.
 # -----------------------------------------------------------------------------
 func _remove_request_reference_from_map(pack_name : String):
-	_play_asset_pack_manager_mutex.lock()	
 	_asset_pack_to_request_map.erase(pack_name)
-	_play_asset_pack_manager_mutex.unlock()	
 
 # -----------------------------------------------------------------------------
 # Helper function that synchronizes relevant request object's state upon 
