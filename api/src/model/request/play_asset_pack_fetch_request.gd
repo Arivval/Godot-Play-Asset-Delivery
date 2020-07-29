@@ -82,23 +82,9 @@ func get_error() -> PlayAssetPackException:
 # Callback functions handling signals emitted from the plugin.
 # -----------------------------------------------------------------------------
 func _on_fetch_success(result: Dictionary):
-	# Since fetch() in plugin returns a PlayAssetPackStates Dictionary, we need to extract
-	# the PlayAssetPackState within.
-	var fetch_asset_pack_states_dict = PlayAssetPackStates.new(result).get_pack_states()
-	
-	if fetch_asset_pack_states_dict.has(_pack_name):
-		# Since fetchSuccess signal is always emitted after the global assetPackStateUpdated signal,
-		# the request's state would already be updated when we received this signal.
-		pass
-	else:
-		# Although we received a fetchSuccess signal, the result field does not contain
-		# needed AssetPackState dictionary. Hence update _state's error_code to INTERNAL_ERROR
-		# and emit and request_completed signal.
-		_state._error_code = PlayAssetPackManager.AssetPackErrorCode.INTERNAL_ERROR
-		_state._status = PlayAssetPackManager.AssetPackStatus.FAILED
-		# release reference
-		PlayAssetPackManager._remove_request_reference_from_map(_pack_name)
-		emit_signal("request_completed", _pack_name, _state, null)
+	# Since fetchSuccess signal is always emitted after the global assetPackStateUpdated signal,
+	# the request's state would already be updated when we received this signal.
+	pass
 
 func _on_fetch_error(error: Dictionary):
 	_state._status = PlayAssetPackManager.AssetPackStatus.FAILED
