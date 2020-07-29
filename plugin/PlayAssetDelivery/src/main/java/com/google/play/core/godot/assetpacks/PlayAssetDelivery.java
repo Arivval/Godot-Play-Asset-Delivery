@@ -17,11 +17,15 @@
 package com.google.play.core.godot.assetpacks;
 
 import android.content.Context;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import com.google.android.play.core.assetpacks.AssetLocation;
 import com.google.android.play.core.assetpacks.AssetPackLocation;
 import com.google.android.play.core.assetpacks.AssetPackManager;
 import com.google.android.play.core.assetpacks.AssetPackManagerFactory;
+import com.google.android.play.core.assetpacks.AssetPackState;
+import com.google.android.play.core.assetpacks.AssetPackStateUpdateListener;
 import com.google.android.play.core.assetpacks.AssetPackStates;
 import com.google.android.play.core.tasks.OnFailureListener;
 import com.google.android.play.core.tasks.OnSuccessListener;
@@ -62,6 +66,7 @@ public class PlayAssetDelivery extends GodotPlugin {
     super(godot);
     Context applicationContext = godot.getApplicationContext();
     assetPackManager = AssetPackManagerFactory.getInstance(applicationContext);
+    Log.d(TAG, "calling constructor!");
   }
 
   /** Package-private constructor used to instantiate PlayAssetDelivery class with mock objects. */
@@ -72,18 +77,21 @@ public class PlayAssetDelivery extends GodotPlugin {
 
   @Override
   public void onMainPause() {
+    Log.d(TAG, "onMainPause!!!!");
     assetPackManager.clearListeners();
     super.onMainPause();
   }
 
   @Override
   public void onMainResume() {
+    Log.d(TAG, "onMainResume!!!!");
     registerAssetPackStateUpdatedListener();
     super.onMainResume();
   }
 
   @Override
   public void onMainDestroy() {
+    Log.d(TAG, "onMainDestroy!!!!");
     assetPackManager.clearListeners();
     super.onMainDestroy();
   }
@@ -93,8 +101,10 @@ public class PlayAssetDelivery extends GodotPlugin {
    * state is updated.
    */
   void registerAssetPackStateUpdatedListener() {
+    Log.d(TAG, "register global listener!!!!");
     assetPackManager.registerListener(
         state -> {
+          Log.d(TAG, "state updated!" + PlayAssetDeliveryUtils.convertAssetPackStateToDictionary(state).toString());
           emitSignalWrapper(
               ASSET_PACK_STATE_UPDATED,
               PlayAssetDeliveryUtils.convertAssetPackStateToDictionary(state));
@@ -126,7 +136,8 @@ public class PlayAssetDelivery extends GodotPlugin {
         "getPackLocations",
         "getPackStates",
         "removePack",
-        "showCellularDataConfirmation");
+        "showCellularDataConfirmation",
+        "logDict");
   }
 
   /**
@@ -202,17 +213,21 @@ public class PlayAssetDelivery extends GodotPlugin {
   public void fetch(String[] packNamesArray, int signalID) {
     List<String> packNames = Arrays.asList(packNamesArray);
 
+    Log.d(TAG, "fetch()" +  Arrays.asList(packNamesArray).get(0));
     OnSuccessListener<AssetPackStates> fetchSuccessListener =
-        result ->
+        result -> {
+            Log.d(TAG, "fetch success! " + PlayAssetDeliveryUtils.convertAssetPackStatesToDictionary(result).toString());
             emitSignalWrapper(
                 FETCH_SUCCESS,
                 PlayAssetDeliveryUtils.convertAssetPackStatesToDictionary(result),
                 signalID);
-
+        };
     OnFailureListener fetchFailureListener =
-        e ->
+        e -> {
+          Log.d(TAG, "fetch error! " + PlayAssetDeliveryUtils.convertExceptionToDictionary(e).toString());
             emitSignalWrapper(
                 FETCH_ERROR, PlayAssetDeliveryUtils.convertExceptionToDictionary(e), signalID);
+            };
 
     Task<AssetPackStates> fetchTask = assetPackManager.fetch(packNames);
     fetchTask.addOnSuccessListener(fetchSuccessListener);
@@ -256,18 +271,22 @@ public class PlayAssetDelivery extends GodotPlugin {
     List<String> packNames = Arrays.asList(packNamesArray);
 
     OnSuccessListener<AssetPackStates> getPackStatesSuccessListener =
-        result ->
+        result -> {
+            Log.d(TAG, "get pack states success" + PlayAssetDeliveryUtils.convertAssetPackStatesToDictionary(result).toString());
             emitSignalWrapper(
                 GET_PACK_STATES_SUCCESS,
                 PlayAssetDeliveryUtils.convertAssetPackStatesToDictionary(result),
                 signalID);
+            };
     OnFailureListener getPackStatesFailureListener =
-        e ->
-            emitSignalWrapper(
+        e -> {
+          Log.d(TAG, "get pack states failed" + PlayAssetDeliveryUtils.convertExceptionToDictionary(e).toString());
+
+          emitSignalWrapper(
                 GET_PACK_STATES_ERROR,
                 PlayAssetDeliveryUtils.convertExceptionToDictionary(e),
                 signalID);
-
+            };
     Task<AssetPackStates> getPackStatesTask = assetPackManager.getPackStates(packNames);
     getPackStatesTask.addOnSuccessListener(getPackStatesSuccessListener);
     getPackStatesTask.addOnFailureListener(getPackStatesFailureListener);
@@ -321,5 +340,11 @@ public class PlayAssetDelivery extends GodotPlugin {
         showCellularDataConfirmationSuccessListener);
     showCellularDataConfirmationTask.addOnFailureListener(
         showCellularDataConfirmationFailureListener);
+  }
+
+  private static final String TAG = "GodotPAD";
+
+  public void logDict(String logString) {
+    Log.d(TAG, "Engine Message: " + logString);
   }
 }
