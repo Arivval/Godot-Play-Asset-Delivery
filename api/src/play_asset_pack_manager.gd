@@ -21,6 +21,7 @@
 # modifying the configurations in Project -> Project Settings -> AutoLoad.
 # Functions and signals provided by the Android plugin will use camelCasing as 
 # the naming convention, since the plugin is written in Java.
+#
 # ##############################################################################
 # warnings-disable
 extends Node
@@ -39,10 +40,6 @@ var _request_tracker : PlayAssetDeliveryRequestTracker
 # Dictionary that stores the mapping of pack_name to relevant Request objects.
 var _asset_pack_to_request_map : Dictionary	
 var _play_asset_pack_manager_mutex : Mutex	
-# Dictionary that stores the most udpated mapping of pack_name to pack_state.
-# Do not use _asset_pack_to_request_map to get the most updated pack_state, since
-# request object's state is updated on main thread.
-var _asset_pack_state_cache : Dictionary
 
 var _PACK_TERMINAL_STATES = [AssetPackStatus.CANCELED, AssetPackStatus.COMPLETED, AssetPackStatus.FAILED]
 
@@ -146,36 +143,11 @@ func _route_asset_pack_state_updated(result : Dictionary):
 	
 	_play_asset_pack_manager_mutex.lock()	
 	
-	var pack_name_exists_in_request_map = _asset_pack_to_request_map.has(pack_name)
-	var received_fetch_callback
-	var duplicate_state
-	if pack_name_exists_in_request_map:
+	if _asset_pack_to_request_map.has(pack_name):
 		var request = _asset_pack_to_request_map[pack_name]
-		received_fetch_callback = request.get_state().get_status() != PlayAssetPackManager.AssetPackStatus.UNKNOWN and\
-			request.get_state().get_total_bytes_to_download() != 0
-		duplicate_state = request.get_state().to_dict().hash() == result.hash()
-		
-		# Since assetPackStateUpdated and fetchSuccess/Error might contain duplicate updates,
-		# we will only route non-duplicate updates to request object after we already received 
-		# fetchSuccess/Error signal.
-		if received_fetch_callback and not duplicate_state:
-			# Since devs might read request's state while we are updating it, we need to call this	
-			# function from main thread.
-			request.call_deferred("_on_state_updated", result)		
-		
-		# if reached terminal state, release references	
-		if updated_status in _PACK_TERMINAL_STATES:	
-			_asset_pack_to_request_map.erase(pack_name)
-		
-	# only emit non-repeated state_updated signals after we encountered fetchSuccess/Error
-	if pack_name_exists_in_request_map:
-		if received_fetch_callback and not duplicate_state:
-			_asset_pack_state_cache[pack_name] = result
-			# emit state updated signal on main thread
-			call_deferred("emit_signal", "state_updated", pack_name, updated_state)
-	else:
-		_asset_pack_state_cache[pack_name] = result
-		call_deferred("emit_signal", "state_updated", pack_name, updated_state)	
+		request.call_deferred("_on_state_updated", result)
+	
+	call_deferred("emit_signal", "state_updated", pack_name, updated_state)	
 	
 	_play_asset_pack_manager_mutex.unlock()
 
@@ -183,16 +155,9 @@ func _route_asset_pack_state_updated(result : Dictionary):
 # Helper function called by request objects, to emit artifical state_updated signals.
 # -----------------------------------------------------------------------------
 func _forward_high_level_state_updated_signal(pack_name : String, state : Dictionary):
-	# update cache, since this function can be called by multiple request objects with same packName
-	_play_asset_pack_manager_mutex.lock()
-	var pack_state_changed = not _asset_pack_state_cache.has(pack_name) or \
-		_asset_pack_state_cache[pack_name].hash() != state.hash()
-	if pack_state_changed:
-		_asset_pack_state_cache[pack_name] = state
-		# emit state updated signal on main thread
-		var state_object : PlayAssetPackState = PlayAssetPackState.new(state)
-		call_deferred("emit_signal", "state_updated", pack_name, state_object)
-	_play_asset_pack_manager_mutex.unlock()
+	var state_object : PlayAssetPackState = PlayAssetPackState.new(state)
+	call_deferred("emit_signal", "state_updated", pack_name, state_object)
+
 
 # -----------------------------------------------------------------------------
 # Helper function used to unwrap pack_state from pack_states.
@@ -208,9 +173,6 @@ func _forward_fetch_success(result : Dictionary, signal_id : int):
 	var target_request : PlayAssetPackFetchRequest = _request_tracker.lookup_request(signal_id)
 	target_request.call_deferred("_on_fetch_success", result)
 	_request_tracker.unregister_request(signal_id)
-	var pack_state = _extract_pack_state_from_pack_states(result)
-	# emit status updated global signal
-	_forward_high_level_state_updated_signal(pack_state.get_name(), pack_state.to_dict())
 
 func _forward_fetch_error(error : Dictionary, signal_id : int):
 	var target_request : PlayAssetPackFetchRequest = _request_tracker.lookup_request(signal_id)

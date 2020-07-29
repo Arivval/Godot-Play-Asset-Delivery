@@ -87,7 +87,9 @@ func _on_fetch_success(result: Dictionary):
 	var fetch_asset_pack_states_dict = PlayAssetPackStates.new(result).get_pack_states()
 	
 	if fetch_asset_pack_states_dict.has(_pack_name):
-		_on_state_updated(fetch_asset_pack_states_dict[_pack_name].to_dict())
+		# Since fetchSuccess signal is always emitted after the global assetPackStateUpdated signal,
+		# the request's state would already be updated when we received this signal.
+		pass
 	else:
 		# Although we received a fetchSuccess signal, the result field does not contain
 		# needed AssetPackState dictionary. Hence update _state's error_code to INTERNAL_ERROR
