@@ -64,6 +64,6 @@ func unregister_request(signal_id : int) -> void:
 	if signal_id in _signal_id_to_request_map:
 		var erase_success = _signal_id_to_request_map.erase(signal_id)
 		if not erase_success:
-			push_error("Erase " + str(signal_id) + " key from _signal_id_to_request_map failed!")
+			push_warning("Erase " + str(signal_id) + " key from _signal_id_to_request_map failed!")
 	_request_tracker_mutex.unlock()
 

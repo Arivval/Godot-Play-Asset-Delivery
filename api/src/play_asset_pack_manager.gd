@@ -145,7 +145,7 @@ func _initialize_plugin() -> Object:
 func _remove_request_reference_from_map(pack_name : String):
 	var erase_success = _asset_pack_to_request_map.erase(pack_name)
 	if not erase_success:
-		push_error("Erase " + pack_name + " key from _asset_pack_to_request_map failed!")
+		push_warning("Erase " + pack_name + " key from _asset_pack_to_request_map failed!")
 
 # -----------------------------------------------------------------------------
 # Helper function that synchronizes relevant request object's state upon 
@@ -179,7 +179,7 @@ func _route_asset_pack_state_updated(result : Dictionary):
 		if updated_status in _PACK_TERMINAL_STATES:	
 			var erase_success = _asset_pack_to_request_map.erase(pack_name)
 			if not erase_success:
-				push_error("Erase " + pack_name + " key from _asset_pack_to_request_map failed!")
+				push_warning("Erase " + pack_name + " key from _asset_pack_to_request_map failed!")
 		
 	# only emit non-repeated state_updated signals after we encountered fetchSuccess/Error
 	if pack_name_exists_in_request_map:
