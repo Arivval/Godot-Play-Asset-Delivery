@@ -22,7 +22,6 @@ func create_play_asset_pack_manager(mock_plugin):
 	var test_object = partial_double("res://src/play_asset_pack_manager.gd").new()
 	stub(test_object, "_initialize_plugin").to_return(mock_plugin)
 	test_object._initialize()
-	# test_object._connect_plugin_signals()
 	return test_object
 
 func test_get_asset_location_valid():
