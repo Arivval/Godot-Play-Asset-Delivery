@@ -125,13 +125,6 @@ func _initialize_plugin() -> Object:
 		return null
 
 # -----------------------------------------------------------------------------
-# Helper function used to release reference of request objects in 
-# _asset_pack_to_request_map.
-# -----------------------------------------------------------------------------
-func _remove_request_reference_from_map(pack_name : String):
-	_asset_pack_to_request_map.erase(pack_name)
-
-# -----------------------------------------------------------------------------
 # Helper function that synchronizes relevant request object's state upon 
 # receiving assetPackStateUpdated signal.
 # -----------------------------------------------------------------------------
