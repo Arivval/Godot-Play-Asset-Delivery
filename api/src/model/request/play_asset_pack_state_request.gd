@@ -24,6 +24,9 @@
 # the updated state from this object once the request completes.
 #
 # ##############################################################################
+# Suppress unused_signal warning because Godot cannot detect signal usage when 
+# we call emit_signal() using call_deferred().
+# warning-ignore:unused_signal
 class_name PlayAssetPackStateRequest
 extends PlayAssetDeliveryRequest
 
