@@ -62,6 +62,6 @@ func lookup_request(signal_id : int) -> PlayAssetDeliveryRequest:
 func unregister_request(signal_id : int) -> void:
 	_request_tracker_mutex.lock()
 	if signal_id in _signal_id_to_request_map:
-		_signal_id_to_request_map.erase(signal_id)
+		var _erase_success = _signal_id_to_request_map.erase(signal_id)
 	_request_tracker_mutex.unlock()
 
