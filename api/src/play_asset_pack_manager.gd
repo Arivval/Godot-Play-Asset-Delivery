@@ -104,7 +104,7 @@ func _initialize():
 # Helper function that connects individual signals from the plugin to given
 # callback function, logs related error.
 # -----------------------------------------------------------------------------
-func _connect_plugin_signal(plugin_signal_name : String, callback_name : String):
+func _connect_plugin_signal_helper(plugin_signal_name : String, callback_name : String):
 	var connect_error_code = _plugin_singleton.connect(plugin_signal_name, self, callback_name)
 	if connect_error_code != OK:
 		push_error("Connecting plugin signal to function failed, error_code = " + str(connect_error_code))
@@ -115,16 +115,16 @@ func _connect_plugin_signal(plugin_signal_name : String, callback_name : String)
 # -----------------------------------------------------------------------------
 func _connect_plugin_signals():
 	if _plugin_singleton != null:
-		_connect_plugin_signal("assetPackStateUpdated", "_route_asset_pack_state_updated")
-		_connect_plugin_signal("fetchSuccess", "_forward_fetch_success")
-		_connect_plugin_signal("fetchError", "_forward_fetch_error")
-		_connect_plugin_signal("getPackStatesSuccess", "_forward_get_pack_states_success")
-		_connect_plugin_signal("getPackStatesError", "_forward_get_pack_states_error")
-		_connect_plugin_signal("removePackSuccess", "_forward_remove_pack_success")
-		_connect_plugin_signal("removePackError", "_forward_remove_pack_error")
-		_connect_plugin_signal("showCellularDataConfirmationSuccess",\
+		_connect_plugin_signal_helper("assetPackStateUpdated", "_route_asset_pack_state_updated")
+		_connect_plugin_signal_helper("fetchSuccess", "_forward_fetch_success")
+		_connect_plugin_signal_helper("fetchError", "_forward_fetch_error")
+		_connect_plugin_signal_helper("getPackStatesSuccess", "_forward_get_pack_states_success")
+		_connect_plugin_signal_helper("getPackStatesError", "_forward_get_pack_states_error")
+		_connect_plugin_signal_helper("removePackSuccess", "_forward_remove_pack_success")
+		_connect_plugin_signal_helper("removePackError", "_forward_remove_pack_error")
+		_connect_plugin_signal_helper("showCellularDataConfirmationSuccess",\
 			"_forward_show_cellular_data_confirmation_success")
-		_connect_plugin_signal("showCellularDataConfirmationError", \
+		_connect_plugin_signal_helper("showCellularDataConfirmationError", \
 			"_forward_show_cellular_data_confirmation_error")
 
 # -----------------------------------------------------------------------------
@@ -143,7 +143,9 @@ func _initialize_plugin() -> Object:
 # _asset_pack_to_request_map.
 # -----------------------------------------------------------------------------
 func _remove_request_reference_from_map(pack_name : String):
-	var _erase_success = _asset_pack_to_request_map.erase(pack_name)
+	var erase_success = _asset_pack_to_request_map.erase(pack_name)
+	if not erase_success:
+		push_error("Erase " + pack_name + " key from _asset_pack_to_request_map failed!")
 
 # -----------------------------------------------------------------------------
 # Helper function that synchronizes relevant request object's state upon 
@@ -175,8 +177,10 @@ func _route_asset_pack_state_updated(result : Dictionary):
 		
 		# if reached terminal state, release references	
 		if updated_status in _PACK_TERMINAL_STATES:	
-			var _erase_success = _asset_pack_to_request_map.erase(pack_name)
-
+			var erase_success = _asset_pack_to_request_map.erase(pack_name)
+			if not erase_success:
+				push_error("Erase " + pack_name + " key from _asset_pack_to_request_map failed!")
+		
 	# only emit non-repeated state_updated signals after we encountered fetchSuccess/Error
 	if pack_name_exists_in_request_map:
 		if received_fetch_callback and not duplicate_state:
