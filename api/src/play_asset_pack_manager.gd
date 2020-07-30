@@ -23,7 +23,7 @@
 # the naming convention, since the plugin is written in Java.
 # ##############################################################################
 # Suppress unused_signal warning because Godot cannot detect signal usage when 
-# we call emit_signal() using call_deferred()
+# we call emit_signal() using call_deferred().
 # warning-ignore:unused_signal
 extends Node
 # -----------------------------------------------------------------------------
