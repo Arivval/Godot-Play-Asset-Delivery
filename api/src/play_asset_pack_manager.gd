@@ -39,7 +39,7 @@ var _plugin_singleton : Object
 var _request_tracker : PlayAssetDeliveryRequestTracker
 
 # Dictionary that stores the mapping of pack_name to relevant Request objects.
-var _asset_pack_to_request_map : Dictionary
+var _asset_pack_to_request_map : Dictionary	
 var _play_asset_pack_manager_mutex : Mutex	
 
 var _PACK_TERMINAL_STATES = [AssetPackStatus.CANCELED, AssetPackStatus.COMPLETED, AssetPackStatus.FAILED]
