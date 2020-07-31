@@ -150,6 +150,9 @@ func _route_asset_pack_state_updated(result : Dictionary):
 		var request = _asset_pack_to_request_map[pack_name]
 		request.call_deferred("_on_state_updated", result)
 	
+	if updated_status == AssetPackStatus.COMPLETED:
+		var pack_location : PlayAssetPackLocation = get_pack_location(pack_name)
+		call_deferred("emit_signal", "state_updated", pack_name, updated_state, pack_location)	
 	call_deferred("emit_signal", "state_updated", pack_name, updated_state)	
 	
 	_play_asset_pack_manager_mutex.unlock()

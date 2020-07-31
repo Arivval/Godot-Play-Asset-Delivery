@@ -30,13 +30,15 @@ extends PlayAssetDeliveryRequest
 # upon request reached terminal state {COMPLETED, CANCELED, FAILED}
 # 	pack_name: String, name of the requested asset pack
 # 	result : PlayAssetPackState object
+#	location : PlayAssetPackLocation if the request is in COMPLETED state, otherwise null
 #	exception: PlayAssetPackException object if Plugin encountered an exception
 # while handling this request
 # -----------------------------------------------------------------------------
-signal request_completed(pack_name, result, exception)
+signal request_completed(pack_name, result, pack_location, exception)
 
 var _pack_name : String
 var _state : PlayAssetPackState
+var _location : PlayAssetPackLocation
 var _error : PlayAssetPackException
 
 func _init(pack_name):
@@ -73,6 +75,13 @@ func get_state() -> PlayAssetPackState:
 	return _state
 
 # -----------------------------------------------------------------------------
+# Returns the PlayAssetPackLocation object if the request is in COMPLETED state, 
+# otherwise returns null.
+# -----------------------------------------------------------------------------
+func get_location() -> PlayAssetPackLocation:
+	return _location
+
+# -----------------------------------------------------------------------------
 # Returns a PlayAssetPackException if exception occurred.
 # -----------------------------------------------------------------------------
 func get_error() -> PlayAssetPackException:
@@ -87,9 +96,10 @@ func _on_fetch_error(error: Dictionary):
 	_state._error_code = _error.get_error_code()
 	emit_signal("request_completed", _pack_name, _state, _error)
 
-func _on_state_updated(result: Dictionary):
+func _on_state_updated(result: Dictionary, location : PlayAssetPackLocation = null):
 	_state = PlayAssetPackState.new(result)
 	if _state.get_status() in PlayAssetPackManager._PACK_TERMINAL_STATES:
 		# reached a terminal state, emit request_completed signal
 		emit_signal("request_completed", _pack_name, _state, null)
-		
+	_location = location
+	
