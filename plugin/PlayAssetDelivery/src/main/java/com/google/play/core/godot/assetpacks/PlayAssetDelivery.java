@@ -31,6 +31,7 @@ import com.google.android.play.core.tasks.Task;
 import com.google.play.core.godot.assetpacks.utils.PlayAssetDeliveryUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -71,7 +72,7 @@ public class PlayAssetDelivery extends GodotPlugin {
     Context applicationContext = godot.getApplicationContext();
     assetPackManager = AssetPackManagerFactory.getInstance(applicationContext);
     ongoingAssetPackRequestMap = new ConcurrentHashMap<>();
-    completedAssetPackRequests = new HashSet<>();
+    completedAssetPackRequests = Collections.synchronizedSet(new HashSet<>());
   }
 
   /** Package-private constructor used to instantiate PlayAssetDelivery class with mock objects. */
@@ -79,7 +80,7 @@ public class PlayAssetDelivery extends GodotPlugin {
     super(godot);
     this.assetPackManager = assetPackManager;
     ongoingAssetPackRequestMap = new ConcurrentHashMap<>();
-    completedAssetPackRequests = new HashSet<>();
+    completedAssetPackRequests = Collections.synchronizedSet(new HashSet<>());
   }
 
   @Override
@@ -132,7 +133,10 @@ public class PlayAssetDelivery extends GodotPlugin {
         .getPackStates(new ArrayList<>(ongoingAssetPackRequestMap.keySet()))
         .addOnSuccessListener(
             result ->
-                result.packStates().entrySet().stream()
+                result
+                    .packStates()
+                    .entrySet()
+                    .stream()
                     .forEach(
                         e -> {
                           String packName = e.getKey();
@@ -267,7 +271,10 @@ public class PlayAssetDelivery extends GodotPlugin {
     completedAssetPackRequests.removeAll(packNames);
     OnSuccessListener<AssetPackStates> fetchSuccessListener =
         result -> {
-          result.packStates().entrySet().stream()
+          result
+              .packStates()
+              .entrySet()
+              .stream()
               .forEach(
                   entry -> {
                     // Handles the edge case where the app is paused immediately after we start this
