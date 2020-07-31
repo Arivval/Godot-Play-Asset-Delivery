@@ -120,7 +120,10 @@ public class PlayAssetDelivery extends GodotPlugin {
         });
   }
 
-  /** Calls getPackStates on all asset packs currently in non-terminal state. */
+  /**
+   * Calls getPackStates on all asset packs currently in non-terminal state and emit non-duplicating
+   * stateUpdated signals.
+   */
   private void forceAssetPackStateUpdate() {
     assetPackManager
         .getPackStates(new ArrayList<>(ongoingAssetPackRequests))
