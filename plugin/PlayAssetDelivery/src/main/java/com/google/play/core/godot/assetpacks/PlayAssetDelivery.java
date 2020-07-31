@@ -51,8 +51,7 @@ import org.godotengine.godot.plugin.SignalInfo;
 public class PlayAssetDelivery extends GodotPlugin {
 
   private AssetPackManager assetPackManager;
-  private Map<String, AssetPackState> ongoingAssetPackRequestMap;
-  private Set<String> completedAssetPackRequests;
+  private Set<String> ongoingAssetPackRequests;
   private final List<Integer> assetPackTerminalStates =
       Arrays.asList(AssetPackStatus.COMPLETED, AssetPackStatus.FAILED, AssetPackStatus.CANCELED);
 
@@ -71,16 +70,14 @@ public class PlayAssetDelivery extends GodotPlugin {
     super(godot);
     Context applicationContext = godot.getApplicationContext();
     assetPackManager = AssetPackManagerFactory.getInstance(applicationContext);
-    ongoingAssetPackRequestMap = new ConcurrentHashMap<>();
-    completedAssetPackRequests = Collections.synchronizedSet(new HashSet<>());
+    ongoingAssetPackRequests = Collections.synchronizedSet(new HashSet<>());
   }
 
   /** Package-private constructor used to instantiate PlayAssetDelivery class with mock objects. */
   PlayAssetDelivery(Godot godot, AssetPackManager assetPackManager) {
     super(godot);
     this.assetPackManager = assetPackManager;
-    ongoingAssetPackRequestMap = new ConcurrentHashMap<>();
-    completedAssetPackRequests = Collections.synchronizedSet(new HashSet<>());
+    ongoingAssetPackRequests = Collections.synchronizedSet(new HashSet<>());
   }
 
   @Override
@@ -111,61 +108,37 @@ public class PlayAssetDelivery extends GodotPlugin {
         state -> {
           boolean isTerminalState = assetPackTerminalStates.contains(state.status());
           if (isTerminalState) {
-            ongoingAssetPackRequestMap.remove(state.name());
-            completedAssetPackRequests.add(state.name());
-          } else {
-            ongoingAssetPackRequestMap.put(state.name(), state);
+            ongoingAssetPackRequests.remove(state.name());
           }
-
           emitSignalWrapper(
               ASSET_PACK_STATE_UPDATED,
               PlayAssetDeliveryUtils.convertAssetPackStateToDictionary(state));
         });
   }
 
-  /**
-   * Calls getPackStates on all asset packs currently in non-terminal state. If the updated state is
-   * different from previous state store in updatedAssetPackStateMap, update this state in
-   * updatedAssetPackStateMap and emit an assetPackStateUpdated signal.
-   */
+  /** Calls getPackStates on all asset packs currently in non-terminal state. */
   private void forceAssetPackStateUpdate() {
     assetPackManager
-        .getPackStates(new ArrayList<>(ongoingAssetPackRequestMap.keySet()))
+        .getPackStates(new ArrayList<>(ongoingAssetPackRequests))
         .addOnSuccessListener(
             result ->
-                result
-                    .packStates()
-                    .entrySet()
-                    .stream()
+                result.packStates().entrySet().stream()
                     .forEach(
                         e -> {
                           String packName = e.getKey();
                           AssetPackState updatedState = e.getValue();
-                          AssetPackState previousState = ongoingAssetPackRequestMap.get(packName);
-                          // check if updatedState is different from previous state
-                          Dictionary updatedStateDict =
-                              PlayAssetDeliveryUtils.convertAssetPackStateToDictionary(
-                                  updatedState);
-                          Dictionary previousStateDict =
-                              PlayAssetDeliveryUtils.convertAssetPackStateToDictionary(
-                                  previousState);
-                          boolean packStateUpdated =
-                              updatedStateDict.hashCode() != previousStateDict.hashCode();
-                          if (packStateUpdated) {
-                            boolean isTerminalState =
-                                assetPackTerminalStates.contains(updatedState.status());
-                            if (isTerminalState) {
-                              ongoingAssetPackRequestMap.remove(packName);
-                              completedAssetPackRequests.add(packName);
-                            } else {
-                              ongoingAssetPackRequestMap.put(packName, updatedState);
-                            }
-
-                            emitSignalWrapper(
-                                ASSET_PACK_STATE_UPDATED,
-                                PlayAssetDeliveryUtils.convertAssetPackStateToDictionary(
-                                    updatedState));
+                          // emit state_updated signal no matter what, filter duplicate states
+                          // on GDScript end
+                          boolean isTerminalState =
+                              assetPackTerminalStates.contains(updatedState.status());
+                          if (isTerminalState) {
+                            ongoingAssetPackRequests.remove(packName);
                           }
+
+                          emitSignalWrapper(
+                              ASSET_PACK_STATE_UPDATED,
+                              PlayAssetDeliveryUtils.convertAssetPackStateToDictionary(
+                                  updatedState));
                         }));
   }
 
@@ -269,25 +242,17 @@ public class PlayAssetDelivery extends GodotPlugin {
    */
   public void fetch(String[] packNamesArray, int signalID) {
     List<String> packNames = Arrays.asList(packNamesArray);
-    completedAssetPackRequests.removeAll(packNames);
     OnSuccessListener<AssetPackStates> fetchSuccessListener =
         result -> {
-          result
-              .packStates()
-              .entrySet()
-              .stream()
+          result.packStates().entrySet().stream()
               .forEach(
                   entry -> {
                     // Handles the edge case where the app is paused immediately after we start this
-                    // fetch request. In this case we need to manually put this fetchSuccess result
-                    // to updatedAssetPackStateMap since assetPackManager's global listener for this
-                    // update was not called.
+                    // fetch request. In this case we need to manually add the packNames to
+                    // ongoingAssetPackRequests so forceAssetPackStateUpdate() will call
+                    // getPackStates() for these packNames.
                     String packName = entry.getKey();
-                    AssetPackState packState = entry.getValue();
-                    if (!ongoingAssetPackRequestMap.containsKey(packName)
-                        && !completedAssetPackRequests.contains(packName)) {
-                      ongoingAssetPackRequestMap.put(packName, packState);
-                    }
+                    ongoingAssetPackRequests.add(packName);
                   });
           emitSignalWrapper(
               FETCH_SUCCESS,
