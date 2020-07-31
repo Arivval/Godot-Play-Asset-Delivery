@@ -22,12 +22,16 @@ import com.google.android.play.core.assetpacks.AssetLocation;
 import com.google.android.play.core.assetpacks.AssetPackLocation;
 import com.google.android.play.core.assetpacks.AssetPackManager;
 import com.google.android.play.core.assetpacks.AssetPackManagerFactory;
+import com.google.android.play.core.assetpacks.AssetPackState;
 import com.google.android.play.core.assetpacks.AssetPackStates;
+import com.google.android.play.core.assetpacks.model.AssetPackStatus;
 import com.google.android.play.core.tasks.OnFailureListener;
 import com.google.android.play.core.tasks.OnSuccessListener;
 import com.google.android.play.core.tasks.Task;
 import com.google.play.core.godot.assetpacks.utils.PlayAssetDeliveryUtils;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +50,9 @@ import org.godotengine.godot.plugin.SignalInfo;
 public class PlayAssetDelivery extends GodotPlugin {
 
   private AssetPackManager assetPackManager;
+  private Set<String> ongoingAssetPackRequests;
+  private final List<Integer> assetPackTerminalStates =
+      Arrays.asList(AssetPackStatus.COMPLETED, AssetPackStatus.FAILED, AssetPackStatus.CANCELED);
 
   static final String ASSET_PACK_STATE_UPDATED = "assetPackStateUpdated";
   static final String FETCH_SUCCESS = "fetchSuccess";
@@ -62,12 +69,14 @@ public class PlayAssetDelivery extends GodotPlugin {
     super(godot);
     Context applicationContext = godot.getApplicationContext();
     assetPackManager = AssetPackManagerFactory.getInstance(applicationContext);
+    ongoingAssetPackRequests = Collections.synchronizedSet(new HashSet<>());
   }
 
   /** Package-private constructor used to instantiate PlayAssetDelivery class with mock objects. */
   PlayAssetDelivery(Godot godot, AssetPackManager assetPackManager) {
     super(godot);
     this.assetPackManager = assetPackManager;
+    ongoingAssetPackRequests = Collections.synchronizedSet(new HashSet<>());
   }
 
   @Override
@@ -78,6 +87,7 @@ public class PlayAssetDelivery extends GodotPlugin {
 
   @Override
   public void onMainResume() {
+    forceAssetPackStateUpdate();
     registerAssetPackStateUpdatedListener();
     super.onMainResume();
   }
@@ -95,10 +105,40 @@ public class PlayAssetDelivery extends GodotPlugin {
   void registerAssetPackStateUpdatedListener() {
     assetPackManager.registerListener(
         state -> {
+          boolean isTerminalState = assetPackTerminalStates.contains(state.status());
+          if (isTerminalState) {
+            ongoingAssetPackRequests.remove(state.name());
+          }
           emitSignalWrapper(
               ASSET_PACK_STATE_UPDATED,
               PlayAssetDeliveryUtils.convertAssetPackStateToDictionary(state));
         });
+  }
+
+  /** Calls getPackStates on all asset packs currently in non-terminal state. */
+  private void forceAssetPackStateUpdate() {
+    assetPackManager
+        .getPackStates(new ArrayList<>(ongoingAssetPackRequests))
+        .addOnSuccessListener(
+            result ->
+                result.packStates().entrySet().stream()
+                    .forEach(
+                        e -> {
+                          String packName = e.getKey();
+                          AssetPackState updatedState = e.getValue();
+                          // emit state_updated signal no matter what, filter duplicate states
+                          // on GDScript end
+                          boolean isTerminalState =
+                              assetPackTerminalStates.contains(updatedState.status());
+                          if (isTerminalState) {
+                            ongoingAssetPackRequests.remove(packName);
+                          }
+
+                          emitSignalWrapper(
+                              ASSET_PACK_STATE_UPDATED,
+                              PlayAssetDeliveryUtils.convertAssetPackStateToDictionary(
+                                  updatedState));
+                        }));
   }
 
   /**
@@ -201,13 +241,23 @@ public class PlayAssetDelivery extends GodotPlugin {
    */
   public void fetch(String[] packNamesArray, int signalID) {
     List<String> packNames = Arrays.asList(packNamesArray);
-
     OnSuccessListener<AssetPackStates> fetchSuccessListener =
-        result ->
-            emitSignalWrapper(
-                FETCH_SUCCESS,
-                PlayAssetDeliveryUtils.convertAssetPackStatesToDictionary(result),
-                signalID);
+        result -> {
+          result.packStates().entrySet().stream()
+              .forEach(
+                  entry -> {
+                    // Handles the edge case where the app is paused immediately after we start this
+                    // fetch request. In this case we need to manually add the packNames to
+                    // ongoingAssetPackRequests so forceAssetPackStateUpdate() will call
+                    // getPackStates() for these packNames.
+                    String packName = entry.getKey();
+                    ongoingAssetPackRequests.add(packName);
+                  });
+          emitSignalWrapper(
+              FETCH_SUCCESS,
+              PlayAssetDeliveryUtils.convertAssetPackStatesToDictionary(result),
+              signalID);
+        };
 
     OnFailureListener fetchFailureListener =
         e ->
