@@ -126,7 +126,7 @@ public class PlayAssetDelivery extends GodotPlugin {
                         e -> {
                           String packName = e.getKey();
                           AssetPackState updatedState = e.getValue();
-                          // emit state_updated signal no matter what, filter duplicate states
+                          // emit state_updated signal for ongoing packs, filter duplicate states
                           // on GDScript end
                           boolean isTerminalState =
                               assetPackTerminalStates.contains(updatedState.status());

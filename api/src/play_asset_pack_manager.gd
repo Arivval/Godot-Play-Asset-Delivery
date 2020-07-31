@@ -149,9 +149,9 @@ func _route_asset_pack_state_updated(result : Dictionary):
 	_play_asset_pack_manager_mutex.lock()	
 	
 	# filter out duplicate state updated signals
-	var duplicate_state = _asset_pack_cache.has(pack_name) and \
+	var is_duplicate_state = _asset_pack_cache.has(pack_name) and \
 		_asset_pack_cache[pack_name].hash() == result.hash()
-	if duplicate_state:
+	if is_duplicate_state:
 		return
 	_asset_pack_cache[pack_name] = result
 	
