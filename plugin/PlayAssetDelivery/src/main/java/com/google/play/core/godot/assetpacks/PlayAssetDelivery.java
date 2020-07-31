@@ -108,6 +108,8 @@ public class PlayAssetDelivery extends GodotPlugin {
           boolean isTerminalState = assetPackTerminalStates.contains(state.status());
           if (isTerminalState) {
             ongoingAssetPackRequests.remove(state.name());
+          } else {
+            ongoingAssetPackRequests.add(state.name());
           }
           emitSignalWrapper(
               ASSET_PACK_STATE_UPDATED,
