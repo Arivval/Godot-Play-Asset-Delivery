@@ -126,7 +126,7 @@ public class PlayAssetDelivery extends GodotPlugin {
   /**
    * Function that emits assetPackStateUpdated signal if the given assetPackState has been updated.
    */
-  private void emitNonDuplicateStateUpdatedSignal(
+  private synchronized void emitNonDuplicateStateUpdatedSignal(
       AssetPackState assetPackState, boolean addToOngoingAssetPackRequests) {
     boolean isTerminalState = assetPackTerminalStates.contains(assetPackState.status());
     if (isTerminalState) {
