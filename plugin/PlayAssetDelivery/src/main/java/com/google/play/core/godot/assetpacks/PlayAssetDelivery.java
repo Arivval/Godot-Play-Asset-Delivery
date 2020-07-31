@@ -36,6 +36,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.godotengine.godot.Dictionary;
 import org.godotengine.godot.Godot;
 import org.godotengine.godot.plugin.GodotPlugin;
@@ -51,6 +53,7 @@ public class PlayAssetDelivery extends GodotPlugin {
 
   private AssetPackManager assetPackManager;
   private Set<String> ongoingAssetPackRequests;
+  private Map<String, Dictionary> updatedAssetPackStateMap;
   private final List<Integer> assetPackTerminalStates =
       Arrays.asList(AssetPackStatus.COMPLETED, AssetPackStatus.FAILED, AssetPackStatus.CANCELED);
 
@@ -70,6 +73,7 @@ public class PlayAssetDelivery extends GodotPlugin {
     Context applicationContext = godot.getApplicationContext();
     assetPackManager = AssetPackManagerFactory.getInstance(applicationContext);
     ongoingAssetPackRequests = Collections.synchronizedSet(new HashSet<>());
+    updatedAssetPackStateMap = new ConcurrentHashMap();
   }
 
   /** Package-private constructor used to instantiate PlayAssetDelivery class with mock objects. */
@@ -77,6 +81,7 @@ public class PlayAssetDelivery extends GodotPlugin {
     super(godot);
     this.assetPackManager = assetPackManager;
     ongoingAssetPackRequests = Collections.synchronizedSet(new HashSet<>());
+    updatedAssetPackStateMap = new ConcurrentHashMap();
   }
 
   @Override
@@ -111,9 +116,16 @@ public class PlayAssetDelivery extends GodotPlugin {
           } else {
             ongoingAssetPackRequests.add(state.name());
           }
-          emitSignalWrapper(
-              ASSET_PACK_STATE_UPDATED,
-              PlayAssetDeliveryUtils.convertAssetPackStateToDictionary(state));
+          Dictionary assetPackStateDictionary =
+              PlayAssetDeliveryUtils.convertAssetPackStateToDictionary(state);
+          boolean isDuplicateState =
+              updatedAssetPackStateMap.containsKey(state.name())
+                  && updatedAssetPackStateMap.get(state.name()).hashCode()
+                      == assetPackStateDictionary.hashCode();
+          if (!isDuplicateState) {
+            updatedAssetPackStateMap.put(state.name(), assetPackStateDictionary);
+            emitSignalWrapper(ASSET_PACK_STATE_UPDATED, assetPackStateDictionary);
+          }
         });
   }
 
@@ -136,10 +148,17 @@ public class PlayAssetDelivery extends GodotPlugin {
                             ongoingAssetPackRequests.remove(packName);
                           }
 
-                          emitSignalWrapper(
-                              ASSET_PACK_STATE_UPDATED,
+                          Dictionary assetPackStateDictionary =
                               PlayAssetDeliveryUtils.convertAssetPackStateToDictionary(
-                                  updatedState));
+                                  updatedState);
+                          boolean isDuplicateState =
+                              updatedAssetPackStateMap.containsKey(packName)
+                                  && updatedAssetPackStateMap.get(packName).hashCode()
+                                      == assetPackStateDictionary.hashCode();
+                          if (!isDuplicateState) {
+                            updatedAssetPackStateMap.put(packName, assetPackStateDictionary);
+                            emitSignalWrapper(ASSET_PACK_STATE_UPDATED, assetPackStateDictionary);
+                          }
                         }));
   }
 

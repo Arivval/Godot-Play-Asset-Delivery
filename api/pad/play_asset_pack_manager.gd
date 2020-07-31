@@ -40,6 +40,8 @@ var _request_tracker : PlayAssetDeliveryRequestTracker
 
 # Dictionary that stores the mapping of pack_name to relevant Request objects.
 var _asset_pack_to_request_map : Dictionary
+# Dictionary that store the mapping of pack_name to most updated asset pack state
+var _asset_pack_cache : Dictionary
 var _play_asset_pack_manager_mutex : Mutex	
 
 var _PACK_TERMINAL_STATES = [AssetPackStatus.CANCELED, AssetPackStatus.COMPLETED, AssetPackStatus.FAILED]
@@ -145,6 +147,13 @@ func _route_asset_pack_state_updated(result : Dictionary):
 	var updated_status = updated_state.get_status()
 	
 	_play_asset_pack_manager_mutex.lock()	
+	
+	# filter out duplicate state updated signals
+	var is_duplicate_state = _asset_pack_cache.has(pack_name) and \
+		_asset_pack_cache[pack_name].hash() == result.hash()
+	if is_duplicate_state:
+		return
+	_asset_pack_cache[pack_name] = result
 	
 	if _asset_pack_to_request_map.has(pack_name):
 		var request = _asset_pack_to_request_map[pack_name]
