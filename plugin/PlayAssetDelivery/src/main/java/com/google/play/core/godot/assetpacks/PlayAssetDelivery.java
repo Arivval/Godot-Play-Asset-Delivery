@@ -142,6 +142,7 @@ public class PlayAssetDelivery extends GodotPlugin {
                           String packName = e.getKey();
                           AssetPackState updatedState = e.getValue();
                           AssetPackState previousState = ongoingAssetPackRequestMap.get(packName);
+                          // check if updatedState is different from previous state
                           Dictionary updatedStateDict =
                               PlayAssetDeliveryUtils.convertAssetPackStateToDictionary(
                                   updatedState);
