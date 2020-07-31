@@ -37,7 +37,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
 import org.godotengine.godot.Dictionary;
 import org.godotengine.godot.Godot;
 import org.godotengine.godot.plugin.GodotPlugin;
@@ -127,7 +126,10 @@ public class PlayAssetDelivery extends GodotPlugin {
         .getPackStates(new ArrayList<>(ongoingAssetPackRequests))
         .addOnSuccessListener(
             result ->
-                result.packStates().entrySet().stream()
+                result
+                    .packStates()
+                    .entrySet()
+                    .stream()
                     .forEach(
                         e -> {
                           String packName = e.getKey();
@@ -260,7 +262,10 @@ public class PlayAssetDelivery extends GodotPlugin {
     List<String> packNames = Arrays.asList(packNamesArray);
     OnSuccessListener<AssetPackStates> fetchSuccessListener =
         result -> {
-          result.packStates().entrySet().stream()
+          result
+              .packStates()
+              .entrySet()
+              .stream()
               .forEach(
                   entry -> {
                     // Handles the edge case where the app is paused immediately after we start this
