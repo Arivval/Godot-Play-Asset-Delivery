@@ -22,21 +22,16 @@ import com.google.android.play.core.assetpacks.AssetLocation;
 import com.google.android.play.core.assetpacks.AssetPackLocation;
 import com.google.android.play.core.assetpacks.AssetPackManager;
 import com.google.android.play.core.assetpacks.AssetPackManagerFactory;
-import com.google.android.play.core.assetpacks.AssetPackState;
 import com.google.android.play.core.assetpacks.AssetPackStates;
-import com.google.android.play.core.assetpacks.model.AssetPackStatus;
 import com.google.android.play.core.tasks.OnFailureListener;
 import com.google.android.play.core.tasks.OnSuccessListener;
 import com.google.android.play.core.tasks.Task;
 import com.google.play.core.godot.assetpacks.utils.PlayAssetDeliveryUtils;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import org.godotengine.godot.Dictionary;
 import org.godotengine.godot.Godot;
 import org.godotengine.godot.plugin.GodotPlugin;
@@ -51,10 +46,7 @@ import org.godotengine.godot.plugin.SignalInfo;
 public class PlayAssetDelivery extends GodotPlugin {
 
   private AssetPackManager assetPackManager;
-  private Set<String> ongoingAssetPackRequests = Collections.synchronizedSet(new HashSet<>());
-  private ConcurrentHashMap updatedAssetPackStateMap = new ConcurrentHashMap();
-  private final List<Integer> assetPackTerminalStates =
-      Arrays.asList(AssetPackStatus.COMPLETED, AssetPackStatus.FAILED, AssetPackStatus.CANCELED);
+  StateUpdateManager stateUpdateManager;
 
   static final String ASSET_PACK_STATE_UPDATED = "assetPackStateUpdated";
   static final String FETCH_SUCCESS = "fetchSuccess";
@@ -71,12 +63,14 @@ public class PlayAssetDelivery extends GodotPlugin {
     super(godot);
     Context applicationContext = godot.getApplicationContext();
     assetPackManager = AssetPackManagerFactory.getInstance(applicationContext);
+    this.stateUpdateManager = new StateUpdateManager(this, assetPackManager);
   }
 
   /** Package-private constructor used to instantiate PlayAssetDelivery class with mock objects. */
   PlayAssetDelivery(Godot godot, AssetPackManager assetPackManager) {
     super(godot);
     this.assetPackManager = assetPackManager;
+    this.stateUpdateManager = new StateUpdateManager(this, assetPackManager);
   }
 
   @Override
@@ -87,7 +81,7 @@ public class PlayAssetDelivery extends GodotPlugin {
 
   @Override
   public void onMainResume() {
-    forceAssetPackStateUpdate();
+    stateUpdateManager.forceAssetPackStateUpdate();
     registerAssetPackStateUpdatedListener();
     super.onMainResume();
   }
@@ -103,48 +97,8 @@ public class PlayAssetDelivery extends GodotPlugin {
    * state is updated.
    */
   void registerAssetPackStateUpdatedListener() {
-    assetPackManager.registerListener(state -> emitNonDuplicateStateUpdatedSignal(state, true));
-  }
-
-  /**
-   * Calls getPackStates on all asset packs currently in non-terminal state and emit non-duplicating
-   * stateUpdated signals.
-   */
-  private void forceAssetPackStateUpdate() {
-    assetPackManager
-        .getPackStates(new ArrayList<>(ongoingAssetPackRequests))
-        .addOnSuccessListener(
-            result ->
-                result
-                    .packStates()
-                    .values()
-                    .stream()
-                    .forEach(
-                        updatedState -> emitNonDuplicateStateUpdatedSignal(updatedState, false)));
-  }
-
-  /**
-   * Function that emits assetPackStateUpdated signal if the given assetPackState has been updated.
-   */
-  private synchronized void emitNonDuplicateStateUpdatedSignal(
-      AssetPackState assetPackState, boolean addToOngoingAssetPackRequests) {
-    boolean isTerminalState = assetPackTerminalStates.contains(assetPackState.status());
-    if (isTerminalState) {
-      ongoingAssetPackRequests.remove(assetPackState);
-    }
-    if (!isTerminalState && addToOngoingAssetPackRequests) {
-      ongoingAssetPackRequests.add(assetPackState.name());
-    }
-    Dictionary assetPackStateDictionary =
-        PlayAssetDeliveryUtils.convertAssetPackStateToDictionary(assetPackState);
-    boolean isDifferentState =
-        !(updatedAssetPackStateMap.containsKey(assetPackState.name())
-            && updatedAssetPackStateMap.get(assetPackState.name()).hashCode()
-                == assetPackStateDictionary.hashCode());
-    if (isDifferentState) {
-      updatedAssetPackStateMap.put(assetPackState.name(), assetPackStateDictionary);
-      emitSignalWrapper(ASSET_PACK_STATE_UPDATED, assetPackStateDictionary);
-    }
+    assetPackManager.registerListener(
+        state -> stateUpdateManager.emitNonDuplicateStateUpdatedSignal(state, true));
   }
 
   /**
@@ -259,7 +213,7 @@ public class PlayAssetDelivery extends GodotPlugin {
           // duplicate stateUpdated signal emitted by forceAssetPackStateUpdate(). Hence
           // we are using emitNonDuplicateStateUpdatedSignal() to filter out these
           // duplicate signals.
-          ongoingAssetPackRequests.addAll(result.packStates().keySet());
+          stateUpdateManager.ongoingAssetPackRequests().addAll(result.packStates().keySet());
           emitSignalWrapper(
               FETCH_SUCCESS,
               PlayAssetDeliveryUtils.convertAssetPackStatesToDictionary(result),

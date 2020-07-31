@@ -151,6 +151,8 @@ public class PlayAssetDeliveryTest {
     ArgumentCaptor<Object> signalArgsCaptor = ArgumentCaptor.forClass(Object.class);
 
     PlayAssetDelivery testSubject = spy(new PlayAssetDelivery(godotMock, assetPackManagerMock));
+    // stub the reference to playAssetDeliveryPlugin in stateUpdateManager
+    testSubject.stateUpdateManager.playAssetDeliveryPlugin = testSubject;
 
     testSubject.registerAssetPackStateUpdatedListener();
 
