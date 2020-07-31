@@ -116,16 +116,8 @@ public class PlayAssetDelivery extends GodotPlugin {
           } else {
             ongoingAssetPackRequests.add(state.name());
           }
-          Dictionary assetPackStateDictionary =
-              PlayAssetDeliveryUtils.convertAssetPackStateToDictionary(state);
-          boolean isDuplicateState =
-              updatedAssetPackStateMap.containsKey(state.name())
-                  && updatedAssetPackStateMap.get(state.name()).hashCode()
-                      == assetPackStateDictionary.hashCode();
-          if (!isDuplicateState) {
-            updatedAssetPackStateMap.put(state.name(), assetPackStateDictionary);
-            emitSignalWrapper(ASSET_PACK_STATE_UPDATED, assetPackStateDictionary);
-          }
+
+          emitNonDuplicateStateUpdatedSignal(state);
         });
   }
 
@@ -140,26 +132,30 @@ public class PlayAssetDelivery extends GodotPlugin {
                         e -> {
                           String packName = e.getKey();
                           AssetPackState updatedState = e.getValue();
-                          // emit state_updated signal for ongoing packs, filter duplicate states
-                          // on GDScript end
                           boolean isTerminalState =
                               assetPackTerminalStates.contains(updatedState.status());
                           if (isTerminalState) {
                             ongoingAssetPackRequests.remove(packName);
                           }
 
-                          Dictionary assetPackStateDictionary =
-                              PlayAssetDeliveryUtils.convertAssetPackStateToDictionary(
-                                  updatedState);
-                          boolean isDuplicateState =
-                              updatedAssetPackStateMap.containsKey(packName)
-                                  && updatedAssetPackStateMap.get(packName).hashCode()
-                                      == assetPackStateDictionary.hashCode();
-                          if (!isDuplicateState) {
-                            updatedAssetPackStateMap.put(packName, assetPackStateDictionary);
-                            emitSignalWrapper(ASSET_PACK_STATE_UPDATED, assetPackStateDictionary);
-                          }
+                          emitNonDuplicateStateUpdatedSignal(updatedState);
                         }));
+  }
+
+  /**
+   * Function that emits assetPackStateUpdated signal if the given assetPackState has been updated.
+   */
+  private void emitNonDuplicateStateUpdatedSignal(AssetPackState assetPackState) {
+    Dictionary assetPackStateDictionary =
+        PlayAssetDeliveryUtils.convertAssetPackStateToDictionary(assetPackState);
+    boolean isDuplicateState =
+        updatedAssetPackStateMap.containsKey(assetPackState.name())
+            && updatedAssetPackStateMap.get(assetPackState.name()).hashCode()
+                == assetPackStateDictionary.hashCode();
+    if (!isDuplicateState) {
+      updatedAssetPackStateMap.put(assetPackState.name(), assetPackStateDictionary);
+      emitSignalWrapper(ASSET_PACK_STATE_UPDATED, assetPackStateDictionary);
+    }
   }
 
   /**
@@ -270,7 +266,13 @@ public class PlayAssetDelivery extends GodotPlugin {
                     // Handles the edge case where the app is paused immediately after we start this
                     // fetch request. In this case we need to manually add the packNames to
                     // ongoingAssetPackRequests so forceAssetPackStateUpdate() will call
-                    // getPackStates() for these packNames.
+                    // getPackStates() for these packNames. In this implementation, it is possible
+                    // to have an extreme edge case where the assetPackState reached terminal state
+                    // in globalListener before fetchSuccess is called. This will result in
+                    // packName to be added back again to the ongoingAssetPackRequests set and
+                    // duplicate stateUpdated signal emitted by forceAssetPackStateUpdate(). Hence
+                    // we are using emitNonDuplicateStateUpdatedSignal() to filter out these
+                    // duplicate signals.
                     String packName = entry.getKey();
                     ongoingAssetPackRequests.add(packName);
                   });
