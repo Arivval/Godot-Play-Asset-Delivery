@@ -21,11 +21,10 @@
 # modifying the configurations in Project -> Project Settings -> AutoLoad.
 # Functions and signals provided by the Android plugin will use camelCasing as 
 # the naming convention, since the plugin is written in Java.
+#
 # ##############################################################################
-# Suppress unused_signal warning because Godot cannot detect signal usage when 
-# we call emit_signal() using call_deferred().
-# warning-ignore:unused_signal
 extends Node
+
 # -----------------------------------------------------------------------------
 # Emits state_updated(pack_name, state) global signal upon any asset pack's 
 # state update.
@@ -39,11 +38,9 @@ var _request_tracker : PlayAssetDeliveryRequestTracker
 
 # Dictionary that stores the mapping of pack_name to relevant Request objects.
 var _asset_pack_to_request_map : Dictionary	
-var _play_asset_pack_manager_mutex : Mutex	
-# Dictionary that stores the most udpated mapping of pack_name to pack_state.
-# Do not use _asset_pack_to_request_map to get the most updated pack_state, since
-# request object's state is updated on main thread.
+# Dictionary that stores the most updated asset pack states
 var _asset_pack_state_cache : Dictionary
+var _play_asset_pack_manager_mutex : Mutex	
 
 var _PACK_TERMINAL_STATES = [AssetPackStatus.CANCELED, AssetPackStatus.COMPLETED, AssetPackStatus.FAILED]
 
@@ -101,30 +98,21 @@ func _initialize():
 	_play_asset_pack_manager_mutex = Mutex.new()
 
 # -----------------------------------------------------------------------------
-# Helper function that connects individual signals from the plugin to given
-# callback function, logs related error.
-# -----------------------------------------------------------------------------
-func _connect_plugin_signal_helper(plugin_signal_name : String, callback_name : String):
-	var connect_error_code = _plugin_singleton.connect(plugin_signal_name, self, callback_name)
-	if connect_error_code != OK:
-		push_error("Connecting plugin signal to function failed, error_code = " + str(connect_error_code))
-
-# -----------------------------------------------------------------------------
 # Connect signals, allowing signals emitted from the plugin to be correctly
 # linked to functions in the front-facing API.
 # -----------------------------------------------------------------------------
 func _connect_plugin_signals():
 	if _plugin_singleton != null:
-		_connect_plugin_signal_helper("assetPackStateUpdated", "_route_asset_pack_state_updated")
-		_connect_plugin_signal_helper("fetchSuccess", "_forward_fetch_success")
-		_connect_plugin_signal_helper("fetchError", "_forward_fetch_error")
-		_connect_plugin_signal_helper("getPackStatesSuccess", "_forward_get_pack_states_success")
-		_connect_plugin_signal_helper("getPackStatesError", "_forward_get_pack_states_error")
-		_connect_plugin_signal_helper("removePackSuccess", "_forward_remove_pack_success")
-		_connect_plugin_signal_helper("removePackError", "_forward_remove_pack_error")
-		_connect_plugin_signal_helper("showCellularDataConfirmationSuccess",\
+		_plugin_singleton.connect("assetPackStateUpdated", self, "_route_asset_pack_state_updated")
+		_plugin_singleton.connect("fetchSuccess", self, "_forward_fetch_success")
+		_plugin_singleton.connect("fetchError", self, "_forward_fetch_error")
+		_plugin_singleton.connect("getPackStatesSuccess", self, "_forward_get_pack_states_success")
+		_plugin_singleton.connect("getPackStatesError", self, "_forward_get_pack_states_error")
+		_plugin_singleton.connect("removePackSuccess", self, "_forward_remove_pack_success")
+		_plugin_singleton.connect("removePackError", self, "_forward_remove_pack_error")
+		_plugin_singleton.connect("showCellularDataConfirmationSuccess", self, \
 			"_forward_show_cellular_data_confirmation_success")
-		_connect_plugin_signal_helper("showCellularDataConfirmationError", \
+		_plugin_singleton.connect("showCellularDataConfirmationError", self, \
 			"_forward_show_cellular_data_confirmation_error")
 
 # -----------------------------------------------------------------------------
@@ -139,53 +127,30 @@ func _initialize_plugin() -> Object:
 		return null
 
 # -----------------------------------------------------------------------------
-# Helper function used to release reference of request objects in 
-# _asset_pack_to_request_map.
-# -----------------------------------------------------------------------------
-func _remove_request_reference_from_map(pack_name : String):
-	var _erase_success = _asset_pack_to_request_map.erase(pack_name)
-
-# -----------------------------------------------------------------------------
 # Helper function that synchronizes relevant request object's state upon 
 # receiving assetPackStateUpdated signal.
 # -----------------------------------------------------------------------------
-func _route_asset_pack_state_updated(result : Dictionary):
+func _route_asset_pack_state_updated(result : Dictionary):	
 	var updated_state : PlayAssetPackState = PlayAssetPackState.new(result)
 	var pack_name = updated_state.get_name()
 	var updated_status = updated_state.get_status()
 	
-	_play_asset_pack_manager_mutex.lock()	
+	_play_asset_pack_manager_mutex.lock()
+	# drop duplicate state_updated signals
+	var is_duplicate_state = _asset_pack_state_cache.has(pack_name) and \
+		_asset_pack_state_cache[pack_name].hash() == result.hash()
+	if false:
+		print(_asset_pack_state_cache[pack_name])
+		print(result)
+		print("here!!!! return!!!!")
+		return
+	_asset_pack_state_cache[pack_name] = result
 	
-	var pack_name_exists_in_request_map = _asset_pack_to_request_map.has(pack_name)
-	var received_fetch_callback
-	var duplicate_state
-	if pack_name_exists_in_request_map:
+	if _asset_pack_to_request_map.has(pack_name):
 		var request = _asset_pack_to_request_map[pack_name]
-		received_fetch_callback = request.get_state().get_status() != PlayAssetPackManager.AssetPackStatus.UNKNOWN and\
-			request.get_state().get_total_bytes_to_download() != 0
-		duplicate_state = request.get_state().to_dict().hash() == result.hash()
-		
-		# Since assetPackStateUpdated and fetchSuccess/Error might contain duplicate updates,
-		# we will only route non-duplicate updates to request object after we already received 
-		# fetchSuccess/Error signal.
-		if received_fetch_callback and not duplicate_state:
-			# Since devs might read request's state while we are updating it, we need to call this	
-			# function from main thread.
-			request.call_deferred("_on_state_updated", result)		
-		
-		# if reached terminal state, release references	
-		if updated_status in _PACK_TERMINAL_STATES:	
-			var _erase_success = _asset_pack_to_request_map.erase(pack_name)
-
-	# only emit non-repeated state_updated signals after we encountered fetchSuccess/Error
-	if pack_name_exists_in_request_map:
-		if received_fetch_callback and not duplicate_state:
-			_asset_pack_state_cache[pack_name] = result
-			# emit state updated signal on main thread
-			call_deferred("emit_signal", "state_updated", pack_name, updated_state)
-	else:
-		_asset_pack_state_cache[pack_name] = result
-		call_deferred("emit_signal", "state_updated", pack_name, updated_state)	
+		request.call_deferred("_on_state_updated", result)
+	
+	call_deferred("emit_signal", "state_updated", pack_name, updated_state)	
 	
 	_play_asset_pack_manager_mutex.unlock()
 
@@ -193,16 +158,9 @@ func _route_asset_pack_state_updated(result : Dictionary):
 # Helper function called by request objects, to emit artifical state_updated signals.
 # -----------------------------------------------------------------------------
 func _forward_high_level_state_updated_signal(pack_name : String, state : Dictionary):
-	# update cache, since this function can be called by multiple request objects with same packName
-	_play_asset_pack_manager_mutex.lock()
-	var pack_state_changed = not _asset_pack_state_cache.has(pack_name) or \
-		_asset_pack_state_cache[pack_name].hash() != state.hash()
-	if pack_state_changed:
-		_asset_pack_state_cache[pack_name] = state
-		# emit state updated signal on main thread
-		var state_object : PlayAssetPackState = PlayAssetPackState.new(state)
-		call_deferred("emit_signal", "state_updated", pack_name, state_object)
-	_play_asset_pack_manager_mutex.unlock()
+	var state_object : PlayAssetPackState = PlayAssetPackState.new(state)
+	call_deferred("emit_signal", "state_updated", pack_name, state_object)
+
 
 # -----------------------------------------------------------------------------
 # Helper function used to unwrap pack_state from pack_states.
@@ -215,12 +173,9 @@ func _extract_pack_state_from_pack_states(result : Dictionary) -> PlayAssetPackS
 # Helper functions that forward signals emitted from the plugin
 # -----------------------------------------------------------------------------
 func _forward_fetch_success(result : Dictionary, signal_id : int):
-	var target_request : PlayAssetPackFetchRequest = _request_tracker.lookup_request(signal_id)
-	target_request.call_deferred("_on_fetch_success", result)
+	# Since fetchSuccess signal is always emitted after the global assetPackStateUpdated signal, we
+	# don't need to call _on_fetch_success to update the state again.
 	_request_tracker.unregister_request(signal_id)
-	var pack_state = _extract_pack_state_from_pack_states(result)
-	# emit status updated global signal
-	_forward_high_level_state_updated_signal(pack_state.get_name(), pack_state.to_dict())
 
 func _forward_fetch_error(error : Dictionary, signal_id : int):
 	var target_request : PlayAssetPackFetchRequest = _request_tracker.lookup_request(signal_id)
