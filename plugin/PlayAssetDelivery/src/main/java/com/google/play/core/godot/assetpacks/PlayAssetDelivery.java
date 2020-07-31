@@ -17,7 +17,6 @@
 package com.google.play.core.godot.assetpacks;
 
 import android.content.Context;
-
 import androidx.annotation.NonNull;
 import com.google.android.play.core.assetpacks.AssetLocation;
 import com.google.android.play.core.assetpacks.AssetPackLocation;
@@ -139,9 +138,14 @@ public class PlayAssetDelivery extends GodotPlugin {
                           String packName = e.getKey();
                           AssetPackState updatedState = e.getValue();
                           AssetPackState previousState = ongoingAssetPackRequestMap.get(packName);
-                          Dictionary updatedStateDict = PlayAssetDeliveryUtils.convertAssetPackStateToDictionary(updatedState);
-                          Dictionary previousStateDict = PlayAssetDeliveryUtils.convertAssetPackStateToDictionary(previousState);
-                          boolean packStateUpdated = updatedStateDict.hashCode() != previousStateDict.hashCode();
+                          Dictionary updatedStateDict =
+                              PlayAssetDeliveryUtils.convertAssetPackStateToDictionary(
+                                  updatedState);
+                          Dictionary previousStateDict =
+                              PlayAssetDeliveryUtils.convertAssetPackStateToDictionary(
+                                  previousState);
+                          boolean packStateUpdated =
+                              updatedStateDict.hashCode() != previousStateDict.hashCode();
                           if (packStateUpdated) {
                             boolean isTerminalState =
                                 assetPackTerminalStates.contains(updatedState.status());
@@ -272,7 +276,8 @@ public class PlayAssetDelivery extends GodotPlugin {
                     // update was not called.
                     String packName = entry.getKey();
                     AssetPackState packState = entry.getValue();
-                    if (!ongoingAssetPackRequestMap.containsKey(packName) && !completedAssetPackRequests.contains(packName)) {
+                    if (!ongoingAssetPackRequestMap.containsKey(packName)
+                        && !completedAssetPackRequests.contains(packName)) {
                       ongoingAssetPackRequestMap.put(packName, packState);
                     }
                   });
