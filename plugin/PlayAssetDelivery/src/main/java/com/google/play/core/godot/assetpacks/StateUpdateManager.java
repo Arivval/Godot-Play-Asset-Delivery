@@ -61,9 +61,7 @@ public class StateUpdateManager {
     updatedAssetPackStateMap = new ConcurrentHashMap();
   }
 
-  /**
-   * Package-private wrapper function used for argument captor.
-   */
+  /** Package-private wrapper function used for argument captor. */
   void emitSignalWrapper(String signalName, Object... signalArgs) {
     playAssetDeliveryPlugin.emitSignalWrapper(signalName, signalArgs);
   }
