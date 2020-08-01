@@ -45,12 +45,16 @@ public class StateUpdateManager {
   PlayAssetDelivery playAssetDeliveryPlugin;
   private AssetPackManager assetPackManager;
 
-  public Set<String> ongoingAssetPackRequests() {
+  Set<String> ongoingAssetPackRequests() {
     return ongoingAssetPackRequests;
   }
 
-  public Map<String, Dictionary> updatedAssetPackStateMap() {
+  Map<String, Dictionary> updatedAssetPackStateMap() {
     return updatedAssetPackStateMap;
+  }
+
+  public void joinOngoingAssetPackRequests(Set<String> newOngoingAssetPackRequests) {
+    ongoingAssetPackRequests.addAll(newOngoingAssetPackRequests);
   }
 
   public StateUpdateManager(
@@ -68,23 +72,30 @@ public class StateUpdateManager {
   /**
    * Function that emits assetPackStateUpdated signal if the given assetPackState has been updated.
    */
-  public synchronized void emitNonDuplicateStateUpdatedSignal(
+  public void emitNonDuplicateStateUpdatedSignal(
       AssetPackState assetPackState, boolean addToOngoingAssetPackRequests) {
-    boolean isTerminalState = assetPackTerminalStates.contains(assetPackState.status());
-    if (isTerminalState) {
-      ongoingAssetPackRequests.remove(assetPackState);
+    boolean isDifferentState;
+    Dictionary assetPackStateDictionary;
+    synchronized (this) {
+      boolean isTerminalState = assetPackTerminalStates.contains(assetPackState.status());
+      if (isTerminalState) {
+        ongoingAssetPackRequests.remove(assetPackState);
+      }
+      if (!isTerminalState && addToOngoingAssetPackRequests) {
+        ongoingAssetPackRequests.add(assetPackState.name());
+      }
+      assetPackStateDictionary =
+          PlayAssetDeliveryUtils.convertAssetPackStateToDictionary(assetPackState);
+      isDifferentState =
+          !updatedAssetPackStateMap.containsKey(assetPackState.name())
+              || updatedAssetPackStateMap.get(assetPackState.name()).hashCode()
+                  != assetPackStateDictionary.hashCode();
+      if (isDifferentState) {
+        updatedAssetPackStateMap.put(assetPackState.name(), assetPackStateDictionary);
+      }
     }
-    if (!isTerminalState && addToOngoingAssetPackRequests) {
-      ongoingAssetPackRequests.add(assetPackState.name());
-    }
-    Dictionary assetPackStateDictionary =
-        PlayAssetDeliveryUtils.convertAssetPackStateToDictionary(assetPackState);
-    boolean isDifferentState =
-        !(updatedAssetPackStateMap.containsKey(assetPackState.name())
-            && updatedAssetPackStateMap.get(assetPackState.name()).hashCode()
-                == assetPackStateDictionary.hashCode());
+    // emit signal outside the synchronized block
     if (isDifferentState) {
-      updatedAssetPackStateMap.put(assetPackState.name(), assetPackStateDictionary);
       emitSignalWrapper(ASSET_PACK_STATE_UPDATED, assetPackStateDictionary);
     }
   }

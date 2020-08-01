@@ -34,6 +34,7 @@ import com.google.play.core.godot.assetpacks.utils.AssetPackStatesFromDictionary
 import com.google.play.core.godot.assetpacks.utils.PlayAssetDeliveryUtils;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.godotengine.godot.Dictionary;
 import org.godotengine.godot.Godot;
@@ -189,5 +190,18 @@ public class StateUpdateManagerTest {
         .containsEntry(expectedPackName1, expectedPackStateDict1);
     assertThat(testStateUpdateManager.updatedAssetPackStateMap())
         .containsEntry(expectedPackName2, expectedPackStateDict2);
+  }
+
+  @Test
+  public void joinOngoingAssetPackRequests_valid() {
+    PlayAssetDelivery playAssetDelivery = new PlayAssetDelivery(godotMock, assetPackManagerMock);
+    StateUpdateManager testStateUpdateManager =
+        new StateUpdateManager(playAssetDelivery, assetPackManagerMock);
+    testStateUpdateManager.joinOngoingAssetPackRequests(Set.of("packName1", "packName2"));
+    assertThat(testStateUpdateManager.ongoingAssetPackRequests())
+        .containsExactly("packName1", "packName2");
+    testStateUpdateManager.joinOngoingAssetPackRequests(Set.of("packName2", "packName3"));
+    assertThat(testStateUpdateManager.ongoingAssetPackRequests())
+        .containsExactly("packName1", "packName2", "packName3");
   }
 }

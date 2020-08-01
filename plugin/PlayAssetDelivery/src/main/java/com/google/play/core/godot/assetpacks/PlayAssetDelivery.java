@@ -213,7 +213,7 @@ public class PlayAssetDelivery extends GodotPlugin {
           // duplicate stateUpdated signal emitted by forceAssetPackStateUpdate(). Hence
           // we are using emitNonDuplicateStateUpdatedSignal() to filter out these
           // duplicate signals.
-          stateUpdateManager.ongoingAssetPackRequests().addAll(result.packStates().keySet());
+          stateUpdateManager.joinOngoingAssetPackRequests(result.packStates().keySet());
           emitSignalWrapper(
               FETCH_SUCCESS,
               PlayAssetDeliveryUtils.convertAssetPackStatesToDictionary(result),
