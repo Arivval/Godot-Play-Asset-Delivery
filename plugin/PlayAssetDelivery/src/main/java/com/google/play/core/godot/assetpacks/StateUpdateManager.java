@@ -14,6 +14,11 @@
  *  	limitations under the License.
  */
 
+/**
+ * This class keep track of all the ongoing asset pack requests and most updated asset pack states.
+ * Provides forceAssetPackStateUpdate() function to force-emit stateUpdated global signals, so that
+ * we are able to get the most updated asset pack state when the app is returned from background.
+ */
 package com.google.play.core.godot.assetpacks;
 
 import static com.google.play.core.godot.assetpacks.PlayAssetDelivery.ASSET_PACK_STATE_UPDATED;
@@ -57,6 +62,12 @@ public class StateUpdateManager {
   }
 
   /**
+   * Package-private wrapper function used for argument captor (since emitSignal() is protected).
+   */
+  void emitSignalWrapper(String signalName, Object... signalArgs) {
+    playAssetDeliveryPlugin.emitSignalWrapper(signalName, signalArgs);
+  }
+  /**
    * Function that emits assetPackStateUpdated signal if the given assetPackState has been updated.
    */
   public synchronized void emitNonDuplicateStateUpdatedSignal(
@@ -76,7 +87,7 @@ public class StateUpdateManager {
                 == assetPackStateDictionary.hashCode());
     if (isDifferentState) {
       updatedAssetPackStateMap.put(assetPackState.name(), assetPackStateDictionary);
-      playAssetDeliveryPlugin.emitSignalWrapper(ASSET_PACK_STATE_UPDATED, assetPackStateDictionary);
+      emitSignalWrapper(ASSET_PACK_STATE_UPDATED, assetPackStateDictionary);
     }
   }
 
