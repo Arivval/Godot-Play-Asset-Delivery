@@ -185,9 +185,8 @@ public class StateUpdateManagerTest {
     String expectedPackName2 =
         (String) expectedPackStateDict2.get(AssetPackStateFromDictionary.NAME_KEY);
     assertThat(testStateUpdateManager.updatedAssetPackStateMap()).hasSize(2);
-    assertThat(testStateUpdateManager.updatedAssetPackStateMap())
-        .containsEntry(expectedPackName1, expectedPackName1);
-    assertThat(testStateUpdateManager.updatedAssetPackStateMap())
-        .containsEntry(expectedPackName2, expectedPackName2);
+    System.out.println(testStateUpdateManager.updatedAssetPackStateMap());
+    assertThat(testStateUpdateManager.updatedAssetPackStateMap()).containsEntry(expectedPackName1, expectedPackStateDict1);
+    assertThat(testStateUpdateManager.updatedAssetPackStateMap()).containsEntry(expectedPackName2, expectedPackStateDict2);
   }
 }
