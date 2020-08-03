@@ -80,8 +80,7 @@ public class StateUpdateManager {
       boolean isTerminalState = assetPackTerminalStates.contains(assetPackState.status());
       if (isTerminalState) {
         ongoingAssetPackRequests.remove(assetPackState);
-      }
-      if (!isTerminalState && addToOngoingAssetPackRequests) {
+      } else if (addToOngoingAssetPackRequests) {
         ongoingAssetPackRequests.add(assetPackState.name());
       }
       assetPackStateDictionary =
