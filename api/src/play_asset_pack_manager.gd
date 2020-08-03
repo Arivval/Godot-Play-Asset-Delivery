@@ -306,6 +306,8 @@ func cancel_asset_pack_request(pack_name : String) -> bool:
 	var updated_asset_pack_status = updated_asset_pack_state.get_status()
 	
 	var cancellation_success = updated_asset_pack_status == AssetPackStatus.CANCELED
+	# Since no global state_updated signal will be emitted in this case, we need to manual erase
+	# this pack if it is canceled.
 	if cancellation_success:
 		_asset_pack_to_request_map.erase(pack_name)
 	
