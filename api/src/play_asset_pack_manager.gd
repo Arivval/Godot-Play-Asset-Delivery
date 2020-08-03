@@ -149,6 +149,8 @@ func _route_asset_pack_state_updated(result : Dictionary):
 	if _asset_pack_to_request_map.has(pack_name):
 		var request = _asset_pack_to_request_map[pack_name]
 		request.call_deferred("_on_state_updated", result)
+		if updated_state.get_status() in _PACK_TERMINAL_STATES:
+			_asset_pack_to_request_map.erase(pack_name)
 	
 	call_deferred("emit_signal", "state_updated", pack_name, updated_state)	
 	
@@ -187,6 +189,8 @@ func _forward_fetch_error(error : Dictionary, signal_id : int):
 	previous_state[PlayAssetPackState._STATUS_KEY] = AssetPackStatus.FAILED
 	previous_state[PlayAssetPackState._ERROR_CODE_KEY] = error[PlayAssetPackException._ERROR_CODE_KEY]
 	_forward_high_level_state_updated_signal(pack_name, previous_state)
+	
+	_asset_pack_to_request_map.erase(pack_name)
 
 func _forward_get_pack_states_success(result : Dictionary, signal_id : int):
 	var target_request : PlayAssetPackStateRequest = _request_tracker.lookup_request(signal_id)
@@ -301,7 +305,13 @@ func cancel_asset_pack_request(pack_name : String) -> bool:
 	var updated_asset_pack_state : PlayAssetPackState = updated_asset_pack_states.get_pack_states()[pack_name]
 	var updated_asset_pack_status = updated_asset_pack_state.get_status()
 	
-	return updated_asset_pack_status == AssetPackStatus.CANCELED
+	var cancellation_success = updated_asset_pack_status == AssetPackStatus.CANCELED
+	# Since no global state_updated signal will be emitted in this case, we need to manual erase
+	# this pack if it is canceled.
+	if cancellation_success:
+		_asset_pack_to_request_map.erase(pack_name)
+	
+	return cancellation_success
 
 # -----------------------------------------------------------------------------
 # Deletes the specified asset pack from the internal storage of the app.
