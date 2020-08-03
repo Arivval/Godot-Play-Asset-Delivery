@@ -638,8 +638,7 @@ func test_fetch_asset_pack_cancel():
 	assert_asset_pack_state_eq_dict(request_object.get_state(), updated_state3)	
 	
 	var cancel_success = test_object.cancel_asset_pack_request(test_pack_name)
-	
-	assert_eq(cancel_success, true)
+	assert_true(cancel_success)
 	
 	# assert signal_captor is as expected
 	var result_params_store = signal_captor.received_params_store
