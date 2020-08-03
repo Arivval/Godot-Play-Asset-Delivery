@@ -637,20 +637,15 @@ func test_fetch_asset_pack_cancel():
 	assert_false(request_object.get_is_completed())
 	assert_asset_pack_state_eq_dict(request_object.get_state(), updated_state3)	
 	
-	test_object.cancel_asset_pack_request(test_pack_name)
-	var expected_state4 = create_mock_asset_pack_state_with_status_and_progress_dict(test_pack_name, \
-		PlayAssetPackManager.AssetPackStatus.CANCELED, 2048, 4096)
-	yield(yield_to(test_object, "state_updated", 1), YIELD)
+	var cancel_success = test_object.cancel_asset_pack_request(test_pack_name)
 	
-	assert_signal_emitted(test_object, "state_updated")
-	assert_true(request_object.get_is_completed())
-	assert_asset_pack_state_eq_dict(request_object.get_state(), expected_state4)
+	assert_eq(cancel_success, true)
 	
 	# assert signal_captor is as expected
 	var result_params_store = signal_captor.received_params_store
 	var expected_state_list = [test_asset_pack_state, updated_state1, updated_state2, \
-		updated_state3, expected_state4]
-	var expected_num_updates = 5
+		updated_state3]
+	var expected_num_updates = 4
 	var expected_signal_arg_count = 2
 	
 	assert_eq(result_params_store.size(), expected_num_updates)

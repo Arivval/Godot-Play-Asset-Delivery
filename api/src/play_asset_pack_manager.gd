@@ -305,7 +305,7 @@ func cancel_asset_pack_request(pack_name : String) -> bool:
 	var updated_asset_pack_state : PlayAssetPackState = updated_asset_pack_states.get_pack_states()[pack_name]
 	var updated_asset_pack_status = updated_asset_pack_state.get_status()
 	
-	var cancellation_success = AssetPackStatus.CANCELED == AssetPackStatus.CANCELED
+	var cancellation_success = updated_asset_pack_status == AssetPackStatus.CANCELED
 	if cancellation_success:
 		_asset_pack_to_request_map.erase(pack_name)
 	
