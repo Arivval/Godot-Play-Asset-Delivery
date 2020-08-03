@@ -32,12 +32,9 @@ import com.google.android.play.core.tasks.Task;
 import com.google.play.core.godot.assetpacks.utils.AssetPackStateFromDictionary;
 import com.google.play.core.godot.assetpacks.utils.AssetPackStatesFromDictionary;
 import com.google.play.core.godot.assetpacks.utils.PlayAssetDeliveryUtils;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import org.godotengine.godot.Dictionary;
 import org.godotengine.godot.Godot;
@@ -200,10 +197,12 @@ public class StateUpdateManagerTest {
     PlayAssetDelivery playAssetDelivery = new PlayAssetDelivery(godotMock, assetPackManagerMock);
     StateUpdateManager testStateUpdateManager =
         new StateUpdateManager(playAssetDelivery, assetPackManagerMock);
-    testStateUpdateManager.joinOngoingAssetPackRequests(new HashSet<>(Arrays.asList("packName1", "packName2")));
+    testStateUpdateManager.joinOngoingAssetPackRequests(
+        new HashSet<>(Arrays.asList("packName1", "packName2")));
     assertThat(testStateUpdateManager.ongoingAssetPackRequests())
         .containsExactly("packName1", "packName2");
-    testStateUpdateManager.joinOngoingAssetPackRequests(new HashSet<>(Arrays.asList("packName2", "packName3")));
+    testStateUpdateManager.joinOngoingAssetPackRequests(
+        new HashSet<>(Arrays.asList("packName2", "packName3")));
     assertThat(testStateUpdateManager.ongoingAssetPackRequests())
         .containsExactly("packName1", "packName2", "packName3");
   }
