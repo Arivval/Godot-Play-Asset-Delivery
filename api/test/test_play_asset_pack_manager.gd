@@ -493,7 +493,6 @@ func test_fetch_asset_pack_success():
 		updated_state3, updated_state4]
 	var expected_num_updates = 5
 	var expected_signal_arg_count = 2
-	
 	assert_eq(result_params_store.size(), expected_num_updates)
 	# assert all entries in result_params_store
 	for i in range(expected_num_updates):
@@ -506,8 +505,8 @@ func test_fetch_asset_pack_success():
 	# assert reference is freed
 	assert_true(not request_object_reference.get_ref())
 
-func assert_fetch_signal_is_completed(pack_name : String, \
-	result : PlayAssetPackState, pack_location : PlayAssetPackLocation, exception : PlayAssetPackException):
+func assert_fetch_signal_is_completed(pack_name : String, result : PlayAssetPackState, \
+	pack_location : PlayAssetPackLocation, exception : PlayAssetPackException):
 	# assert using callback, simulating the workflow of connecting callback to signal
 	var expected_pack_name = "testPack"
 	var expected_pack_state_dict = create_mock_asset_pack_state_with_status_and_progress_dict(\
