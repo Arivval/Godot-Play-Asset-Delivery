@@ -30,7 +30,7 @@ extends PlayAssetDeliveryRequest
 # upon request reached terminal state {COMPLETED, CANCELED, FAILED}
 # 	pack_name: String, name of the requested asset pack
 # 	result : PlayAssetPackState object
-#	location : PlayAssetPackLocation if the request is in COMPLETED state, otherwise null
+#	pack_location : PlayAssetPackLocation if the request is in COMPLETED state, otherwise null
 #	exception: PlayAssetPackException object if Plugin encountered an exception
 # while handling this request
 # -----------------------------------------------------------------------------
