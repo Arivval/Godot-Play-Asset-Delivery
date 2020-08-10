@@ -46,6 +46,7 @@ import org.godotengine.godot.plugin.SignalInfo;
 public class PlayAssetDelivery extends GodotPlugin {
 
   private AssetPackManager assetPackManager;
+  StateUpdateManager stateUpdateManager;
 
   static final String ASSET_PACK_STATE_UPDATED = "assetPackStateUpdated";
   static final String FETCH_SUCCESS = "fetchSuccess";
@@ -62,12 +63,14 @@ public class PlayAssetDelivery extends GodotPlugin {
     super(godot);
     Context applicationContext = godot.getApplicationContext();
     assetPackManager = AssetPackManagerFactory.getInstance(applicationContext);
+    this.stateUpdateManager = new StateUpdateManager(this, assetPackManager);
   }
 
   /** Package-private constructor used to instantiate PlayAssetDelivery class with mock objects. */
   PlayAssetDelivery(Godot godot, AssetPackManager assetPackManager) {
     super(godot);
     this.assetPackManager = assetPackManager;
+    this.stateUpdateManager = new StateUpdateManager(this, assetPackManager);
   }
 
   @Override
@@ -78,6 +81,7 @@ public class PlayAssetDelivery extends GodotPlugin {
 
   @Override
   public void onMainResume() {
+    stateUpdateManager.forceAssetPackStateUpdate();
     registerAssetPackStateUpdatedListener();
     super.onMainResume();
   }
@@ -94,11 +98,7 @@ public class PlayAssetDelivery extends GodotPlugin {
    */
   void registerAssetPackStateUpdatedListener() {
     assetPackManager.registerListener(
-        state -> {
-          emitSignalWrapper(
-              ASSET_PACK_STATE_UPDATED,
-              PlayAssetDeliveryUtils.convertAssetPackStateToDictionary(state));
-        });
+        state -> stateUpdateManager.emitNonDuplicateStateUpdatedSignal(state, true));
   }
 
   /**
@@ -201,13 +201,24 @@ public class PlayAssetDelivery extends GodotPlugin {
    */
   public void fetch(String[] packNamesArray, int signalID) {
     List<String> packNames = Arrays.asList(packNamesArray);
-
     OnSuccessListener<AssetPackStates> fetchSuccessListener =
-        result ->
-            emitSignalWrapper(
-                FETCH_SUCCESS,
-                PlayAssetDeliveryUtils.convertAssetPackStatesToDictionary(result),
-                signalID);
+        result -> {
+          // Handles the edge case where the app is paused immediately after we start this
+          // fetch request. In this case we need to manually add the packNames to
+          // ongoingAssetPackRequests so forceAssetPackStateUpdate() will call
+          // getPackStates() for these packNames. In this implementation, it is possible
+          // to have an extreme edge case where the assetPackState reached terminal state
+          // in globalListener before fetchSuccess is called. This will result in
+          // packName to be added back again to the ongoingAssetPackRequests set and
+          // duplicate stateUpdated signal emitted by forceAssetPackStateUpdate(). Hence
+          // we are using emitNonDuplicateStateUpdatedSignal() to filter out these
+          // duplicate signals.
+          stateUpdateManager.joinOngoingAssetPackRequests(result.packStates().keySet());
+          emitSignalWrapper(
+              FETCH_SUCCESS,
+              PlayAssetDeliveryUtils.convertAssetPackStatesToDictionary(result),
+              signalID);
+        };
 
     OnFailureListener fetchFailureListener =
         e ->
