@@ -99,7 +99,7 @@ func _on_fetch_error(error: Dictionary):
 func _on_state_updated(result: Dictionary, location : PlayAssetPackLocation = null):
 	_state = PlayAssetPackState.new(result)
 	if _state.get_status() in PlayAssetPackManager._PACK_TERMINAL_STATES:
+		_location = location
 		# reached a terminal state, emit request_completed signal
-		emit_signal("request_completed", _pack_name, _state, null)
-	_location = location
+		emit_signal("request_completed", _pack_name, _state, _location, null)
 	
