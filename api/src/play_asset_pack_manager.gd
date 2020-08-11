@@ -148,7 +148,10 @@ func _route_asset_pack_state_updated(result : Dictionary):
 	
 	if _asset_pack_to_request_map.has(pack_name):
 		var request = _asset_pack_to_request_map[pack_name]
-		request.call_deferred("_on_state_updated", result)
+		var pack_location : PlayAssetPackLocation = null
+		if updated_status == AssetPackStatus.COMPLETED:
+			pack_location = get_pack_location(pack_name)
+		request.call_deferred("_on_state_updated", result, pack_location)
 		if updated_state.get_status() in _PACK_TERMINAL_STATES:
 			_asset_pack_to_request_map.erase(pack_name)
 	

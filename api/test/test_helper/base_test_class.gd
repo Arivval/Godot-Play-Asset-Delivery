@@ -98,6 +98,13 @@ func create_mock_asset_pack_states_dict() -> Dictionary:
 	
 	return test_dict
 
+func create_mock_asset_pack_location_dict() -> Dictionary:
+	return {
+		PlayAssetPackLocation._ASSETS_PATH_KEY: "/assetsPath/", 
+		PlayAssetPackLocation._PACK_STORAGE_METHOD_KEY: PlayAssetPackManager.AssetPackStorageMethod.STORAGE_FILES, 
+		PlayAssetLocation._PATH_KEY: "/path/"
+	}
+
 func create_mock_asset_locations_dict() -> Dictionary:
 	var pack_location_1_dict = {
 		PlayAssetPackLocation._ASSETS_PATH_KEY: "/assetsPath/", 

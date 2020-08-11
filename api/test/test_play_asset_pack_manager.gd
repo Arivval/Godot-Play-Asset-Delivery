@@ -60,11 +60,7 @@ func test_get_asset_location_not_exist():
 
 func test_get_asset_pack_location_valid():
 	var test_pack = "testPack"
-	var return_dict = {
-		PlayAssetPackLocation._ASSETS_PATH_KEY: "/assetsPath/", 
-		PlayAssetPackLocation._PACK_STORAGE_METHOD_KEY: PlayAssetPackManager.AssetPackStorageMethod.STORAGE_FILES, 
-		PlayAssetLocation._PATH_KEY: "/path/"
-	}
+	var return_dict = create_mock_asset_pack_location_dict()
 	
 	var mock_plugin = FakeAndroidPlugin.new()
 	mock_plugin.add_asset_pack_location(test_pack, return_dict)
@@ -76,11 +72,7 @@ func test_get_asset_pack_location_valid():
 
 func test_get_asset_pack_location_not_exist():
 	var test_pack = "testPack"
-	var return_dict = {
-		PlayAssetPackLocation._ASSETS_PATH_KEY: "/assetsPath/", 
-		PlayAssetPackLocation._PACK_STORAGE_METHOD_KEY: PlayAssetPackManager.AssetPackStorageMethod.STORAGE_FILES, 
-		PlayAssetLocation._PATH_KEY: "/path/"
-	}
+	var return_dict = create_mock_asset_pack_location_dict()
 	
 	var mock_plugin = FakeAndroidPlugin.new()
 	mock_plugin.add_asset_pack_location(test_pack, return_dict)
@@ -424,6 +416,10 @@ func test_fetch_asset_pack_success():
 		test_asset_pack_states, {})
 	mock_plugin.set_fetch_info(signal_info)
 	
+	# set return value for get_pack_location
+	var return_pack_location_dict = create_mock_asset_pack_location_dict()
+	mock_plugin.add_asset_pack_location(test_pack_name, return_pack_location_dict)
+	
 	var test_object = create_play_asset_pack_manager(mock_plugin)
 	
 	var request_object = test_object.fetch_asset_pack(test_pack_name)
@@ -489,6 +485,7 @@ func test_fetch_asset_pack_success():
 	assert_signal_emitted(test_object, "state_updated")
 	assert_true(request_object.get_is_completed())
 	assert_asset_pack_state_eq_dict(request_object.get_state(), updated_state4)	
+	assert_asset_pack_location_eq_dict(request_object.get_location(), create_mock_asset_pack_location_dict())	
 	
 	# assert signal_captor is as expected
 	var result_params_store = signal_captor.received_params_store
@@ -508,14 +505,15 @@ func test_fetch_asset_pack_success():
 	# assert reference is freed
 	assert_true(not request_object_reference.get_ref())
 
-func assert_fetch_signal_is_completed(pack_name : String, \
-	result : PlayAssetPackState, exception : PlayAssetPackException):
+func assert_fetch_signal_is_completed(pack_name : String, result : PlayAssetPackState, \
+	pack_location : PlayAssetPackLocation, exception : PlayAssetPackException):
 	# assert using callback, simulating the workflow of connecting callback to signal
 	var expected_pack_name = "testPack"
 	var expected_pack_state_dict = create_mock_asset_pack_state_with_status_and_progress_dict(\
 		expected_pack_name, PlayAssetPackManager.AssetPackStatus.COMPLETED, 4096, 4096)
 	assert_eq(pack_name, expected_pack_name)
 	assert_asset_pack_state_eq_dict(result, expected_pack_state_dict)
+	assert_asset_pack_location_eq_dict(pack_location, create_mock_asset_pack_location_dict())
 	assert_eq(exception, null)
 
 func test_fetch_asset_pack_error():
